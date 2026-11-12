@@ -1,0 +1,6 @@
+{
+  "name": "Portfolio Marion Moun - LPAE Gestion & Digital",
+  "description": "Portfolio professionnel mobile-first de Marion Moun, diplômé en LPAE (ESGAE, Brazzaville) - Stage en Commerce, Comptabilité, Recouvrement, Management et Services Web.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
