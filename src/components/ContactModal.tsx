@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
 import { 
-  PhoneCall, 
-  MessageSquare, 
-  Mail, 
-  MapPin, 
   X, 
-  CheckCircle, 
-  ExternalLink, 
-  Send,
-  Building,
-  Car
+  Phone, 
+  Mail, 
+  MessageCircle, 
+  Copy, 
+  Check, 
+  MapPin,
+  ArrowUpRight 
 } from 'lucide-react';
 
 interface ContactModalProps {
@@ -19,198 +17,164 @@ interface ContactModalProps {
 }
 
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
-  const [senderName, setSenderName] = useState('');
-  const [senderCompany, setSenderCompany] = useState('');
-  const [subjectType, setSubjectType] = useState('Stage en Entreprise');
-  const [customNotes, setCustomNotes] = useState('');
+  const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSendWhatsApp = () => {
-    const text = encodeURIComponent(
-      `Bonjour Marion,\n\nJe suis ${senderName || 'un recruteur'} de l'entreprise ${senderCompany || '[Entreprise]'}.\nObjet : ${subjectType}.\nMessage : ${customNotes || "J'ai consulté votre portfolio suite à votre CV et je souhaite échanger avec vous."}`
-    );
-    window.open(`https://wa.me/${PERSONAL_INFO.phone1Raw}?text=${text}`, '_blank');
+  const handleCopy = () => {
+    const text = `Marion Moun - Diplômé LPAE Gestion & Recouvrement\nTél / WhatsApp : ${PERSONAL_INFO.phone1}\nTél secondaire : ${PERSONAL_INFO.phone2}\nEmail : ${PERSONAL_INFO.email}\nAdresse : ${PERSONAL_INFO.address}`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSendEmail = () => {
-    const subject = encodeURIComponent(`[${subjectType}] Prise de contact - ${senderCompany || 'Entreprise'}`);
-    const body = encodeURIComponent(
-      `Bonjour Marion,\n\nJe suis ${senderName || 'recruteur'} pour l'entreprise ${senderCompany || '[Nom Entreprise]'}.\n\nObjet : ${subjectType}\n\n${customNotes || "Nous souhaitons vous rencontrer pour un entretien concernant votre candidature de stage en gestion."}\n\nCordialement,\n${senderName}`
+  const handleWhatsApp = () => {
+    const message = encodeURIComponent(
+      "Bonjour Marion, j'ai scanné le QR Code de votre CV et je souhaite échanger avec vous au sujet d'une opportunité."
     );
+    window.open(`https://wa.me/${PERSONAL_INFO.phone1Raw}?text=${message}`, '_blank');
+  };
+
+  const handleEmail = () => {
+    const subject = encodeURIComponent("Prise de contact — Stage en gestion");
+    const body = encodeURIComponent("Bonjour Marion,\n\nNous avons consulté votre profil et souhaitons vous rencontrer pour un entretien.\n\nCordialement,");
     window.location.href = `mailto:${PERSONAL_INFO.email}?subject=${subject}&body=${body}`;
   };
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-200 p-0 sm:p-4"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="contact-modal-title"
+      onClick={onClose}
     >
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative space-y-6">
-        
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Fermer"
-        >
-          <X className="w-5 h-5" />
-        </button>
+      <div 
+        className="w-full sm:max-w-md bg-white dark:bg-[#1C1C1E] rounded-t-[28px] sm:rounded-[28px] p-5 sm:p-6 shadow-2xl ios-sheet space-y-4 border border-black/5 dark:border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* iOS Grabber pill */}
+        <div className="w-9 h-1 rounded-full bg-neutral-300 dark:bg-neutral-600 mx-auto -mt-1 mb-1 sm:hidden" />
 
-        {/* Header */}
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-            Disponibilité Immédiate · Brazzaville
-          </span>
-          <h2 id="contact-modal-title" className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Contacter {PERSONAL_INFO.name}
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Choisissez votre canal privilégié : WhatsApp pour une réponse rapide, appel direct ou email formel.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[20px] font-bold text-neutral-900 dark:text-neutral-100">
+              Me contacter
+            </h2>
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
+              Marion Moun · Brazzaville, Congo
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white flex items-center justify-center cursor-pointer"
+            aria-label="Fermer"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Quick Click Direct Action Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Grouped Actions (iOS Action Sheet style) */}
+        <div className="ios-inset-group text-[15px]">
           
           {/* WhatsApp Direct */}
-          <a
-            href={`https://wa.me/${PERSONAL_INFO.phone1Raw}?text=${encodeURIComponent("Bonjour Marion, j'ai scanné le QR Code de votre CV et je souhaite échanger avec vous sur une opportunité.")}`}
-            target="_blank"
-            rel="noreferrer"
-            className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-200 dark:border-emerald-800/80 transition-all flex items-center gap-3 group shadow-xs"
+          <button
+            type="button"
+            onClick={handleWhatsApp}
+            className="w-full text-left ios-row cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
-                WhatsApp Direct
-              </div>
-              <div className="text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-400">
-                {PERSONAL_INFO.phone1}
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+                <MessageCircle className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="font-semibold text-neutral-900 dark:text-neutral-100">WhatsApp</div>
+                <div className="text-[12px] text-neutral-500 dark:text-neutral-400 font-mono">{PERSONAL_INFO.phone1}</div>
               </div>
             </div>
-          </a>
+            <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+          </button>
 
-          {/* Direct Phone Call */}
+          {/* Appel direct */}
           <a
             href={`tel:${PERSONAL_INFO.phone1}`}
-            className="p-4 rounded-2xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 dark:hover:bg-sky-900 border border-sky-200 dark:border-sky-800/80 transition-all flex items-center gap-3 group shadow-xs"
+            className="w-full text-left ios-row cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-              <PhoneCall className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-sky-900 dark:text-sky-200">
-                Appel Téléphonique
-              </div>
-              <div className="text-xs font-mono font-semibold text-sky-700 dark:text-sky-400">
-                {PERSONAL_INFO.phone1}
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-[#0071E3] dark:bg-[#0A84FF] text-white flex items-center justify-center">
+                <Phone className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="font-semibold text-neutral-900 dark:text-neutral-100">Appel direct</div>
+                <div className="text-[12px] text-neutral-500 dark:text-neutral-400 font-mono">{PERSONAL_INFO.phone1}</div>
               </div>
             </div>
+            <ArrowUpRight className="w-4 h-4 text-neutral-400" />
           </a>
 
-        </div>
-
-        {/* Secondary Direct Call / Second line */}
-        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between text-xs">
-          <span className="text-slate-600 dark:text-slate-300">Ligne secondaire directe :</span>
-          <a 
-            href={`tel:${PERSONAL_INFO.phone2}`} 
-            className="font-mono font-bold text-slate-900 dark:text-white hover:text-sky-600 dark:hover:text-sky-400"
+          {/* Email */}
+          <button
+            type="button"
+            onClick={handleEmail}
+            className="w-full text-left ios-row cursor-pointer"
           >
-            {PERSONAL_INFO.phone2}
-          </a>
-        </div>
-
-        {/* Pre-filled Message Form */}
-        <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            Personnaliser votre message :
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Votre nom</label>
-              <input
-                type="text"
-                value={senderName}
-                onChange={(e) => setSenderName(e.target.value)}
-                placeholder="Ex: M. Makosso"
-                className="w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-neutral-800 dark:bg-neutral-200 text-white dark:text-black flex items-center justify-center">
+                <Mail className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="font-semibold text-neutral-900 dark:text-neutral-100">Email</div>
+                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">{PERSONAL_INFO.email}</div>
+              </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Entreprise</label>
-              <input
-                type="text"
-                value={senderCompany}
-                onChange={(e) => setSenderCompany(e.target.value)}
-                placeholder="Ex: PME Télécoms Brazza"
-                className="w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
+            <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+          </button>
+
+          {/* Copier tout */}
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="w-full text-left ios-row cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </span>
+              <div>
+                <div className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  {copied ? 'Coordonnées copiées !' : 'Copier les coordonnées'}
+                </div>
+                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Pour votre carnet ou dossier RH</div>
+              </div>
             </div>
-          </div>
+          </button>
 
-          <div>
-            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Objet de la prise de contact</label>
-            <select
-              value={subjectType}
-              onChange={(e) => setSubjectType(e.target.value)}
-              className="w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-            >
-              <option value="Stage en Gestion / Recouvrement">Stage en Gestion & Recouvrement</option>
-              <option value="Stage en Comptabilité">Stage en Comptabilité / Finance</option>
-              <option value="Stage en Commerce / Vente">Stage en Commerce & Négociation</option>
-              <option value="Prestation Digitale / Site Web">Prestation Digitale ou Tableaux de bord</option>
-              <option value="Autre demande">Autre opportunité</option>
-            </select>
-          </div>
+        </div>
 
-          <div>
-            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Message / Détails (optionnel)</label>
-            <textarea
-              rows={2}
-              value={customNotes}
-              onChange={(e) => setCustomNotes(e.target.value)}
-              placeholder="Précisez la date souhaitée, le lieu ou les missions..."
-              className="w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-            />
+        {/* Second phone line & address info note */}
+        <div className="p-3 bg-neutral-100/70 dark:bg-neutral-800/60 rounded-xl text-[12px] text-neutral-600 dark:text-neutral-400 space-y-1">
+          <div className="flex items-center justify-between">
+            <span>Deuxième ligne :</span>
+            <a href={`tel:${PERSONAL_INFO.phone2}`} className="font-mono font-semibold text-neutral-900 dark:text-neutral-100">
+              {PERSONAL_INFO.phone2}
+            </a>
           </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <button
-              onClick={handleSendWhatsApp}
-              className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              <span>Ouvrir WhatsApp</span>
-            </button>
-            <button
-              onClick={handleSendEmail}
-              className="py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Envoyer par Email</span>
-            </button>
+          <div className="flex items-center gap-1.5 pt-1 border-t border-neutral-200/60 dark:border-neutral-700/60">
+            <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
+            <span>N° 8, avenue de l’impréco Mansimou, arr8 Madibou, Brazzaville</span>
           </div>
         </div>
 
-        {/* Location & Driver license footnote */}
-        <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
-          <span className="flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-rose-500" />
-            {PERSONAL_INFO.address}
-          </span>
-          <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
-            <Car className="w-3.5 h-3.5 text-sky-500" />
-            {PERSONAL_INFO.driverLicense}
-          </span>
-        </div>
+        {/* Cancel button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-full py-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-semibold text-[15px] hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+        >
+          Annuler
+        </button>
 
       </div>
     </div>
   );
-};
+}

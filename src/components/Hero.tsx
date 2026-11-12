@@ -1,248 +1,191 @@
-import React from 'react';
-import { PERSONAL_INFO, KEY_METRICS } from '../data/portfolioData.ts';
+import { useState } from 'react';
+import { PERSONAL_INFO } from '../data/portfolioData.ts';
 import { 
-  FileText, 
-  MessageSquare, 
+  ArrowDown, 
   MapPin, 
-  Award, 
   Car, 
-  CheckCircle, 
-  TrendingUp, 
-  Scan, 
-  QrCode,
-  ArrowRight,
+  GraduationCap, 
+  FileText, 
+  ArrowUpRight,
   ShieldCheck,
-  Zap
+  Check
 } from 'lucide-react';
 
 interface HeroProps {
-  activeTab: 'stage' | 'digital';
   onOpenContact: () => void;
-  onOpenScanner: () => void;
-  onOpenQr: () => void;
   onSelectTab: (tab: 'stage' | 'digital') => void;
 }
 
-export function Hero({
-  activeTab,
-  onOpenContact,
-  onOpenScanner,
-  onOpenQr,
-  onSelectTab
-}: HeroProps) {
+export function Hero({ onOpenContact, onSelectTab }: HeroProps) {
+  // Option for Marion to preview an uploaded photo or see the placeholder
+  const [usePhotoPlaceholder, setUsePhotoPlaceholder] = useState<boolean>(true);
+
   return (
-    <section className="relative overflow-hidden pt-8 pb-12 sm:pt-14 sm:pb-16 bg-gradient-to-b from-sky-50/70 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 border-b border-slate-200/80 dark:border-slate-800">
+    <section className="pt-8 pb-12 sm:pt-14 sm:pb-16 max-w-5xl mx-auto px-4 sm:px-6">
       
-      {/* Decorative ambient background glows */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-sky-400/10 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 left-10 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Top Meta Tag: Stage recherché */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0071E3]/10 dark:bg-[#0A84FF]/15 text-[#0071E3] dark:text-[#0A84FF] text-[13px] font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0071E3] dark:bg-[#0A84FF]" />
+          <span>Stage recherché · Brazzaville</span>
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <span className="text-[13px] text-neutral-500 dark:text-neutral-400">
+          Disponible immédiatement
+        </span>
+      </div>
+
+      {/* Main Grid: Portrait on left/top + Concrete text */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         
-        {/* Verification banner for QR Code scan */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold mb-6 shadow-xs animate-in fade-in duration-300">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Accès QR Code CV vérifié</span>
-          <span className="text-slate-400 dark:text-slate-600">·</span>
-          <span>Disponible immédiatement pour stage à Brazzaville</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Main Info Column */}
-          <div className="lg:col-span-8 space-y-5 text-left">
+        {/* Human Portrait Slot ([PHOTO]) */}
+        <div className="md:col-span-4 flex flex-col items-start">
+          <div className="relative w-48 h-56 sm:w-56 sm:h-64 rounded-[26px] overflow-hidden bg-neutral-200 dark:bg-neutral-800 border border-neutral-300/80 dark:border-neutral-700/80 shadow-sm flex flex-col items-center justify-center text-center p-4">
             
-            <div>
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="text-sm font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">
-                  Portfolio Professionnel
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1">
-                  <Award className="w-3 h-3 text-amber-500" />
-                  Diplômé LPAE · ESGAE
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1">
-                  <Car className="w-3 h-3 text-sky-500" />
-                  Permis B
-                </span>
-              </div>
-
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
-                {PERSONAL_INFO.name}
-              </h1>
-
-              <p className="mt-2 text-lg sm:text-xl font-semibold text-slate-700 dark:text-slate-200">
-                Orienté <span className="text-sky-600 dark:text-sky-400 underline decoration-sky-300 dark:decoration-sky-700 decoration-2 underline-offset-4">Commerce</span>, <span className="text-indigo-600 dark:text-indigo-400 underline decoration-indigo-300 dark:decoration-indigo-700 decoration-2 underline-offset-4">Comptabilité</span>, <span className="text-teal-600 dark:text-teal-400 underline decoration-teal-300 dark:decoration-teal-700 decoration-2 underline-offset-4">Recouvrement</span> & <span className="text-slate-800 dark:text-slate-200">Management</span>
-              </p>
+            {/* Realistic stylized portrait placeholder frame */}
+            <div className="w-20 h-20 rounded-full bg-neutral-300 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-300 mb-3 border border-neutral-400/30">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
             </div>
 
-            {/* Strategic Value Proposition */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-                Ce site révèle ce que le format d'un CV papier ne peut pas montrer : 
-                <strong className="text-slate-900 dark:text-white font-semibold ml-1">
-                  l'alliance d'une rigueur comptable et commerciale certifiée avec des compétences rares d'automatisation digitale
-                </strong>, prêtes à faire gagner du temps et de la trésorerie à votre entreprise dès la première semaine.
-              </p>
-
-              <div className="mt-3 flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-700/60">
-                <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <MapPin className="w-3.5 h-3.5 text-rose-500" />
-                  Brazzaville, Congo (Mansimou)
-                </span>
-                <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  Masterclass Recouvrement
-                </span>
-                <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <Zap className="w-3.5 h-3.5 text-amber-500" />
-                  Projet DAS 1 & 2 chez Émeraude
-                </span>
-              </div>
+            <div className="text-[12px] font-semibold text-neutral-700 dark:text-neutral-200">
+              [PHOTO]
+            </div>
+            <div className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 max-w-[160px] leading-tight">
+              Emplacement photo portrait (recadrée simplement)
             </div>
 
-            {/* Primary Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              
-              {/* Download CV button */}
-              <a
-                href={PERSONAL_INFO.cvDownloadUrl}
-                download="CV_Marion_Moun_LPAE.png"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-101"
-              >
-                <FileText className="w-4 h-4 text-sky-400 dark:text-sky-600" />
-                <span>Télécharger mon CV</span>
-              </a>
-
-              {/* Direct WhatsApp / Contact button */}
-              <button
-                onClick={onOpenContact}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-101"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Me contacter (WhatsApp / Email)</span>
-              </button>
-
-              {/* Document Scanner Feature */}
-              <button
-                onClick={onOpenScanner}
-                className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-sm font-semibold transition-all"
-                title="Tester l'analyseur IA de factures et créances"
-              >
-                <Scan className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span>Scanner une créance (IA)</span>
-              </button>
-
-              {/* Show QR code button */}
-              <button
-                onClick={onOpenQr}
-                className="p-3 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all"
-                title="Partager le QR Code"
-                aria-label="Afficher le QR code pour smartphone"
-              >
-                <QrCode className="w-5 h-5" />
-              </button>
-            </div>
-
-          </div>
-
-          {/* Quick Profile Summary / Hero Card */}
-          <div className="lg:col-span-4">
-            <div className="rounded-3xl p-6 bg-gradient-to-br from-white via-sky-50/50 to-indigo-50/30 dark:from-slate-800 dark:via-slate-850 dark:to-slate-900 border border-sky-100 dark:border-slate-700 shadow-xl relative overflow-hidden">
-              
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200/80 dark:border-slate-700">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-md">
-                    MM
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                      {PERSONAL_INFO.name}
-                    </h3>
-                    <p className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-                      LPAE Gestion d'Entreprise
-                    </p>
-                  </div>
-                </div>
-                <div className="w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-emerald-100 dark:ring-emerald-950" title="Actif et disponible" />
-              </div>
-
-              {/* Profile Strengths List */}
-              <div className="py-4 space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Formation ESGAE & ULC :</strong> Solide bagage académique en gestion, compta OHADA et management.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Maîtrise du Recouvrement :</strong> Méthodologie rigoureuse pour réduire les délais de paiement clients.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Atout Digital :</strong> Créateur de solutions web, tableurs connectés et automatisation Google Workspace.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Mobilité immédiate :</strong> Permis B opérationnel pour prospection et démarches terrain.</span>
-                </div>
-              </div>
-
-              {/* Direct Tab Switchers */}
-              <div className="pt-4 border-t border-slate-200/80 dark:border-slate-700 grid grid-cols-2 gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('stage')}
-                  className={`py-2 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                    activeTab === 'stage'
-                      ? 'bg-sky-600 text-white shadow-md ring-2 ring-sky-300 dark:ring-sky-600 scale-102'
-                      : 'bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 hover:bg-sky-200 dark:hover:bg-sky-900'
-                  }`}
-                >
-                  <span>Profil Métier</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onSelectTab('digital')}
-                  className={`py-2 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                    activeTab === 'digital'
-                      ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300 dark:ring-indigo-600 scale-102'
-                      : 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900'
-                  }`}
-                >
-                  <span>Atouts Web</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              </div>
-
+            {/* Subtle verification badge on photo */}
+            <div className="absolute bottom-3 right-3 w-6 h-6 rounded-full bg-[#0071E3] text-white flex items-center justify-center text-[10px]" title="Profil vérifié">
+              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
           </div>
 
+          {/* Quick details inset group below photo */}
+          <div className="w-full mt-4 bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/5 dark:border-white/10 p-3.5 space-y-2 text-[13px]">
+            <div className="flex items-center justify-between text-neutral-600 dark:text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Localisation</span>
+              </span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                Mansimou, Brazza
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between text-neutral-600 dark:text-neutral-400 pt-1.5 border-t border-neutral-100 dark:border-neutral-800">
+              <span className="flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Diplôme</span>
+              </span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                LPAE (ESGAE)
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between text-neutral-600 dark:text-neutral-400 pt-1.5 border-t border-neutral-100 dark:border-neutral-800">
+              <span className="flex items-center gap-1.5">
+                <Car className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Permis B</span>
+              </span>
+              <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                Opérationnel
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Animated Key Metrics Strip */}
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {KEY_METRICS.map((metric, idx) => (
-            <div 
-              key={idx}
-              className="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:border-sky-300 dark:hover:border-sky-700 transition-all text-center sm:text-left"
+        {/* Narrative & Clear Human Presentation on right */}
+        <div className="md:col-span-8 space-y-5">
+          
+          <div>
+            <h1 className="text-[34px] sm:text-[42px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.025em] leading-[1.12]">
+              Marion Moun
+            </h1>
+            <p className="text-[17px] sm:text-[19px] font-medium text-neutral-600 dark:text-neutral-300 mt-2">
+              Diplômé en Administration des Entreprises (LPAE)
+            </p>
+          </div>
+
+          {/* First-person concrete paragraph without buzzwords */}
+          <div className="space-y-3 text-[16px] sm:text-[17px] text-neutral-700 dark:text-neutral-300 leading-[1.55]">
+            <p>
+              Je cherche un stage opérationnel de 3 à 6 mois auprès d'une entreprise basée à Brazzaville. Mes domaines prioritaires sont le <strong>commerce</strong>, la <strong>comptabilité</strong>, le <strong>recouvrement de créances</strong> et le <strong>management</strong>. Ce n'est pas un stage de développement informatique.
+            </p>
+            <p>
+              Mon profil a été forgé sur le terrain : le montage des déclarations annuelles des salaires (<strong>DAS 1 & 2</strong>) sous la direction de M. Yves Miatoko chez <strong>Émeraude</strong>, et les techniques de relance apprises lors de la <strong>Masterclass Recouvrement</strong> de mai 2026.
+            </p>
+            <p className="text-neutral-600 dark:text-neutral-400 text-[15px]">
+              Ce que j'apporte en plus ? Je sais digitaliser ce qui prend du temps : concevoir des tableurs connectés, automatiser des alertes de relance et monter des formulaires sans papier pour que l'équipe gagne des heures chaque semaine.
+            </p>
+          </div>
+
+          {/* Action buttons (Clean Apple style) */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            
+            {/* Télécharger mon CV */}
+            <a
+              href={PERSONAL_INFO.cvDownloadUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-200/80 hover:bg-neutral-300/80 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-900 dark:text-neutral-100 text-[15px] font-semibold transition-colors cursor-pointer"
             >
-              <div className="text-2xl sm:text-3xl font-extrabold text-sky-600 dark:text-sky-400">
-                {metric.value}
-              </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
-                {metric.label}
-              </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                {metric.detail}
-              </div>
+              <FileText className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
+              <span>Mon CV</span>
+            </a>
+
+            {/* Me contacter */}
+            <button
+              type="button"
+              onClick={onOpenContact}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0071E3] hover:bg-[#0077ED] dark:bg-[#0A84FF] dark:hover:bg-[#409CFF] text-white text-[15px] font-semibold transition-colors cursor-pointer shadow-xs"
+            >
+              <span>Me contacter</span>
+            </button>
+
+            {/* Découvrir les atouts web */}
+            <button
+              type="button"
+              onClick={() => onSelectTab('digital')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[14px] font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+            >
+              <span>Voir mes atouts web</span>
+              <ArrowDown className="w-3.5 h-3.5" />
+            </button>
+
+          </div>
+
+          {/* Handcrafted Asymmetric Detail: Handwritten SVG signature */}
+          <div className="pt-4 flex items-center justify-between border-t border-neutral-200/80 dark:border-neutral-800/80">
+            <div className="flex items-center gap-3">
+              <svg 
+                className="w-32 h-10 text-neutral-800 dark:text-neutral-200" 
+                viewBox="0 0 160 48" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="1.6" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                aria-label="Signature manuscrite de Marion Moun"
+              >
+                <path d="M 12 36 C 18 16, 26 12, 30 32 C 34 14, 42 16, 46 34 C 54 22, 60 26, 68 32 C 78 12, 84 38, 92 28 C 102 18, 110 32, 118 24 C 126 16, 134 32, 148 20" />
+                <path d="M 28 38 C 50 42, 95 40, 144 32" strokeWidth="1.2" opacity="0.6" />
+              </svg>
+              <span className="text-[12px] text-neutral-500 dark:text-neutral-400 font-normal">
+                Marion Moun · Brazzaville
+              </span>
             </div>
-          ))}
+
+            <span className="text-[11px] text-neutral-400 dark:text-neutral-500 hidden sm:inline">
+              Fiche ouverte depuis le QR Code du CV
+            </span>
+          </div>
+
         </div>
 
       </div>
+
     </section>
   );
-};
+}

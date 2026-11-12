@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Copy, Download, CheckCircle, FileCode, ExternalLink, HelpCircle } from 'lucide-react';
+import { X, Copy, Download, Check, FileCode } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
 
 interface StandaloneExportModalProps {
@@ -8,18 +8,15 @@ interface StandaloneExportModalProps {
 }
 
 export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModalProps) {
-  const [copiedCode, setCopiedCode] = useState(false);
   const [copiedChecklist, setCopiedChecklist] = useState(false);
 
   if (!isOpen) return null;
 
   const checklistItems = [
-    { key: '[LIEN_TELECHARGEMENT_CV_PDF]', desc: "Lien vers votre CV PDF hébergé (ex: Google Drive public, GitHub ou votre serveur)." },
-    { key: '[LIEN_GOOGLE_FORM]', desc: "URL de votre Google Forms si vous souhaitez rediriger vos prospects/recruteurs dessus." },
-    { key: '[PROFIL_LINKEDIN_A_COMPLETER]', desc: "URL de votre profil LinkedIn si vous en avez un." },
-    { key: 'Numéros WhatsApp', desc: "+242 06 406 50 70 et +242 06 113 38 15 (déjà renseignés d'après votre CV)." },
-    { key: 'Adresse e-mail', desc: "glory3marrion71@gmail.com (déjà renseignée d'après votre CV)." },
-    { key: 'Adresse physique', desc: "N° 8, avenue de l'impréco Mansimou, arr8 Madibou, Brazzaville (déjà renseignée)." }
+    { key: '[PHOTO]', desc: 'Remplacer le bloc photo par votre vrai portrait photo (ex: portrait_marion.jpg).' },
+    { key: '[LIEN_PDF_CV]', desc: 'Lien direct vers votre CV PDF (ex: Google Drive public ou fichier hébergé).' },
+    { key: 'Coordonnées', desc: 'Téléphones +242 06 406 50 70 / +242 06 113 38 15 et email glory3marrion71@gmail.com déjà intégrés.' },
+    { key: 'Captures de projets', desc: 'Remplacer les cadres SVG des projets par vos vraies captures d\'écran si vous le souhaitez.' }
   ];
 
   const handleCopyChecklist = () => {
@@ -30,179 +27,235 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
   };
 
   const handleDownloadStandaloneHtml = () => {
-    // Generate clean standalone HTML
     const standaloneHtml = `<!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marion Moun — Portfolio LPAE Gestion, Commerce & Recouvrement | Brazzaville</title>
-  <meta name="description" content="Portfolio professionnel de Marion Moun, diplômé en LPAE (ESGAE, Brazzaville) - Stage en Commerce, Comptabilité, Recouvrement, Management et Services Web." />
+  <title>Marion Moun — Portfolio LPAE Gestion & Recouvrement | Brazzaville</title>
+  <meta name="description" content="Portfolio professionnel de Marion Moun, diplômé LPAE ESGAE. Stage en Commerce, Comptabilité, Recouvrement et Management à Brazzaville." />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0369a1', 700: '#075985' }
-          }
-        }
-      }
-    }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    :root {
+      --ios-bg: #F2F2F7;
+      --ios-card: #FFFFFF;
+      --ios-separator: rgba(60, 60, 67, 0.12);
+      --ios-label: #000000;
+      --ios-secondary: #3C3C4399;
+      --ios-blue: #0071E3;
+    }
+    .dark {
+      --ios-bg: #000000;
+      --ios-card: #1C1C1E;
+      --ios-separator: rgba(255, 255, 255, 0.12);
+      --ios-label: #FFFFFF;
+      --ios-secondary: #EBEBF599;
+      --ios-blue: #0A84FF;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--ios-bg);
+      color: var(--ios-label);
+      letter-spacing: -0.011em;
+    }
+    .liquid-glass {
+      background-color: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    .dark .liquid-glass {
+      background-color: rgba(28, 28, 30, 0.82);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .ios-inset-group {
+      background-color: var(--ios-card);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--ios-separator);
+    }
+    .ios-segmented {
+      background-color: rgba(118, 118, 128, 0.12);
+      border-radius: 12px;
+      padding: 3px;
+      display: inline-flex;
+    }
+    .ios-segmented-btn {
+      border-radius: 9px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ios-secondary);
+      transition: all 0.2s ease;
+    }
+    .ios-segmented-btn.active {
+      background-color: var(--ios-card);
+      color: var(--ios-label);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
+<body class="transition-colors duration-200 min-h-screen flex flex-col">
 
-  <!-- En-tête Fixe -->
-  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-sky-600 text-white font-bold flex items-center justify-center text-lg shadow-sm">MM</div>
-      <div>
-        <div class="font-bold text-slate-900 dark:text-white leading-tight">Marion Moun</div>
-        <div class="text-xs text-slate-500 dark:text-slate-400">LPAE · ESGAE Brazzaville</div>
+  <!-- En-tête Liquid Glass -->
+  <header class="sticky top-0 z-40 w-full liquid-glass border-b">
+    <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold text-xs flex items-center justify-center">MM</div>
+        <div>
+          <div class="text-[14px] font-semibold">Marion Moun</div>
+          <div class="text-[11px] text-neutral-500 hidden sm:block">LPAE · ESGAE Brazzaville</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="flex items-center gap-2">
-      <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">🌓</button>
-      <a href="https://wa.me/242064065070" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold">WhatsApp Direct</a>
+
+      <nav class="hidden sm:inline-flex ios-segmented">
+        <button id="btn-seg-stage" onclick="switchTab('stage')" class="ios-segmented-btn active">Profil & Stage</button>
+        <button id="btn-seg-digital" onclick="switchTab('digital')" class="ios-segmented-btn">Digital Web</button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300">🌓</button>
+        <a href="https://wa.me/242064065070" target="_blank" class="px-3.5 py-1.5 rounded-full bg-[#0071E3] text-white text-[13px] font-semibold">Me contacter</a>
+      </div>
     </div>
   </header>
 
-  <!-- Navigation Onglets Principaux -->
-  <div class="max-w-4xl mx-auto px-4 mt-6">
-    <div class="flex p-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-sm font-bold">
-      <button id="btn-tab-stage" onclick="switchTab('stage')" class="flex-1 py-2.5 rounded-lg bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-sm transition-all">
-        1. Profil & Stage Métier
-      </button>
-      <button id="btn-tab-digital" onclick="switchTab('digital')" class="flex-1 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 transition-all">
-        2. Digital Web & Atouts
-      </button>
+  <!-- Contenu Principal -->
+  <main class="flex-1 max-w-4xl mx-auto px-4 py-8 space-y-10 w-full">
+    
+    <!-- Hero Handcrafted -->
+    <section class="space-y-6">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0071E3]/10 text-[#0071E3] text-[13px] font-medium">
+        <span>Stage recherché · Brazzaville</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div class="md:col-span-4 flex flex-col items-start">
+          <div class="w-44 h-52 rounded-[24px] bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 flex flex-col items-center justify-center text-center p-3">
+            <div class="w-16 h-16 rounded-full bg-neutral-300 dark:bg-neutral-700 flex items-center justify-center text-xl mb-2">👤</div>
+            <div class="text-[12px] font-semibold text-neutral-700 dark:text-neutral-200">[PHOTO]</div>
+            <div class="text-[10px] text-neutral-500">Photo portrait recadrée</div>
+          </div>
+          <div class="w-full mt-3 ios-inset-group p-3 text-[12px] space-y-1.5">
+            <div class="flex justify-between"><span>Localisation :</span><strong>Mansimou, Brazza</strong></div>
+            <div class="flex justify-between"><span>Diplôme :</span><strong>LPAE (ESGAE)</strong></div>
+            <div class="flex justify-between"><span>Permis :</span><strong>Permis B</strong></div>
+          </div>
+        </div>
+
+        <div class="md:col-span-8 space-y-4">
+          <h1 class="text-[34px] font-bold tracking-tight">Marion Moun</h1>
+          <p class="text-[16px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
+            Diplômé en administration des entreprises (LPAE) à l'ESGAE, je recherche un stage opérationnel de 3 à 6 mois à Brazzaville en commerce, comptabilité, recouvrement ou management.
+          </p>
+          <p class="text-[14px] text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            Pratique réelle des déclarations fiscales DAS 1 & 2 chez Émeraude avec M. Yves Miatoko, et spécialisation en réduction des délais de paiement lors de la Masterclass Recouvrement de mai 2026.
+          </p>
+          <div class="flex flex-wrap gap-2.5 pt-2">
+            <a href="https://wa.me/242064065070" target="_blank" class="px-5 py-2 rounded-xl bg-[#0071E3] text-white text-[14px] font-semibold">WhatsApp</a>
+            <a href="tel:+242064065070" class="px-5 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-[14px] font-semibold">Appel direct</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Mobile In-Page -->
+    <div class="flex sm:hidden justify-center">
+      <nav class="ios-segmented">
+        <button id="btn-seg-stage-mob" onclick="switchTab('stage')" class="ios-segmented-btn active">Profil & Stage</button>
+        <button id="btn-seg-digital-mob" onclick="switchTab('digital')" class="ios-segmented-btn">Digital Web</button>
+      </nav>
     </div>
-  </div>
 
-  <!-- ONGLET 1: PROFIL & STAGE -->
-  <main id="content-stage" class="max-w-4xl mx-auto px-4 py-8 space-y-12">
-    <!-- Hero -->
-    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-      <div class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-        ✓ Profil Certifié CV (Code QR) · Brazzaville
-      </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
-        Marion Moun
-      </h1>
-      <p class="text-base sm:text-lg text-sky-600 dark:text-sky-400 font-bold">
-        Diplômé en LPAE | Commerce, Comptabilité, Recouvrement & Management
-      </p>
-      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-        Ce site dit ce que mon CV ne peut pas dire : j'allie la rigueur de gestion d'entreprise et des comptes à la puissance d'automatisation des outils web pour sécuriser vos encaissements et accélérer vos processus dès la première semaine.
-      </p>
-      <div class="flex flex-wrap gap-3 pt-2">
-        <a href="https://wa.me/242064065070" class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs">Me contacter (WhatsApp)</a>
-        <a href="tel:+242064065070" class="px-4 py-2.5 rounded-xl bg-sky-600 text-white font-bold text-xs">Appel direct (+242 06 406 50 70)</a>
-      </div>
-    </section>
+    <!-- ONGLET 1: STAGE & PROFIL -->
+    <div id="tab-stage" class="space-y-8">
+      <section class="space-y-3">
+        <h2 class="text-[20px] font-bold">Compétences par domaine</h2>
+        <div class="ios-inset-group">
+          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
+            <span>Balance âgée & Suivi des échéances</span><strong>Expert</strong>
+          </div>
+          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
+            <span>Plan de relance multi-canaux (J+3 à J+35)</span><strong>Pratique</strong>
+          </div>
+          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
+            <span>Déclarations fiscales DAS 1 & 2 (OHADA)</span><strong>Spécialité</strong>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span>Tableaux de bord connectés & Automatisation</span><strong>Avancé</strong>
+          </div>
+        </div>
+      </section>
 
-    <!-- Preuve Visuelle : Recouvrement -->
-    <section class="p-6 rounded-3xl bg-slate-900 text-white space-y-4">
-      <div class="text-xs uppercase tracking-wider text-amber-400 font-bold">Exemple illustratif, données fictives</div>
-      <h3 class="text-xl font-bold">Tableau de Bord Recouvrement & Plan de Relance</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-        <div class="p-3 rounded-xl bg-slate-800">
-          <div class="text-slate-400">Total Facturé</div>
-          <div class="text-lg font-black mt-1">4 950 000 FCFA</div>
+      <section class="ios-inset-group p-5 space-y-4">
+        <h3 class="text-[17px] font-semibold">Tableau de bord Recouvrement (Données fictives)</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[13px]">
+          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Facturé : <strong>5 050 000 FCFA</strong></div>
+          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Encaissé : <strong>4 150 000 FCFA</strong></div>
+          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Taux : <strong>82.1%</strong></div>
+          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Retard moyen : <strong>19 jours</strong></div>
         </div>
-        <div class="p-3 rounded-xl bg-slate-800">
-          <div class="text-slate-400">Total Encaissé</div>
-          <div class="text-lg font-black text-emerald-400 mt-1">4 185 000 FCFA</div>
-        </div>
-        <div class="p-3 rounded-xl bg-slate-800">
-          <div class="text-slate-400">Taux Recouvrement</div>
-          <div class="text-lg font-black text-sky-400 mt-1">84.5%</div>
-        </div>
-        <div class="p-3 rounded-xl bg-slate-800">
-          <div class="text-slate-400">DSO (Délai Moyen)</div>
-          <div class="text-lg font-black text-amber-400 mt-1">19 jours</div>
-        </div>
-      </div>
-      <div class="p-4 rounded-xl bg-slate-850 border border-slate-800 text-xs space-y-2">
-        <div class="font-bold text-sky-400">Protocole de relance J+3 à J+35 :</div>
-        <p class="text-slate-300">J+3 : Rappel courtois SMS/WhatsApp ➔ J+10 : Écrit formel avec relevé ➔ J+20 : Sommation amiable 48h ➔ J+35 : Échéancier ou Contentieux.</p>
-      </div>
-    </section>
+        <div class="text-[11px] text-neutral-400 italic text-center">Exemple illustratif, données fictives</div>
+      </section>
+    </div>
 
-    <!-- Pourquoi moi dès la première semaine -->
-    <section class="p-6 rounded-3xl bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-800 space-y-3">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Pourquoi moi dès la première semaine ?</h3>
-      <ul class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-2">
-        <li>✓ <strong>Autonomie immédiate :</strong> Formé aux réalités du cabinet d'expertise comptable (DAS 1 & 2 chez Émeraude).</li>
-        <li>✓ <strong>Spécialiste de la trésorerie :</strong> Certifié par une Masterclass sur le recouvrement des créances & impayés.</li>
-        <li>✓ <strong>Mobilité totale :</strong> Titulaire du permis de conduire catégorie B pour tous déplacements à Brazzaville.</li>
-      </ul>
-    </section>
+    <!-- ONGLET 2: DIGITAL WEB -->
+    <div id="tab-digital" class="hidden space-y-6">
+      <section class="ios-inset-group p-5 space-y-3">
+        <h2 class="text-[18px] font-bold">La passerelle Gestion + Web</h2>
+        <p class="text-[14px] text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          Un profil de gestion capable d'automatiser apporte une valeur immédiate : zéro ressaisie papier, clôture quotidienne de trésorerie en 5 minutes, et visibilité client en direct sur smartphone.
+        </p>
+      </section>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="ios-inset-group p-4 space-y-2">
+          <h4 class="font-bold text-[15px]">Facturation & Recouvrement Télécom</h4>
+          <p class="text-[13px] text-neutral-500">Calcul automatique d'intérêts et relances WhatsApp : -45% de temps de gestion.</p>
+        </div>
+        <div class="ios-inset-group p-4 space-y-2">
+          <h4 class="font-bold text-[15px]">Tableau de Bord Trésorerie Google Sheets</h4>
+          <p class="text-[13px] text-neutral-500">Formulaire mobile de dépenses et suivi prévisionnel sans abonnement payant.</p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <!-- ONGLET 2: DIGITAL WEB -->
-  <main id="content-digital" class="hidden max-w-4xl mx-auto px-4 py-8 space-y-8">
-    <section class="p-6 rounded-3xl bg-indigo-900 text-white space-y-3">
-      <h2 class="text-2xl font-extrabold">La Passerelle Gestion + Web</h2>
-      <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
-        Un profil gestion/commerce qui sait digitaliser et automatiser est un stagiaire qui apporte de la valeur tout de suite : suppression des ressaisies manuelles, alertes d'impayés et sites vitrines prêts à vendre.
-      </p>
-    </section>
+  <footer class="border-t border-neutral-200 dark:border-neutral-800 p-6 text-center text-[13px] text-neutral-500">
+    « Ce site a été conçu pour aller à l'essentiel : des compétences vérifiables, sans artifice. » — Marion Moun, Brazzaville.
+  </footer>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
-        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">Facturation Télécom</span>
-        <h4 class="font-bold text-slate-900 dark:text-white">Système de Facturation & Recouvrement</h4>
-        <p class="text-xs text-slate-600 dark:text-slate-400">Automatisation des factures récurrentes et relances SMS : -45% de temps de traitement.</p>
-      </div>
-
-      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
-        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300">Portail Associatif</span>
-        <h4 class="font-bold text-slate-900 dark:text-white">Plateforme Étudiants & Cotisations</h4>
-        <p class="text-xs text-slate-600 dark:text-slate-400">Enrôlement et traçabilité des cotisations pour 450+ étudiants avec export trésorerie.</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- Script Navigation & QR Handler -->
   <script>
     function switchTab(tab) {
-      const stage = document.getElementById('content-stage');
-      const digital = document.getElementById('content-digital');
-      const btnStage = document.getElementById('btn-tab-stage');
-      const btnDigital = document.getElementById('btn-tab-digital');
+      const stage = document.getElementById('tab-stage');
+      const digital = document.getElementById('tab-digital');
+      const b1 = document.getElementById('btn-seg-stage');
+      const b2 = document.getElementById('btn-seg-digital');
+      const b1m = document.getElementById('btn-seg-stage-mob');
+      const b2m = document.getElementById('btn-seg-digital-mob');
 
       if (tab === 'digital') {
         stage.classList.add('hidden');
         digital.classList.remove('hidden');
-        btnDigital.className = 'flex-1 py-2.5 rounded-lg bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all';
-        btnStage.className = 'flex-1 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 transition-all';
+        if (b1) { b1.classList.remove('active'); b2.classList.add('active'); }
+        if (b1m) { b1m.classList.remove('active'); b2m.classList.add('active'); }
         window.location.hash = 'digital';
       } else {
         digital.classList.add('hidden');
         stage.classList.remove('hidden');
-        btnStage.className = 'flex-1 py-2.5 rounded-lg bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-sm transition-all';
-        btnDigital.className = 'flex-1 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 transition-all';
+        if (b1) { b1.classList.add('active'); b2.classList.remove('active'); }
+        if (b1m) { b1m.classList.add('active'); b2m.classList.remove('active'); }
         window.location.hash = 'stage';
       }
     }
 
-    // QR Code / URL parameter detection (?src=cv)
     window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const hash = window.location.hash;
-      if (hash === '#digital') {
-        switchTab('digital');
-      } else if (params.get('src') === 'cv' || hash === '#stage') {
-        switchTab('stage');
-      }
+      const p = new URLSearchParams(window.location.search);
+      const h = window.location.hash;
+      if (h === '#digital') switchTab('digital');
+      else if (p.get('src') === 'cv' || h === '#stage') switchTab('stage');
     });
 
     function toggleDarkMode() {
@@ -225,75 +278,72 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs transition-opacity duration-200"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="export-modal-title"
+      onClick={onClose}
     >
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative space-y-6">
-        
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Fermer"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Header */}
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-            Livrable Clé en Main
-          </span>
-          <h2 id="export-modal-title" className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Fichier Unique index.html Autonome (GitHub Pages & Netlify)
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Conformément à votre demande, ce fichier rassemble tout le HTML, CSS et JavaScript dans un fichier 100% autonome prêt à être glissé-déposé sur Netlify Drop ou publié sur GitHub Pages.
-          </p>
-        </div>
-
-        {/* Download Button Card */}
-        <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div 
+        className="w-full max-w-lg bg-white dark:bg-[#1C1C1E] rounded-[24px] p-6 shadow-2xl space-y-5 border border-black/5 dark:border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
           <div>
-            <div className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
-              Télécharger le fichier index.html autonome
-            </div>
-            <div className="text-xs text-emerald-700 dark:text-emerald-400">
-              Prêt pour hébergement gratuit sans aucune installation.
-            </div>
+            <h3 className="text-[18px] font-bold text-neutral-900 dark:text-neutral-100">
+              Export Fichier Unique index.html
+            </h3>
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
+              Prêt à héberger gratuitement sur GitHub Pages ou Netlify
+            </p>
           </div>
           <button
-            onClick={handleDownloadStandaloneHtml}
-            className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 shrink-0"
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white flex items-center justify-center cursor-pointer"
           >
-            <Download className="w-4 h-4" />
-            <span>Télécharger index.html</span>
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Checklist of elements to customize */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-              Liste des éléments à personnaliser :
-            </h4>
+        <div className="p-4 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-[14px] font-semibold text-neutral-900 dark:text-neutral-100">
+              Télécharger le fichier index.html autonome
+            </div>
+            <div className="text-[12px] text-neutral-500 dark:text-neutral-400">
+              Aucune dépendance externe, CSS et scripts inclus.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleDownloadStandaloneHtml}
+            className="px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-[13px] font-semibold shrink-0 cursor-pointer"
+          >
+            Télécharger
+          </button>
+        </div>
+
+        {/* Checklist */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[13px] font-medium text-neutral-700 dark:text-neutral-300">
+            <span>Éléments à remplacer dans le fichier :</span>
             <button
+              type="button"
               onClick={handleCopyChecklist}
-              className="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline flex items-center gap-1"
+              className="text-[#0071E3] dark:text-[#0A84FF] hover:underline flex items-center gap-1 cursor-pointer text-[12px]"
             >
-              {copiedChecklist ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedChecklist ? 'Checklist copiée !' : 'Copier la checklist'}</span>
+              {copiedChecklist ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedChecklist ? 'Copié' : 'Copier liste'}</span>
             </button>
           </div>
 
-          <div className="divide-y divide-slate-200 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-2 text-xs">
+          <div className="ios-inset-group text-[13px]">
             {checklistItems.map((item, idx) => (
-              <div key={idx} className="p-2.5 flex items-start gap-2">
-                <span className="font-mono font-bold text-sky-600 dark:text-sky-400 shrink-0">
+              <div key={idx} className="p-3 border-b last:border-b-0 border-neutral-100 dark:border-neutral-800 flex items-start gap-2">
+                <span className="font-mono font-semibold text-neutral-900 dark:text-neutral-100 shrink-0">
                   {item.key}
                 </span>
-                <span className="text-slate-600 dark:text-slate-300">
+                <span className="text-neutral-600 dark:text-neutral-400">
                   : {item.desc}
                 </span>
               </div>
@@ -301,7 +351,14 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
           </div>
         </div>
 
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-full py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[14px] font-semibold cursor-pointer"
+        >
+          Fermer
+        </button>
       </div>
     </div>
   );
-};
+}

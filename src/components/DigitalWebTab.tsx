@@ -1,114 +1,100 @@
-import { useState, useTransition, type FormEvent } from 'react';
+import { useState } from 'react';
 import { ProjectCase } from '../types.ts';
 import { SERVICES_DATA, PERSONAL_INFO } from '../data/portfolioData.ts';
 import { 
-  Code2, 
-  Layers, 
-  Sparkles, 
-  Smartphone, 
-  Monitor, 
-  CheckCircle, 
-  ArrowRight, 
-  ExternalLink, 
-  FileSpreadsheet, 
-  FileCode, 
-  Workflow, 
   X, 
-  Send, 
-  Sliders, 
-  DollarSign, 
-  TrendingUp, 
-  LayoutTemplate 
+  ArrowUpRight, 
+  Check, 
+  ExternalLink, 
+  ChevronRight,
+  Send,
+  Sliders,
+  Laptop,
+  Smartphone
 } from 'lucide-react';
 
 interface DigitalWebTabProps {
   onOpenContact: () => void;
-  onOpenScanner: () => void;
 }
 
-export function DigitalWebTab({
-  onOpenContact,
-  onOpenScanner
-}: DigitalWebTabProps) {
+export function DigitalWebTab({ onOpenContact }: DigitalWebTabProps) {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'gestion' | 'web' | 'ecommerce' | 'automation'>('all');
   const [selectedProject, setSelectedProject] = useState<ProjectCase | null>(null);
 
   // Quote builder states
-  const [quoteService, setQuoteService] = useState<string>('dashboard');
-  const [quoteBudget, setQuoteBudget] = useState<string>('standard');
-  const [quoteMessage, setQuoteMessage] = useState<string>('');
-  const [quoteSubmitted, setQuoteSubmitted] = useState<boolean>(false);
+  const [quoteService, setQuoteService] = useState<string>('Tableau de bord de trésorerie');
+  const [quoteDelay, setQuoteDelay] = useState<string>('Standard (2 semaines)');
+  const [quoteDetails, setQuoteDetails] = useState<string>('');
 
-  // Projects list
   const projects: ProjectCase[] = [
     {
       id: 'telecom-billing',
-      title: 'Système de Facturation & Recouvrement Télécom',
+      title: 'Facturation & Recouvrement pour Télécoms',
       category: 'gestion',
       categoryLabel: 'Gestion & Recouvrement',
-      badge: 'Cas Entreprise Réel',
-      summary: 'Plateforme web automatisant l’émission de factures récurrentes, le calcul d’intérêts de retard et les relances multi-canaux (SMS / Email / WhatsApp).',
-      problem: 'Une PME locale de télécoms perdait 45 jours de délai moyen sur ses encaissements à cause de factures manuelles éparpillées sur plusieurs classeurs Excel, sans relance programmée.',
-      solution: 'Développement d’une application web centralisée : génération instantanée des factures en PDF certifié, balance âgée en temps réel et alertes automatiques pour relancer les impayés.',
-      stack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Passerelle SMS', 'Export PDF'],
+      badge: 'Cas entreprise',
+      summary: 'Génération de factures récurrentes, calcul automatique des intérêts de retard et déclenchement des relances SMS et WhatsApp.',
+      problem: 'Une PME locale perdait plus d’un mois de délai sur ses règlements à cause de factures dispersées sur des feuilles Excel sans suivi structuré des impayés.',
+      solution: 'Mise en place d’un outil centralisé avec édition immédiate des reçus PDF, calcul automatique de la balance âgée et préparation des messages de relance personnalisés.',
+      stack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Passerelle SMS'],
       results: [
-        '-45% de temps passé sur la gestion administrative mensuelle',
+        '-45% de temps passé sur la gestion administrative chaque mois',
         '+32% d’encaissements sous 30 jours dès le deuxième mois',
-        'Zéro facture oubliée ou égarée dans les flux'
+        'Zéro créance oubliée ou égarée'
       ],
       mockupType: 'desktop',
       featured: true
     },
     {
       id: 'student-association',
-      title: 'Plateforme de Gestion des Étudiants & Cotisations',
+      title: 'Gestion des Adhésions & Cotisations Étudiantes',
       category: 'web',
-      categoryLabel: 'Portail Web & Adhésions',
-      badge: 'Projet Associatif',
-      summary: 'Portail complet facilitant l’inscription des étudiants, la traçabilité des cotisations annuelles (simulation Mobile Money) et la diffusion d’annonces officielles.',
-      problem: 'Inscriptions manuelles sur cahiers physiques, risques de perte de données et contestations récurrentes lors des bilans financiers annuels de l’association étudiante.',
-      solution: 'Création d’un portail web 100% mobile-friendly avec profil étudiant sécurisé, reçu de cotisation dématérialisé et tableau de bord trésorier avec export Excel.',
-      stack: ['React / Vite', 'Tailwind CSS', 'Supabase Cloud', 'Mobile Money Gateway', 'Export XLSX'],
+      categoryLabel: 'Portail web',
+      badge: 'Projet associatif',
+      summary: 'Plateforme mobile d’inscription, de reçu dématérialisé et de traçabilité des cotisations annuelles pour l’association.',
+      problem: 'Inscriptions manuelles sur cahiers papier, perte fréquente de reçus et contestations récurrentes lors de la reddition des comptes financiers.',
+      solution: 'Développement d’une interface web légère utilisable sur smartphone avec confirmation instantanée, reçu téléchargeable et tableau récapitulatif pour le trésorier.',
+      stack: ['React', 'Tailwind CSS', 'Supabase', 'Export Excel'],
       results: [
-        'Plus de 450 étudiants inscrits dès les 2 premières semaines',
-        'Transparence financière absolue saluée par le bureau des étudiants',
-        'Temps de validation d’un paiement réduit de 15 minutes à 30 secondes'
+        '450 étudiants inscrits sans aucune perte de registre',
+        'Clôture du bilan financier en 1 journée au lieu de 2 semaines',
+        'Traçabilité complète des fonds collectés'
       ],
       mockupType: 'mobile',
       featured: true
     },
     {
       id: 'ecommerce-ads',
-      title: 'Boutique E-commerce & Stratégie Facebook Ads',
+      title: 'Boutique WhatsApp & Campagnes Facebook Ads',
       category: 'ecommerce',
-      categoryLabel: 'E-commerce & Publicités',
-      badge: 'Prestation Client',
-      summary: 'Boutique en ligne conçue pour le marché congolais, synchronisée avec un catalogue WhatsApp Business et propulsée par des campagnes publicitaires ciblées.',
-      problem: 'Un commerçant de Brazzaville recevait des centaines de messages WhatsApp non qualifiés sans structure de commande claire, générant un taux d’abandon élevé.',
-      solution: 'Mise en place d’un site de commande ultra-rapide optimisé pour les connexions mobiles locales, avec bouton d’achat direct WhatsApp pré-rempli et campagnes Facebook Ads géociblées.',
-      stack: ['WordPress / WooCommerce', 'Meta Pixel', 'Facebook Ads Manager', 'WhatsApp API'],
+      categoryLabel: 'E-commerce local',
+      badge: 'Commerce local',
+      summary: 'Catalogue de vente en ligne relié directement au WhatsApp de la boutique avec ciblage publicitaire sur Brazzaville.',
+      problem: 'Un commerçant recevait de nombreux messages non qualifiés sur WhatsApp, sans commandes fermes ni catalogue consultable avec les prix en FCFA.',
+      solution: 'Création d’un site catalogue épuré optimisé pour le réseau mobile 3G/4G, bouton de commande pré-rempli dans WhatsApp et publicités Meta ciblées.',
+      stack: ['WordPress / WooCommerce', 'WhatsApp API', 'Meta Ads Manager'],
       results: [
-        'Retour sur investissement publicitaire (ROAS) de x3.8',
-        '+120 commandes fermes validées dès le premier mois de diffusion',
-        'Panier moyen client augmenté de 25%'
+        'Multiplication par 3 des ventes mensuelles validées',
+        'Ciblage géographique précis sur Brazzaville et Pointe-Noire',
+        'Panier moyen augmenté grâce à la clarté du catalogue'
       ],
       mockupType: 'mobile',
       featured: true
     },
     {
       id: 'treasury-dashboard',
-      title: 'Tableau de Bord de Trésorerie & Google Workspace',
+      title: 'Tableau de Bord Trésorerie Google Workspace',
       category: 'automation',
-      categoryLabel: 'Automatisation & Data',
-      badge: 'Outil de Gestion PME',
-      summary: 'Système d’automatisation connectant Google Forms pour la saisie mobile des dépenses, Google Sheets pour les calculs et Looker Studio pour le pilotage.',
-      problem: 'Le chef d’entreprise n’avait de visibilité sur son solde bancaire et sa caisse qu’en fin de mois, subissant des agios imprévus et des tensions de liquidité.',
-      solution: 'Mise en place d’un formulaire sur smartphone pour chaque sortie de caisse, synchronisation instantanée sous Google Sheets avec Apps Script et indicateurs visuels de solde restant.',
-      stack: ['Google Sheets API', 'Google Forms', 'Looker Studio', 'Google Apps Script'],
+      categoryLabel: 'Automatisation',
+      badge: 'Gestion PME',
+      summary: 'Saisie mobile des dépenses sur Google Forms, synchronisation Google Sheets en temps réel et alertes de seuil critique.',
+      problem: 'Visibilité tardive sur la trésorerie réelle en fin de mois uniquement, entraînant des frais bancaires imprévus et des tensions de liquidité.',
+      solution: 'Formulaire de saisie rapide sur le téléphone des gérants, mise à jour instantanée du solde de caisse et prévisionnel à 15 jours.',
+      stack: ['Google Sheets', 'Google Forms', 'Google Apps Script', 'Looker Studio'],
       results: [
-        'Clôture comptable journalière réalisée en 5 minutes chrono',
-        'Anticipation des tensions de trésorerie à 15 jours',
-        'Accès au tableau de bord en direct sur smartphone pour le gérant'
+        'Pointage de caisse quotidien bouclé en 5 minutes',
+        'Anticipation des tensions de trésorerie deux semaines à l’avance',
+        'Aucune licence logicielle payante requise'
       ],
       mockupType: 'desktop',
       featured: true
@@ -120,562 +106,368 @@ export function DigitalWebTab({
     return p.category === selectedCategory;
   });
 
-  const handleSendQuote = (e: FormEvent) => {
-    e.preventDefault();
-    const serviceName = quoteService === 'dashboard' ? 'Tableau de bord de gestion' : quoteService === 'site' ? 'Site web vitrine' : 'Boutique E-commerce / Ads';
+  const handleSendQuoteWhatsApp = () => {
     const text = encodeURIComponent(
-      `Bonjour Marion,\n\nJe souhaite un devis pour un projet : ${serviceName}.\nBudget estimé : ${quoteBudget}.\nPrécisions : ${quoteMessage || 'À définir lors de notre échange.'}`
+      `Bonjour Marion,\n\nJe souhaite un devis pour : ${quoteService}.\nDélai envisagé : ${quoteDelay}.\nPrécisions : ${quoteDetails || '[À définir lors de notre échange]'}`
     );
     window.open(`https://wa.me/${PERSONAL_INFO.phone1Raw}?text=${text}`, '_blank');
-    setQuoteSubmitted(true);
   };
 
   return (
-    <div className="space-y-16 py-8">
+    <div className="space-y-12 max-w-5xl mx-auto px-4 sm:px-6 pb-20">
       
-      {/* SECTION 1: PASSERELLE MÉTIER + DIGITAL */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-sky-950 text-white border border-indigo-800 shadow-xl relative overflow-hidden">
-          
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                <Sparkles className="w-3.5 h-3.5" /> La Double Compétence Rentable
-              </div>
+      {/* SECTION 1 : MESSAGE DE PASSERELLE (Concret, sans buzzwords) */}
+      <section className="space-y-3">
+        <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
+          La passerelle : Gestion & Outils Web
+        </h2>
 
-              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                Pourquoi un gestionnaire qui maîtrise le web apporte 3x plus de valeur à votre PME ?
-              </h2>
-
-              <p className="text-indigo-100 text-sm sm:text-base leading-relaxed">
-                Les entreprises locales perdent des journées entières sur des tâches répétitives : ressaisir des chiffres sur papier, relancer des clients à la main, créer des devis sans modèle.
-              </p>
-
-              <p className="text-indigo-100/90 text-sm leading-relaxed">
-                <strong className="text-white">Je ne fais pas que tenir vos comptes :</strong> je conçois des systèmes d'automatisation légers (Google Workspace, tableurs interconnectés, formulaires mobiles) qui éliminent les erreurs, accélèrent vos ventes et sécurisent vos encaissements dès le premier mois.
-              </p>
-
-              <div className="pt-2 flex flex-wrap gap-3">
-                <div className="px-3.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold">
-                  ⚡ 0 coût de licence exorbitant
-                </div>
-                <div className="px-3.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold">
-                  📱 100% adapté aux smartphones du terrain
-                </div>
-                <div className="px-3.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold">
-                  🛡️ Processus sécurisés et traçables
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-4 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-center space-y-3">
-              <div className="text-xs uppercase tracking-wider text-indigo-200 font-bold">
-                Pour Recruteurs & Clients
-              </div>
-              <div className="text-2xl font-black text-white">
-                Besoin d'un coup d'accélérateur ?
-              </div>
-              <p className="text-xs text-indigo-100">
-                Que ce soit pour un stage en entreprise ou une mission de prestation ponctuelle, échangeons en direct.
-              </p>
-              <button
-                onClick={onOpenContact}
-                className="w-full py-2.5 px-4 rounded-xl bg-white text-indigo-950 font-bold text-xs hover:bg-indigo-50 transition-all flex items-center justify-center gap-2 shadow-md"
-              >
-                <span>Contacter Marion Moun</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
+        <div className="ios-inset-group p-5 sm:p-6 space-y-3 text-[15px] sm:text-[16px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
+          <p>
+            Dans la plupart des PME locales, des heures entières sont perdues chaque semaine à recopier des chiffres à la main, vérifier des factures sur des carnets papier ou relancer des clients sans modèle formalisé.
+          </p>
+          <p>
+            Mon avantage pour votre entreprise : <strong>je maîtrise les règles de gestion et je sais aussi construire les outils pour les faire tourner vite</strong>. Je crée des formulaires mobiles pour enregistrer les dépenses de caisse en direct, des tableurs interconnectés qui calculent automatiquement les retards de paiement, et des sites web réactifs pour développer vos ventes.
+          </p>
+          <div className="pt-1 flex flex-wrap gap-2 text-[13px] text-neutral-600 dark:text-neutral-400">
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700">
+              Outils Google Workspace gratuits
+            </span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700">
+              Adapté aux smartphones
+            </span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700">
+              Traçabilité immédiate
+            </span>
           </div>
-
         </div>
       </section>
 
-      {/* SECTION 2: GALERIE DE CAS CONCRETS AVEC CADRES DE DEVICES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      {/* SECTION 2 : GALERIE DE CAS CONCRETS (Apple Developer Case Studies Style) */}
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-bold tracking-wider uppercase text-indigo-600 dark:text-indigo-400">
-              Réalisations Digitales
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
-              Cas Concrets & Projets Applicatifs
+            <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
+              Cas concrets & projets
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
-              Chaque projet résout un problème organisationnel précis avec un résultat mesurable.
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5">
+              Toucher un projet pour afficher la feuille de détails (Problème ➔ Solution ➔ Résultat)
             </p>
           </div>
 
-          {/* Filter Categories */}
-          <div className="flex flex-wrap p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+          {/* Filter */}
+          <div className="ios-segmented">
             <button
+              type="button"
               onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                selectedCategory === 'all'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`ios-segmented-item cursor-pointer ${selectedCategory === 'all' ? 'active' : ''}`}
             >
               Tous ({projects.length})
             </button>
             <button
+              type="button"
               onClick={() => setSelectedCategory('gestion')}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                selectedCategory === 'gestion'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`ios-segmented-item cursor-pointer ${selectedCategory === 'gestion' ? 'active' : ''}`}
             >
-              Facturation & Gestion
+              Gestion
             </button>
             <button
+              type="button"
               onClick={() => setSelectedCategory('web')}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                selectedCategory === 'web'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`ios-segmented-item cursor-pointer ${selectedCategory === 'web' ? 'active' : ''}`}
             >
-              Portails Web
+              Web
             </button>
             <button
+              type="button"
               onClick={() => setSelectedCategory('ecommerce')}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                selectedCategory === 'ecommerce'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`ios-segmented-item cursor-pointer ${selectedCategory === 'ecommerce' ? 'active' : ''}`}
             >
-              E-commerce & Ads
-            </button>
-            <button
-              onClick={() => setSelectedCategory('automation')}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                selectedCategory === 'automation'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Google Workspace
+              E-commerce
             </button>
           </div>
         </div>
 
         {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col justify-between group"
+              onClick={() => setSelectedProject(project)}
+              className="ios-inset-group p-5 flex flex-col justify-between cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-700 transition-all group"
             >
-              <div>
+              <div className="space-y-4">
                 
-                {/* Device Frame Preview (Mockup in pure CSS/SVG) */}
-                <div className="w-full h-48 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-4 flex items-center justify-center border border-slate-200 dark:border-slate-700 mb-6 overflow-hidden relative">
+                {/* Device Frame (Clean Apple styled Mockup) */}
+                <div className="w-full h-44 rounded-xl bg-neutral-100 dark:bg-neutral-800/80 border border-neutral-200/80 dark:border-neutral-700/80 flex items-center justify-center p-3 relative overflow-hidden">
                   
                   {project.mockupType === 'desktop' ? (
-                    // Laptop frame
-                    <div className="w-full max-w-sm h-36 rounded-lg bg-slate-900 border-2 border-slate-700 shadow-lg p-1.5 flex flex-col group-hover:scale-102 transition-transform">
-                      {/* Laptop screen top bar */}
-                      <div className="flex items-center gap-1 pb-1 px-1 border-b border-slate-800">
-                        <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
-                        <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                        <span className="text-[8px] text-slate-500 ml-2 font-mono truncate">
+                    // MacBook frame
+                    <div className="w-full max-w-[260px] h-32 rounded-lg bg-neutral-900 border border-neutral-700 p-1 flex flex-col shadow-xs group-hover:scale-102 transition-transform">
+                      <div className="flex items-center gap-1 px-1 pb-1 border-b border-neutral-800">
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                        <span className="text-[8px] text-neutral-400 font-mono ml-2 truncate">
                           app.marion-moun.digital/{project.id}
                         </span>
                       </div>
-                      {/* Screen content mockup */}
-                      <div className="flex-1 bg-slate-950 p-2 text-[9px] text-slate-300 overflow-hidden space-y-1.5">
-                        <div className="flex justify-between items-center border-b border-slate-800 pb-1">
-                          <span className="font-bold text-sky-400">{project.title}</span>
-                          <span className="px-1 py-0.2 rounded bg-emerald-950 text-emerald-400 font-mono text-[7px]">Actif</span>
-                        </div>
-                        <div className="grid grid-cols-3 gap-1 pt-1">
-                          <div className="p-1 rounded bg-slate-900 border border-slate-800 text-center">
-                            <div className="text-[7px] text-slate-500">Factures</div>
-                            <div className="font-bold text-white text-[9px]">142</div>
-                          </div>
-                          <div className="p-1 rounded bg-slate-900 border border-slate-800 text-center">
-                            <div className="text-[7px] text-slate-500">Recouvré</div>
-                            <div className="font-bold text-emerald-400 text-[9px]">89%</div>
-                          </div>
-                          <div className="p-1 rounded bg-slate-900 border border-slate-800 text-center">
-                            <div className="text-[7px] text-slate-500">En cours</div>
-                            <div className="font-bold text-amber-400 text-[9px]">11%</div>
-                          </div>
-                        </div>
-                        <div className="h-6 w-full rounded bg-slate-900/80 border border-slate-800 p-1 flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-sky-400" />
-                          <span className="text-[8px] text-slate-400">Automatisation connectée</span>
+                      <div className="flex-1 bg-black p-2 text-[9px] text-neutral-300 flex flex-col justify-between">
+                        <div className="font-semibold text-neutral-100 truncate">{project.title}</div>
+                        <div className="grid grid-cols-2 gap-1 text-[8px] text-neutral-400">
+                          <div className="p-1 bg-neutral-900 rounded">Balance âgée : OK</div>
+                          <div className="p-1 bg-neutral-900 rounded">Relances : Actives</div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    // Smartphone frame
-                    <div className="w-40 h-40 rounded-2xl bg-slate-900 border-2 border-slate-700 shadow-lg p-1.5 flex flex-col group-hover:scale-105 transition-transform">
-                      <div className="w-12 h-1 rounded-full bg-slate-700 mx-auto mb-1" />
-                      <div className="flex-1 bg-slate-950 rounded-lg p-2 text-[8px] text-slate-300 flex flex-col justify-between">
-                        <div>
-                          <div className="font-bold text-white text-[9px] line-clamp-1">{project.title}</div>
-                          <div className="text-slate-500 text-[7px] mt-0.5">Mobile Congo Ready</div>
-                          <div className="mt-2 space-y-1">
-                            <div className="h-1.5 w-full bg-slate-800 rounded" />
-                            <div className="h-1.5 w-3/4 bg-indigo-500/50 rounded" />
-                          </div>
-                        </div>
-                        <div className="py-1 px-1.5 rounded bg-emerald-600 text-white text-[7px] font-bold text-center">
-                          WhatsApp / MoMo Ready
+                    // iPhone frame
+                    <div className="w-28 h-36 rounded-2xl bg-neutral-900 border-2 border-neutral-700 p-1 flex flex-col shadow-xs group-hover:scale-102 transition-transform">
+                      <div className="w-8 h-1 bg-neutral-700 rounded-full mx-auto mb-1" />
+                      <div className="flex-1 bg-black rounded-lg p-1.5 text-[8px] text-neutral-300 flex flex-col justify-between">
+                        <div className="font-semibold text-neutral-100 line-clamp-1">{project.title}</div>
+                        <div className="text-[7px] text-neutral-400">Mobile Congo Ready</div>
+                        <div className="py-0.5 px-1 rounded bg-[#0071E3] text-white text-[7px] text-center font-medium">
+                          WhatsApp Ready
                         </div>
                       </div>
                     </div>
                   )}
 
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-black/5 dark:border-white/10">
                       {project.badge}
                     </span>
                   </div>
                 </div>
 
-                {/* Project Header */}
-                <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
-                  <span>{project.categoryLabel}</span>
+                <div>
+                  <div className="text-[12px] text-neutral-500 dark:text-neutral-400 font-medium">
+                    {project.categoryLabel}
+                  </div>
+                  <h3 className="text-[16px] font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">
+                    {project.title}
+                  </h3>
+                  <p className="text-[13px] text-neutral-600 dark:text-neutral-400 mt-1.5 leading-normal">
+                    {project.summary}
+                  </p>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                  {project.title}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                  {project.summary}
-                </p>
-
-                {/* Tech Stack Tags */}
-                <div className="flex flex-wrap gap-1.5 my-4">
-                  {project.stack.map((tech, tIdx) => (
+                {/* Tech pills */}
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {project.stack.slice(0, 3).map((st, sIdx) => (
                     <span
-                      key={tIdx}
-                      className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
+                      key={sIdx}
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
                     >
-                      {tech}
+                      {st}
                     </span>
                   ))}
-                </div>
-
-                {/* Key results highlights */}
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700 space-y-1 text-xs">
-                  <div className="font-bold text-slate-800 dark:text-slate-200 text-[11px] uppercase tracking-wider mb-1">
-                    Impact direct :
-                  </div>
-                  {project.results.slice(0, 2).map((res, rIdx) => (
-                    <div key={rIdx} className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                      <span>{res}</span>
-                    </div>
-                  ))}
+                  {project.stack.length > 3 && (
+                    <span className="text-[11px] px-1.5 py-0.5 text-neutral-400">
+                      +{project.stack.length - 3}
+                    </span>
+                  )}
                 </div>
 
               </div>
 
-              {/* Modal trigger button */}
-              <button
-                onClick={() => setSelectedProject(project)}
-                className="mt-6 w-full py-2.5 px-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all flex items-center justify-center gap-2"
-              >
-                <span>Voir le cas complet (Problème ➔ Solution ➔ Résultat)</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              {/* Bottom detail action link */}
+              <div className="pt-4 mt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-[13px] font-semibold text-[#0071E3] dark:text-[#0A84FF]">
+                <span>Ouvrir la fiche de cas</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* SECTION 3: SERVICES PRESTATAIRE & CONFIGURATEUR DE DEVIS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-left mb-8">
-          <span className="text-xs font-bold tracking-wider uppercase text-sky-600 dark:text-sky-400">
-            Prestations & Missions
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Offre de Services & Solutions Digitales
+      {/* SECTION 3 : SERVICES PRESTATAIRE & DEMANDE DE DEVIS */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
+            Services & prestations web
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-2xl">
-            Disponible également pour des missions de consulting, création de sites vitrines, boutiques en ligne ou automatisation de processus pour entreprises et commerçants.
+          <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5">
+            Pour les entreprises, commerçants ou associations ayant un besoin ponctuel de digitalisation.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SERVICES_DATA.map((srv) => (
-            <div
-              key={srv.id}
-              className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-sky-300 dark:hover:border-sky-700 transition-all"
-            >
+            <div key={srv.id} className="ios-inset-group p-5 space-y-2 flex flex-col justify-between">
               <div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
-                  {srv.tag}
-                </span>
-
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-3">
-                  {srv.title}
-                </h3>
-
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[16px] font-bold text-neutral-900 dark:text-neutral-100">
+                    {srv.title}
+                  </h3>
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                    {srv.tag}
+                  </span>
+                </div>
+                <p className="text-[13px] text-neutral-600 dark:text-neutral-400 mt-1 leading-normal">
                   {srv.description}
                 </p>
 
-                <div className="my-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                <ul className="mt-3 space-y-1 text-[13px] text-neutral-600 dark:text-neutral-400">
                   {srv.deliverables.map((del, dIdx) => (
-                    <div key={dIdx} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <li key={dIdx} className="flex items-start gap-1.5">
+                      <span className="text-neutral-400">•</span>
                       <span>{del}</span>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              <button
-                onClick={() => {
-                  setQuoteService(srv.id === 'service-dashboard' ? 'dashboard' : srv.id === 'service-web' ? 'site' : 'ecommerce');
-                  const el = document.getElementById('devis-calculator');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="mt-2 w-full py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
-              >
-                <span>Configurer ce besoin</span>
-                <Sliders className="w-3.5 h-3.5" />
-              </button>
+              <div className="pt-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuoteService(srv.title);
+                    const el = document.getElementById('devis-express');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-[13px] font-semibold text-[#0071E3] dark:text-[#0A84FF] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Configurer ce besoin</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Interactive Quote Calculator / Lead generator */}
-        <div id="devis-calculator" className="mt-12 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl">
-          <div className="max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-sky-400">
-              Devis & Évaluation Express
-            </span>
-            <h3 className="text-xl sm:text-2xl font-black mt-1">
-              Estimez votre besoin et recevez un retour direct sous 24h
+        {/* Apple Style Devis Express Box */}
+        <div id="devis-express" className="ios-inset-group p-5 sm:p-6 space-y-4">
+          <div>
+            <h3 className="text-[17px] font-bold text-neutral-900 dark:text-neutral-100">
+              Demander un devis ou cadrage
             </h3>
-            <p className="text-slate-400 text-xs sm:text-sm mt-1">
-              Sélectionnez votre type de projet : je prépare pour vous un pré-cadrage technique et financier sans engagement.
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5">
+              Sélectionnez vos critères : le message sera pré-rempli pour WhatsApp.
             </p>
           </div>
 
-          <form onSubmit={handleSendQuote} className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Type de prestation</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px]">
+            <div>
+              <label className="text-[12px] font-medium text-neutral-600 dark:text-neutral-400 block mb-1">
+                Type de prestation
+              </label>
               <select
                 value={quoteService}
                 onChange={(e) => setQuoteService(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-300/80 dark:border-neutral-700 rounded-xl px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-100"
               >
-                <option value="dashboard">Tableau de bord de gestion & Trésorerie</option>
-                <option value="site">Site Web Vitrine & Mobile</option>
-                <option value="ecommerce">Boutique E-commerce & Tunnels WhatsApp</option>
-                <option value="ads">Campagnes Facebook Ads locales</option>
-                <option value="stage">Opportunité de Stage (Gratuit)</option>
+                <option value="Tableau de bord de trésorerie">Tableau de bord de trésorerie</option>
+                <option value="Création de site web vitrine">Création de site web vitrine</option>
+                <option value="Boutique e-commerce WhatsApp">Boutique e-commerce WhatsApp</option>
+                <option value="Campagne Facebook Ads locale">Campagne Facebook Ads locale</option>
+                <option value="Stage en entreprise (Gratuit)">Stage en entreprise</option>
               </select>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Délai souhaité</label>
-              <select
-                value={quoteBudget}
-                onChange={(e) => setQuoteBudget(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
-              >
-                <option value="urgent">Urgent (&lt; 1 semaine)</option>
-                <option value="standard">Standard (2 à 3 semaines)</option>
-                <option value="stage">Stage (Prêt immédiatement)</option>
-              </select>
-            </div>
-
-            <div className="space-y-1.5 md:col-span-1">
-              <label className="text-xs font-bold text-slate-300">Validation & Envoi</label>
-              <button
-                type="submit"
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Transmettre via WhatsApp</span>
-              </button>
-            </div>
-          </form>
-
-          {quoteSubmitted && (
-            <div className="mt-4 p-3 rounded-lg bg-emerald-950/70 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in">
-              <CheckCircle className="w-4 h-4 shrink-0" />
-              <span>Votre demande a été préparée pour WhatsApp ! Marion vous répondra personnellement.</span>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* SECTION 4: HUB GOOGLE WORKSPACE & APPLICATIONS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-          
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <span className="text-xs font-bold tracking-wider uppercase text-sky-600 dark:text-sky-400">
-                Interopérabilité & Outils Cloud
-              </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                Hub Google Workspace Intégré
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Connexion directe avec Google Forms, Google Sheets et la suite bureautique collaborative.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
-                <CheckCircle className="w-3 h-3" /> Connecteur Actif
-              </span>
+              <label className="text-[12px] font-medium text-neutral-600 dark:text-neutral-400 block mb-1">
+                Délai envisagé
+              </label>
+              <select
+                value={quoteDelay}
+                onChange={(e) => setQuoteDelay(e.target.value)}
+                className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-300/80 dark:border-neutral-700 rounded-xl px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-100"
+              >
+                <option value="Urgent (< 1 semaine)">Urgent (&lt; 1 semaine)</option>
+                <option value="Standard (2 semaines)">Standard (2 semaines)</option>
+                <option value="Stage (Immédiat)">Stage (Immédiat)</option>
+              </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            {/* Google Form Box */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
-                <FileCode className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                Formulaire Google Forms
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Remplissez notre formulaire officiel de contact sécurisé pour formaliser vos besoins de stage ou mission.
-              </p>
-              <a
-                href={PERSONAL_INFO.googleFormUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-400 font-bold hover:underline"
-              >
-                <span>Accéder au Google Form</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
-            {/* Google Sheets Sync Box */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-                <FileSpreadsheet className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                Base de Projets Google Sheets
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Structure JavaScript prête pour synchronisation dynamique avec un classeur Sheets partagé en temps réel.
-              </p>
-              <span className="inline-block text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-                GET /api/projects · Prêt pour API Sheets
-              </span>
-            </div>
-
-            {/* Google Docs & Slides Box */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
-                <LayoutTemplate className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                Modèles Docs & Présentations Slides
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Standardisation des rapports d'audit comptable, protocoles d'accord et présentations de plans d'action.
-              </p>
-              <button
-                onClick={onOpenContact}
-                className="text-xs text-sky-600 dark:text-sky-400 font-bold hover:underline inline-flex items-center gap-1"
-              >
-                <span>Demander un modèle type</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-
+          <div className="flex justify-end pt-2">
+            <button
+              type="button"
+              onClick={handleSendQuoteWhatsApp}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] dark:bg-[#0A84FF] dark:hover:bg-[#409CFF] text-white text-[14px] font-semibold transition-colors cursor-pointer"
+            >
+              <span>Envoyer via WhatsApp</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
           </div>
-
         </div>
       </section>
 
-      {/* PROJECT DETAILS MODAL */}
+      {/* FEUILLE MODALE DU BAS (iOS BOTTOM SHEET) POUR LE DÉTAIL D'UN PROJET */}
       {selectedProject && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-200"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="modal-project-title"
         >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative space-y-6">
+          <div className="w-full sm:max-w-xl max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1C1C1E] rounded-t-[28px] sm:rounded-[28px] p-6 shadow-2xl ios-sheet relative space-y-5 border border-black/5 dark:border-white/10">
             
-            <button
-              onClick={() => setSelectedProject(null)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Fermer la modale"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* iOS Grabber pill */}
+            <div className="w-9 h-1 rounded-full bg-neutral-300 dark:bg-neutral-600 mx-auto -mt-1 mb-2 sm:hidden" />
 
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                {selectedProject.categoryLabel} · {selectedProject.badge}
-              </span>
-              <h3 id="modal-project-title" className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
-                {selectedProject.title}
-              </h3>
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[12px] font-medium text-neutral-500 dark:text-neutral-400">
+                  {selectedProject.categoryLabel} · {selectedProject.badge}
+                </span>
+                <h3 className="text-[20px] font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">
+                  {selectedProject.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProject(null)}
+                className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white flex items-center justify-center cursor-pointer"
+                aria-label="Fermer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Problème ➔ Solution ➔ Stack ➔ Résultat */}
-            <div className="space-y-4 text-xs sm:text-sm">
+            <div className="space-y-4 text-[14px]">
               
-              <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 space-y-1">
-                <div className="font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wider text-[11px]">
-                  1. Problème Métier Rencontré
+              <div className="space-y-1">
+                <div className="text-[12px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                  1. Problème rencontré
                 </div>
-                <p className="text-rose-950 dark:text-rose-200 leading-relaxed">
+                <p className="text-neutral-700 dark:text-neutral-300 leading-normal">
                   {selectedProject.problem}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 space-y-1">
-                <div className="font-bold text-sky-800 dark:text-sky-300 uppercase tracking-wider text-[11px]">
-                  2. Solution Digitale Développée
+              <div className="space-y-1 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                <div className="text-[12px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                  2. Solution mise en place
                 </div>
-                <p className="text-sky-950 dark:text-sky-200 leading-relaxed">
+                <p className="text-neutral-700 dark:text-neutral-300 leading-normal">
                   {selectedProject.solution}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
-                <div className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
-                  3. Stack Technique & Technologies
+              <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                <div className="text-[12px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                  3. Technologies
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {selectedProject.stack.map((s, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded bg-white dark:bg-slate-900 font-mono text-xs border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold">
+                    <span key={idx} className="px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-[12px] font-mono">
                       {s}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 space-y-2">
-                <div className="font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider text-[11px]">
-                  4. Résultats Mesurables Obtenus
+              <div className="space-y-1.5 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                <div className="text-[12px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                  4. Résultat mesurable
                 </div>
-                <ul className="space-y-1.5 text-emerald-950 dark:text-emerald-200">
+                <ul className="space-y-1 text-neutral-700 dark:text-neutral-300 text-[13px]">
                   {selectedProject.results.map((res, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-[#0071E3] dark:text-[#0A84FF]">✓</span>
                       <span>{res}</span>
                     </li>
                   ))}
@@ -684,19 +476,19 @@ export function DigitalWebTab({
 
             </div>
 
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-              <span className="text-xs text-slate-500 dark:text-slate-400">
-                Conçu et documenté par Marion Moun
+            <div className="pt-3 border-t border-neutral-200/80 dark:border-neutral-800 flex items-center justify-between">
+              <span className="text-[12px] text-neutral-400 dark:text-neutral-500">
+                Marion Moun · Brazzaville
               </span>
               <button
+                type="button"
                 onClick={() => {
                   setSelectedProject(null);
                   onOpenContact();
                 }}
-                className="py-2.5 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] dark:bg-[#0A84FF] dark:hover:bg-[#409CFF] text-white text-[13px] font-semibold cursor-pointer"
               >
-                <span>Échanger sur ce type de projet</span>
-                <Send className="w-3.5 h-3.5" />
+                Discuter de ce cas
               </button>
             </div>
 
@@ -706,4 +498,4 @@ export function DigitalWebTab({
 
     </div>
   );
-};
+}

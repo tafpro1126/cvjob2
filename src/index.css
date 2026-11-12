@@ -2,64 +2,158 @@
 
 @layer base {
   :root {
-    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --ios-bg: #F2F2F7;
+    --ios-card: #FFFFFF;
+    --ios-card-secondary: #F9F9FB;
+    --ios-separator: rgba(60, 60, 67, 0.12);
+    --ios-separator-opaque: #E5E5EA;
+    --ios-label: #000000;
+    --ios-secondary-label: #3C3C4399;
+    --ios-tertiary-label: #3C3C434D;
+    --ios-blue: #0071E3;
+    --ios-blue-hover: #0077ED;
+    --ios-glass-bg: rgba(255, 255, 255, 0.78);
+    --ios-glass-border: rgba(0, 0, 0, 0.08);
   }
 
-  body {
-    font-family: var(--font-sans);
+  .dark {
+    --ios-bg: #000000;
+    --ios-card: #1C1C1E;
+    --ios-card-secondary: #2C2C2E;
+    --ios-separator: rgba(255, 255, 255, 0.12);
+    --ios-separator-opaque: #38383A;
+    --ios-label: #FFFFFF;
+    --ios-secondary-label: #EBEBF599;
+    --ios-tertiary-label: #EBEBF54D;
+    --ios-blue: #0A84FF;
+    --ios-blue-hover: #409CFF;
+    --ios-glass-bg: rgba(28, 28, 30, 0.78);
+    --ios-glass-border: rgba(255, 255, 255, 0.12);
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    letter-spacing: -0.011em;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--ios-bg);
+    color: var(--ios-label);
+  }
+
+  body {
+    background-color: var(--ios-bg);
+    color: var(--ios-label);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Liquid Glass navigation and bar styling */
+.liquid-glass {
+  background-color: var(--ios-glass-bg);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border-color: var(--ios-glass-border);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+@supports not (backdrop-filter: blur(20px)) {
+  .liquid-glass {
+    background-color: #ffffff;
+  }
+  .dark .liquid-glass {
+    background-color: #1c1c1e;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 4px;
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-glass {
+    background-color: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .dark .liquid-glass {
+    background-color: #1c1c1e;
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.6);
+/* iOS Inset Grouped list styles */
+.ios-inset-group {
+  background-color: var(--ios-card);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--ios-separator);
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(51, 65, 85, 0.5);
-}
-
-.gradient-border {
+.ios-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
   position: relative;
+  transition: background-color 0.15s ease;
 }
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, #0284c7, #0d9488, #6366f1);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+
+.ios-row + .ios-row {
+  border-top: 1px solid var(--ios-separator);
+}
+
+.ios-row:active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dark .ios-row:active {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Apple segmented control */
+.ios-segmented {
+  background-color: rgba(118, 118, 128, 0.12);
+  border-radius: 12px;
+  padding: 3px;
+  display: inline-flex;
+}
+
+.ios-segmented-item {
+  border-radius: 9px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--ios-secondary-label);
+}
+
+.ios-segmented-item.active {
+  background-color: var(--ios-card);
+  color: var(--ios-label);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 0.5px 1px rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+}
+
+/* Subtle iOS sheet animation */
+@keyframes iosSheetSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.ios-sheet {
+  animation: iosSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios-sheet {
+    animation: none;
+    transform: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
