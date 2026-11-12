@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 
 interface HeroProps {
+  activeTab: 'stage' | 'digital';
   onOpenContact: () => void;
   onOpenScanner: () => void;
   onOpenQr: () => void;
@@ -23,6 +24,7 @@ interface HeroProps {
 }
 
 export function Hero({
+  activeTab,
   onOpenContact,
   onOpenScanner,
   onOpenQr,
@@ -190,15 +192,25 @@ export function Hero({
               {/* Direct Tab Switchers */}
               <div className="pt-4 border-t border-slate-200/80 dark:border-slate-700 grid grid-cols-2 gap-2 text-xs">
                 <button
+                  type="button"
                   onClick={() => onSelectTab('stage')}
-                  className="py-2 px-3 rounded-lg bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 font-bold hover:bg-sky-200 dark:hover:bg-sky-900 transition-colors flex items-center justify-center gap-1"
+                  className={`py-2 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                    activeTab === 'stage'
+                      ? 'bg-sky-600 text-white shadow-md ring-2 ring-sky-300 dark:ring-sky-600 scale-102'
+                      : 'bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 hover:bg-sky-200 dark:hover:bg-sky-900'
+                  }`}
                 >
                   <span>Profil Métier</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => onSelectTab('digital')}
-                  className="py-2 px-3 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300 font-bold hover:bg-indigo-200 dark:hover:bg-indigo-900 transition-colors flex items-center justify-center gap-1"
+                  className={`py-2 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                    activeTab === 'digital'
+                      ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300 dark:ring-indigo-600 scale-102'
+                      : 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900'
+                  }`}
                 >
                   <span>Atouts Web</span>
                   <ArrowRight className="w-3 h-3" />

@@ -20,7 +20,9 @@ import {
   ShieldCheck, 
   Car, 
   ArrowUp,
-  Download
+  Download,
+  Briefcase,
+  Code2
 } from 'lucide-react';
 
 export default function App() {
@@ -44,14 +46,19 @@ export default function App() {
     }
 
     // QR Code / URL routing logic
-    const params = new URLSearchParams(window.location.search);
-    const hash = window.location.hash.toLowerCase();
+    const handleRoute = () => {
+      const params = new URLSearchParams(window.location.search);
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#digital') {
+        setActiveTab('digital');
+      } else if (params.get('src') === 'cv' || hash === '#stage' || !hash) {
+        setActiveTab('stage');
+      }
+    };
 
-    if (hash === '#digital') {
-      setActiveTab('digital');
-    } else if (params.get('src') === 'cv' || hash === '#stage') {
-      setActiveTab('stage');
-    }
+    handleRoute();
+    window.addEventListener('hashchange', handleRoute);
+    return () => window.removeEventListener('hashchange', handleRoute);
   }, []);
 
   // Dark mode toggle
@@ -69,13 +76,16 @@ export default function App() {
     });
   };
 
-  const [isTabPending, startTabTransition] = useTransition();
-
   const handleSelectTab = (tab: ActiveTab) => {
-    startTabTransition(() => {
-      setActiveTab(tab);
-      window.location.hash = tab === 'stage' ? 'stage' : 'digital';
-    });
+    setActiveTab(tab);
+    window.history.replaceState(null, '', `#${tab}`);
+    // Scroll directly to the tab content area with smooth animation
+    setTimeout(() => {
+      const el = document.getElementById('tab-content-area');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
 
   const scrollToTop = () => {
@@ -101,11 +111,49 @@ export default function App() {
         
         {/* Hero Section */}
         <Hero
+          activeTab={activeTab}
           onOpenContact={() => setIsContactOpen(true)}
           onOpenScanner={() => setIsScannerOpen(true)}
           onOpenQr={() => setIsQrOpen(true)}
           onSelectTab={handleSelectTab}
         />
+
+        {/* Anchor and In-Page Tab Switcher */}
+        <div id="tab-content-area" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="flex p-1.5 rounded-2xl bg-slate-200/90 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 max-w-xl mx-auto shadow-sm">
+            <button
+              type="button"
+              onClick={() => handleSelectTab('stage')}
+              className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeTab === 'stage'
+                  ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-400 shadow-md border border-slate-200 dark:border-slate-700 scale-102'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Briefcase className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
+              <span>Profil & Stage Métier</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-bold hidden sm:inline">
+                RH
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSelectTab('digital')}
+              className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeTab === 'digital'
+                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-md border border-slate-200 dark:border-slate-700 scale-102'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Code2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span>Digital Web & Atouts</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 font-bold hidden sm:inline">
+                Valeur +
+              </span>
+            </button>
+          </div>
+        </div>
 
         {/* Tab 1: Profil & Stage Métier */}
         {activeTab === 'stage' && (

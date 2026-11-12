@@ -37,11 +37,14 @@ export function Header({
   const [isPending, startTransition] = useTransition();
 
   const handleTabChange = (tab: ActiveTab) => {
-    startTransition(() => {
-      setActiveTab(tab);
-      setMobileMenuOpen(false);
-      window.location.hash = tab === 'stage' ? 'stage' : 'digital';
-    });
+    setActiveTab(tab);
+    setMobileMenuOpen(false);
+    window.history.replaceState(null, '', `#${tab}`);
+    // Smoothly scroll to the tab content area so the user immediately sees the active tab content
+    const el = document.getElementById('tab-content-area');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -51,8 +54,9 @@ export function Header({
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
           <button 
+            type="button"
             onClick={() => handleTabChange('stage')}
-            className="flex items-center gap-3 text-left group focus:outline-none"
+            className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer"
             aria-label="Accueil Marion Moun"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-indigo-600 to-teal-500 text-white font-bold flex items-center justify-center shadow-md group-hover:scale-105 transition-transform text-lg">
@@ -75,15 +79,16 @@ export function Header({
         {/* Central Segmented Tabs (Desktop) */}
         <nav aria-label="Navigation principale" className="hidden md:flex items-center p-1 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700">
           <button
+            type="button"
             onClick={() => handleTabChange('stage')}
             aria-pressed={activeTab === 'stage'}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === 'stage'
                 ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-400 shadow-sm border border-slate-200/60 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Briefcase className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+            <Briefcase className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
             <span>Profil & Stage Métier</span>
             <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-bold">
               Prioritaire
@@ -91,15 +96,16 @@ export function Header({
           </button>
 
           <button
+            type="button"
             onClick={() => handleTabChange('digital')}
             aria-pressed={activeTab === 'digital'}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === 'digital'
                 ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Code2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <Code2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
             <span>Digital Web & Atouts</span>
             <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 font-bold">
               Valeur +
@@ -164,8 +170,9 @@ export function Header({
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
           <button
+            type="button"
             onClick={() => handleTabChange('stage')}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-bold transition-all ${
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'stage'
                 ? 'bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
@@ -186,8 +193,9 @@ export function Header({
           </button>
 
           <button
+            type="button"
             onClick={() => handleTabChange('digital')}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-bold transition-all ${
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'digital'
                 ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
