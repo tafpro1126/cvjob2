@@ -1,133 +1,350 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActiveTab } from '../types.ts';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
-import { 
-  Sun, 
-  Moon, 
-  ArrowUpRight,
-  Briefcase, 
-  Globe
-} from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
-  setActiveTab: (tab: ActiveTab) => void;
-  isDark: boolean;
-  toggleDarkMode: () => void;
+  onNavigate: (tab: ActiveTab, sectionId?: string) => void;
   onOpenContact: () => void;
 }
 
-export function Header({
-  activeTab,
-  setActiveTab,
-  isDark,
-  toggleDarkMode,
-  onOpenContact
-}: HeaderProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
+export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
+  const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<'stage' | 'digital' | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Once scrolled past 120px, show compact title in nav bar (iOS style)
-      if (window.scrollY > 120) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleTabChange = (tab: ActiveTab) => {
-    setActiveTab(tab);
-    window.history.replaceState(null, '', `#${tab}`);
-    const el = document.getElementById('tab-content-area');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpenDropdown(null);
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleSelectItem = (tab: ActiveTab, sectionId?: string) => {
+    setOpenDropdown(null);
+    setMobileMenuOpen(false);
+    onNavigate(tab, sectionId);
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full liquid-glass border-b transition-colors duration-200">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+    <header
+      ref={navRef}
+      className={`sticky top-0 z-40 w-full site-header ${scrolled ? 'scrolled' : ''}`}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-6">
         
-        {/* Left: Compact title appearing on scroll */}
-        <div className="flex items-center gap-3">
-          <button 
-            type="button"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="text-left cursor-pointer group focus:outline-none flex items-center gap-2.5"
-            aria-label="Haut de page"
-          >
-            <div className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold text-xs flex items-center justify-center shrink-0 border border-neutral-300/60 dark:border-neutral-700">
-              MM
-            </div>
+        {/* Left: Monogram & Name */}
+        <a
+          href="#stage"
+          onClick={(e) => {
+            e.preventDefault();
+            handleSelectItem('stage');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="inline-flex items-center gap-2.5 text-[16px] font-semibold text-[var(--ink)] whitespace-nowrap shrink-0 tracking-tight"
+        >
+          <span className="w-7 h-7 rounded-[6px] bg-[var(--ink)] text-[var(--bg)] text-[12px] font-semibold flex items-center justify-center">
+            MM
+          </span>
+          <span>{PERSONAL_INFO.name}</span>
+        </a>
 
-            <div className={`transition-all duration-200 ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 sm:opacity-100 sm:translate-y-0'}`}>
-              <div className="text-[14px] sm:text-[15px] font-semibold text-neutral-900 dark:text-neutral-100 leading-tight">
-                {PERSONAL_INFO.name}
-              </div>
-              <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-normal leading-none hidden sm:block">
-                LPAE · ESGAE Brazzaville
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* Center: Apple Segmented Control (Desktop) */}
-        <div className="hidden md:flex items-center">
-          <nav aria-label="Contrôle segmenté des onglets" className="ios-segmented">
-            <button
-              type="button"
-              onClick={() => handleTabChange('stage')}
-              aria-pressed={activeTab === 'stage'}
-              className={`ios-segmented-item flex items-center gap-1.5 cursor-pointer ${activeTab === 'stage' ? 'active' : ''}`}
-            >
-              <Briefcase className="w-3.5 h-3.5" />
-              <span>Profil & Stage</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange('digital')}
-              aria-pressed={activeTab === 'digital'}
-              className={`ios-segmented-item flex items-center gap-1.5 cursor-pointer ${activeTab === 'digital' ? 'active' : ''}`}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Digital Web</span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Center: Navigation Links with Dropdowns (Desktop md+) */}
+        <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-8">
           
-          {/* Dark mode toggle */}
+          {/* Profil & Stage Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={openDropdown === 'stage'}
+              aria-controls="dropdown-stage"
+              onClick={() => setOpenDropdown(openDropdown === 'stage' ? null : 'stage')}
+              className={`relative py-2 inline-flex items-center gap-1.5 text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                activeTab === 'stage'
+                  ? 'text-[var(--ink)]'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <span>Profil &amp; Stage</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                  openDropdown === 'stage' ? 'rotate-180' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
+                  activeTab === 'stage' ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
+            </button>
+
+            {openDropdown === 'stage' && (
+              <div
+                id="dropdown-stage"
+                className="dropdown-panel absolute left-0 top-full mt-2 w-64 p-2 z-50"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'a-propos')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Vue d'ensemble &amp; À propos</div>
+                  <div className="text-[12px] text-[var(--muted)]">Objectif de stage à Brazzaville</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'parcours')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Parcours</div>
+                  <div className="text-[12px] text-[var(--muted)]">ESGAE, ULC, Émeraude, Masterclass</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'competences')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Compétences</div>
+                  <div className="text-[12px] text-[var(--muted)]">Commerce, Compta, Recouvrement</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'exemples')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Exemples</div>
+                  <div className="text-[12px] text-[var(--muted)]">Balance âgée, relance, trésorerie</div>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Digital Web Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={openDropdown === 'digital'}
+              aria-controls="dropdown-digital"
+              onClick={() => setOpenDropdown(openDropdown === 'digital' ? null : 'digital')}
+              className={`relative py-2 inline-flex items-center gap-1.5 text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                activeTab === 'digital'
+                  ? 'text-[var(--ink)]'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <span>Digital Web</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                  openDropdown === 'digital' ? 'rotate-180' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
+                  activeTab === 'digital' ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
+            </button>
+
+            {openDropdown === 'digital' && (
+              <div
+                id="dropdown-digital"
+                className="dropdown-panel absolute left-0 top-full mt-2 w-64 p-2 z-50"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('digital', 'projets')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Projets</div>
+                  <div className="text-[12px] text-[var(--muted)]">Cas concrets : Facturation, Portails, Ads</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('digital', 'services')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Services</div>
+                  <div className="text-[12px] text-[var(--muted)]">Sites, tableaux de bord, devis</div>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Contact direct link */}
           <button
             type="button"
-            onClick={toggleDarkMode}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-            title={isDark ? 'Mode clair' : 'Mode sombre'}
-            aria-label={isDark ? 'Mode clair' : 'Mode sombre'}
+            onClick={() => {
+              setOpenDropdown(null);
+              onOpenContact();
+            }}
+            className="py-2 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
           >
-            {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4" />}
+            Contact
           </button>
 
-          {/* Primary Action Button (Me contacter) */}
+        </nav>
+
+        {/* Right: Secondary "Mon CV" + Primary "Me contacter" (Desktop md+) */}
+        <div className="hidden md:flex items-center gap-3 shrink-0">
+          <a
+            href={PERSONAL_INFO.cvDownloadUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary"
+          >
+            Mon CV
+          </a>
           <button
             type="button"
             onClick={onOpenContact}
-            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] dark:bg-[#0A84FF] dark:hover:bg-[#409CFF] text-white text-[13px] sm:text-[14px] font-semibold transition-all shadow-xs cursor-pointer"
+            className="btn-primary group"
           >
             <span>Me contacter</span>
+            <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
           </button>
-
         </div>
 
+        {/* Mobile Menu Trigger (< 768px) */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-fullscreen-menu"
+          aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          className="md:hidden w-11 h-11 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+
       </div>
+
+      {/* Fullscreen Mobile Navigation Panel (< 768px) */}
+      {mobileMenuOpen && (
+        <div
+          id="mobile-fullscreen-menu"
+          className="md:hidden fixed inset-0 top-18 z-50 bg-[var(--bg)] flex flex-col justify-between p-6 overflow-y-auto"
+        >
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <div className="text-[12px] font-medium text-[var(--subtle)] uppercase tracking-wider">
+                Profil &amp; Stage
+              </div>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'a-propos')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  À propos &amp; Objectif
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'parcours')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  Parcours
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'competences')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  Compétences
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'exemples')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  Exemples métiers
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-[var(--hairline)] space-y-3">
+              <div className="text-[12px] font-medium text-[var(--subtle)] uppercase tracking-wider">
+                Digital Web
+              </div>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('digital', 'projets')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  Projets réalisés
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('digital', 'services')}
+                  className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+                >
+                  Services &amp; Devis
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-[var(--hairline)]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenContact();
+                }}
+                className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+              >
+                Contact
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Action Buttons */}
+          <div className="pt-8 border-t border-[var(--hairline)] grid grid-cols-2 gap-3">
+            <a
+              href={PERSONAL_INFO.cvDownloadUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-secondary w-full"
+            >
+              Mon CV
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenContact();
+              }}
+              className="btn-primary w-full group"
+            >
+              <span>Me contacter</span>
+              <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

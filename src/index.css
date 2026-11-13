@@ -1,159 +1,289 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
-    --ios-bg: #F2F2F7;
-    --ios-card: #FFFFFF;
-    --ios-card-secondary: #F9F9FB;
-    --ios-separator: rgba(60, 60, 67, 0.12);
-    --ios-separator-opaque: #E5E5EA;
-    --ios-label: #000000;
-    --ios-secondary-label: #3C3C4399;
-    --ios-tertiary-label: #3C3C434D;
-    --ios-blue: #0071E3;
-    --ios-blue-hover: #0077ED;
-    --ios-glass-bg: rgba(255, 255, 255, 0.78);
-    --ios-glass-border: rgba(0, 0, 0, 0.08);
+    --accent: #3B49DF;
+    --accent-hover: #2E3BC7;
+    --accent-active: #2530AE;
+    --accent-subtle: rgba(59, 73, 223, 0.08);
+    --ink: #0A2540;
+    --muted: #425466;
+    --subtle: #697386;
+    --bg: #FFFFFF;
+    --surface: #F6F9FC;
+    --surface-elevated: #FFFFFF;
+    --hairline: rgba(10, 37, 64, 0.08);
+    --header-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 4px 14px rgba(10, 37, 64, 0.06), 0 1px 3px rgba(10, 37, 64, 0.04);
+    --card-shadow-hover: 0 14px 32px rgba(10, 37, 64, 0.1), 0 4px 10px rgba(10, 37, 64, 0.06);
   }
 
   .dark {
-    --ios-bg: #000000;
-    --ios-card: #1C1C1E;
-    --ios-card-secondary: #2C2C2E;
-    --ios-separator: rgba(255, 255, 255, 0.12);
-    --ios-separator-opaque: #38383A;
-    --ios-label: #FFFFFF;
-    --ios-secondary-label: #EBEBF599;
-    --ios-tertiary-label: #EBEBF54D;
-    --ios-blue: #0A84FF;
-    --ios-blue-hover: #409CFF;
-    --ios-glass-bg: rgba(28, 28, 30, 0.78);
-    --ios-glass-border: rgba(255, 255, 255, 0.12);
+    --accent: #6875F5;
+    --accent-hover: #7E8AF8;
+    --accent-active: #5A67E8;
+    --accent-subtle: rgba(104, 117, 245, 0.14);
+    --ink: #F8FAFC;
+    --muted: #B4C0D0;
+    --subtle: #8895A7;
+    --bg: #070B14;
+    --surface: #0D1422;
+    --surface-elevated: #121B2D;
+    --hairline: rgba(248, 250, 252, 0.1);
+    --header-glass: rgba(7, 11, 20, 0.84);
+    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.25);
+    --card-shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
   html {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    letter-spacing: -0.011em;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--ios-bg);
-    color: var(--ios-label);
+    background-color: var(--bg);
+    color: var(--ink);
   }
 
   body {
-    background-color: var(--ios-bg);
-    color: var(--ios-label);
+    background-color: var(--bg);
+    color: var(--ink);
     margin: 0;
     padding: 0;
     overflow-x: hidden;
   }
-}
 
-/* Liquid Glass navigation and bar styling */
-.liquid-glass {
-  background-color: var(--ios-glass-bg);
-  backdrop-filter: blur(20px) saturate(190%);
-  -webkit-backdrop-filter: blur(20px) saturate(190%);
-  border-color: var(--ios-glass-border);
-}
-
-@supports not (backdrop-filter: blur(20px)) {
-  .liquid-glass {
-    background-color: #ffffff;
-  }
-  .dark .liquid-glass {
-    background-color: #1c1c1e;
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
-@media (prefers-reduced-transparency: reduce) {
-  .liquid-glass {
-    background-color: #ffffff;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .dark .liquid-glass {
-    background-color: #1c1c1e;
-  }
+/* Tabular numerals for metrics, dates, tables, and counters */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* iOS Inset Grouped list styles */
-.ios-inset-group {
-  background-color: var(--ios-card);
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--ios-separator);
-}
-
-.ios-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  position: relative;
-  transition: background-color 0.15s ease;
-}
-
-.ios-row + .ios-row {
-  border-top: 1px solid var(--ios-separator);
-}
-
-.ios-row:active {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.dark .ios-row:active {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Apple segmented control */
-.ios-segmented {
-  background-color: rgba(118, 118, 128, 0.12);
-  border-radius: 12px;
-  padding: 3px;
+/* Stripe-inspired crisp 6px radius, 44px height buttons */
+.btn-primary {
   display: inline-flex;
-}
-
-.ios-segmented-item {
-  border-radius: 9px;
-  padding: 6px 16px;
-  font-size: 13px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 15px;
   font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  color: var(--ios-secondary-label);
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ios-segmented-item.active {
-  background-color: var(--ios-card);
-  color: var(--ios-label);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 0.5px 1px rgba(0, 0, 0, 0.06);
-  font-weight: 600;
+.btn-primary:hover {
+  background-color: var(--accent-hover);
 }
 
-/* Subtle iOS sheet animation */
-@keyframes iosSheetSlideUp {
+.btn-primary:active {
+  background-color: var(--accent-active);
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: var(--surface-elevated);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1), transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface);
+  border-color: var(--muted);
+}
+
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+
+/* Chevron slide on hover (3px right) */
+.chevron-slide {
+  display: inline-block;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .chevron-slide,
+.btn-primary:hover .chevron-slide,
+.btn-secondary:hover .chevron-slide {
+  transform: translateX(3px);
+}
+
+/* Sticky Header Glass Effect (only after 8px scroll) */
+.site-header {
+  background-color: transparent;
+  transition: background-color 180ms ease, backdrop-filter 180ms ease;
+}
+
+.site-header.scrolled {
+  background-color: var(--header-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .site-header.scrolled {
+    background-color: var(--bg);
+  }
+}
+
+/* Dropdown menu animation: fade + 8px downward slide, 160ms */
+@keyframes dropdownEnter {
   from {
-    transform: translateY(100%);
-    opacity: 0.9;
+    opacity: 0;
+    transform: translateY(-8px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.ios-sheet {
-  animation: iosSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.dropdown-panel {
+  animation: dropdownEnter 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  background-color: var(--surface-elevated);
+  box-shadow: 0 20px 44px rgba(10, 37, 64, 0.14), 0 4px 12px rgba(10, 37, 64, 0.06);
+  border-radius: 8px;
 }
 
+.dark .dropdown-panel {
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Hero animated diagonal gradient ribbon (only on Hero right side) */
+@keyframes ribbonLoop {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-12deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-24px, 18px, 0) rotate(-9deg) scale(1.04);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-12deg) scale(1);
+  }
+}
+
+.hero-ribbon {
+  background: linear-gradient(
+    135deg,
+    #4F46E5 0%,
+    #7C3AED 26%,
+    #EC4899 54%,
+    #F97316 78%,
+    #38BDF8 100%
+  );
+  filter: blur(56px);
+  opacity: 0.42;
+  animation: ribbonLoop 22s linear infinite;
+  will-change: transform;
+}
+
+.dark .hero-ribbon {
+  opacity: 0.28;
+}
+
+/* Marquee continuous horizontal loop */
+@keyframes marqueeLoop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeLoop 36s linear infinite;
+  will-change: transform;
+}
+
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Project card lift & 3% image zoom on hover */
+.project-card {
+  background-color: var(--surface-elevated);
+  box-shadow: var(--card-shadow);
+  border-radius: 10px;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.project-card-media {
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover .project-card-media {
+  transform: scale(1.03);
+}
+
+/* Scroll reveal: fade + 16px Y translate, 500ms */
+.reveal-block {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-block.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced motion strictly */
 @media (prefers-reduced-motion: reduce) {
-  .ios-sheet {
-    animation: none;
-    transform: none;
+  html {
+    scroll-behavior: auto;
   }
-  * {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+  .hero-ribbon,
+  .marquee-track,
+  .dropdown-panel {
+    animation: none !important;
+    transform: none !important;
+  }
+  .reveal-block {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .btn-primary,
+  .btn-secondary,
+  .chevron-slide,
+  .project-card,
+  .project-card-media,
+  .site-header {
+    transition: none !important;
   }
 }

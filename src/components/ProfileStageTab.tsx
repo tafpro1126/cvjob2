@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { 
-  PERSONAL_INFO, 
   TIMELINE_DATA, 
   SKILL_CATEGORIES, 
   SAMPLE_INVOICES_DEMO 
@@ -11,48 +10,29 @@ import {
   calculateCommercialFunnel,
   getDunningStage
 } from '../utils/calculations.ts';
-import { 
-  ChevronRight, 
-  ChevronDown,
-  Clock, 
-  Check, 
-  FileCheck, 
-  ArrowUpRight,
-  ShieldCheck,
-  Send,
-  Building,
-  Calendar,
-  Layers
-} from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Reveal } from './MotionPrimitives.tsx';
 
 interface ProfileStageTabProps {
   onOpenContact: () => void;
 }
 
 export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
-  // Timeline filter
   const [timelineFilter, setTimelineFilter] = useState<'all' | 'education' | 'experience' | 'certification'>('all');
-  
-  // Interactive proof selector
   const [activeProof, setActiveProof] = useState<'recouvrement' | 'commerce' | 'tresorerie' | 'management'>('recouvrement');
-
-  // Expanded skill disclosure state
   const [expandedSkill, setExpandedSkill] = useState<string | null>('Balance âgée & Suivi des échéances');
 
-  // Recouvrement interactive state
   const [selectedDunningStage, setSelectedDunningStage] = useState<number>(10);
   const [recoveryBonus, setRecoveryBonus] = useState<number>(0);
 
-  // Commerce Funnel state
   const [funnelLeads, setFunnelLeads] = useState<number>(120);
   const [funnelTicket, setFunnelTicket] = useState<number>(350000);
 
-  // Dynamic invoices calculation
   const dynamicInvoices = SAMPLE_INVOICES_DEMO.map((inv, idx) => {
     if (idx === 1 && recoveryBonus > 0) {
       return {
         ...inv,
-        paidAmount: Math.min(inv.amount, inv.paidAmount + recoveryBonus)
+        paidAmount: Math.min(inv.amount, inv.paidAmount + recoveryBonus),
       };
     }
     return inv;
@@ -75,346 +55,421 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
     return new Intl.NumberFormat('fr-FR').format(val) + ' FCFA';
   };
 
-  const filteredTimeline = TIMELINE_DATA.filter(item => {
+  const filteredTimeline = TIMELINE_DATA.filter((item) => {
     if (timelineFilter === 'all') return true;
     return item.type === timelineFilter;
   });
 
   return (
-    <div className="space-y-12 max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 space-y-24 lg:space-y-32">
       
-      {/* SECTION 1 : À PROPOS (3 à 4 lignes concrètes sans superlatifs) */}
-      <section className="space-y-3">
-        <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
-          À propos
-        </h2>
-        
-        <div className="ios-inset-group p-5 sm:p-6 space-y-3.5 text-[15px] sm:text-[16px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
-          <p>
-            Après deux années de tronc commun en gestion à l'Université Libre du Congo (ULC), j'ai obtenu ma Licence Professionnelle en Administration des Entreprises (LPAE) à l'ESGAE.
-          </p>
-          <p>
-            Mon objectif immédiat est de rejoindre une entreprise à Brazzaville pour un stage où je serai utile dès le premier jour : traiter les factures clients, relancer les règlements en retard selon un protocole clair, et participer à la gestion quotidienne sans mobiliser le temps de mon encadrant.
-          </p>
-          <p>
-            En complément de ma formation académique, j'ai suivi la Masterclass spécialisée en recouvrement de créances en mai 2026 et mené des travaux pratiques sur les déclarations fiscales DAS 1 & 2 chez Émeraude.
-          </p>
-        </div>
-      </section>
+      {/* SECTION 1 : À PROPOS */}
+      <section id="a-propos" className="scroll-mt-24">
+        <Reveal>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            <div className="lg:col-span-4 space-y-3">
+              <div className="text-[13px] font-medium text-[var(--accent)]">
+                Profil &amp; Objectif
+              </div>
+              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                Un stagiaire opérationnel dès la première semaine.
+              </h2>
+            </div>
 
-      {/* SECTION 2 : COMPÉTENCES PAR DOMAINE (Listes groupées iOS Settings avec chevrons) */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
-            Compétences par domaine
-          </h2>
-          <span className="text-[13px] text-neutral-500 dark:text-neutral-400">
-            Toucher une ligne pour voir le détail
-          </span>
-        </div>
-
-        <div className="space-y-6">
-          {SKILL_CATEGORIES.map((category) => (
-            <div key={category.id} className="space-y-2">
-              <div className="text-[12px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-2">
-                {category.title}
+            <div className="lg:col-span-8 space-y-6">
+              <div className="space-y-4 text-[16px] sm:text-[17px] text-[var(--muted)] leading-[1.65]">
+                <p>
+                  Après deux années de tronc commun en gestion à l'Université Libre du Congo (ULC), j'ai obtenu ma Licence Professionnelle en Administration des Entreprises (LPAE) à l'ESGAE à Brazzaville.
+                </p>
+                <p>
+                  Je recherche un stage en <strong className="font-medium text-[var(--ink)]">commerce</strong>, <strong className="font-medium text-[var(--ink)]">comptabilité</strong>, <strong className="font-medium text-[var(--ink)]">recouvrement</strong> ou <strong className="font-medium text-[var(--ink)]">management</strong> auprès d'une entreprise locale. Ce n'est pas un stage de développement informatique.
+                </p>
+                <p>
+                  Sur le terrain, j'ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) au cabinet Émeraude sous la direction de M. Yves Miatoko, et suivi en mai 2026 la Masterclass dédiée au recouvrement de créances et à la gestion des impayés.
+                </p>
               </div>
 
-              <div className="ios-inset-group">
-                {category.skills.map((skill, idx) => {
-                  const isExpanded = expandedSkill === skill.name;
-                  return (
-                    <div key={idx} className="border-b last:border-b-0 border-neutral-200/70 dark:border-neutral-800">
-                      <button
-                        type="button"
-                        onClick={() => setExpandedSkill(isExpanded ? null : skill.name)}
-                        className="w-full text-left ios-row cursor-pointer focus:outline-none"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-[15px] font-medium text-neutral-900 dark:text-neutral-100">
-                            {skill.name}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <span className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                            {skill.tag || 'Acquis'}
-                          </span>
-                          <span className="text-neutral-400">
-                            {isExpanded ? (
-                              <ChevronDown className="w-4 h-4 stroke-[1.75]" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4 stroke-[1.75]" />
-                            )}
-                          </span>
-                        </div>
-                      </button>
-
-                      {isExpanded && (
-                        <div className="px-5 pb-4 pt-1 bg-neutral-50/70 dark:bg-neutral-900/60 text-[14px] text-neutral-600 dark:text-neutral-400 leading-normal border-t border-neutral-100 dark:border-neutral-800">
-                          {skill.description}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+              {/* Clean tabular facts without boxed cards */}
+              <div className="pt-6 border-t border-[var(--hairline)] grid grid-cols-2 sm:grid-cols-4 gap-6 text-[13px]">
+                <div>
+                  <div className="text-[var(--subtle)]">Diplôme</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">LPAE (ESGAE)</div>
+                </div>
+                <div>
+                  <div className="text-[var(--subtle)]">Localisation</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Mansimou, Brazzaville</div>
+                </div>
+                <div>
+                  <div className="text-[var(--subtle)]">Mobilité</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (Bling Auto-école)</div>
+                </div>
+                <div>
+                  <div className="text-[var(--subtle)]">Disponibilité</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Immédiate</div>
+                </div>
               </div>
             </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* SECTION 2 : COMPÉTENCES PAR DOMAINE */}
+      <section id="competences" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
+        <Reveal>
+          <div className="max-w-2xl space-y-2 mb-12">
+            <div className="text-[13px] font-medium text-[var(--accent)]">
+              Compétences métiers
+            </div>
+            <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+              Ce que je sais faire concrètement en entreprise.
+            </h2>
+            <p className="text-[15px] text-[var(--muted)]">
+              Sélectionnez une compétence pour afficher le détail pratique de son application.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
+          {SKILL_CATEGORIES.map((category, cIdx) => (
+            <Reveal key={category.id} delayMs={cIdx * 60}>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-[18px] font-medium text-[var(--ink)]">
+                    {category.title}
+                  </h3>
+                  <p className="text-[14px] text-[var(--muted)]">
+                    {category.description}
+                  </p>
+                </div>
+
+                <div className="border-t border-[var(--hairline)]">
+                  {category.skills.map((skill, sIdx) => {
+                    const isOpen = expandedSkill === skill.name;
+                    return (
+                      <div key={sIdx} className="border-b border-[var(--hairline)]">
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          onClick={() => setExpandedSkill(isOpen ? null : skill.name)}
+                          className="w-full py-3.5 flex items-center justify-between gap-4 text-left cursor-pointer group"
+                        >
+                          <span className="text-[15px] font-normal text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
+                            {skill.name}
+                          </span>
+                          <span className="inline-flex items-center gap-2 text-[13px] text-[var(--subtle)] shrink-0">
+                            <span>{skill.tag}</span>
+                            {isOpen ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                          </span>
+                        </button>
+                        {isOpen && (
+                          <div className="pb-4 pr-6 text-[14px] text-[var(--muted)] leading-relaxed">
+                            {skill.description}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* SECTION 3 : PREUVES VISUELLES SOBRES (APPLE STYLE) */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
-              Preuves visuelles & modèles de travail
-            </h2>
-            <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Outils interactifs représentatifs de mes méthodes sur le terrain.
-            </p>
-          </div>
-
-          {/* Segmented picker for proofs */}
-          <div className="ios-segmented">
-            <button
-              type="button"
-              onClick={() => setActiveProof('recouvrement')}
-              className={`ios-segmented-item cursor-pointer ${activeProof === 'recouvrement' ? 'active' : ''}`}
-            >
-              Recouvrement
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveProof('commerce')}
-              className={`ios-segmented-item cursor-pointer ${activeProof === 'commerce' ? 'active' : ''}`}
-            >
-              Commerce
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveProof('tresorerie')}
-              className={`ios-segmented-item cursor-pointer ${activeProof === 'tresorerie' ? 'active' : ''}`}
-            >
-              Trésorerie
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveProof('management')}
-              className={`ios-segmented-item cursor-pointer ${activeProof === 'management' ? 'active' : ''}`}
-            >
-              Management
-            </button>
-          </div>
-        </div>
-
-        {/* 1. Recouvrement (Tableau de bord de créances & Protocole de relance) */}
-        {activeProof === 'recouvrement' && (
-          <div className="ios-inset-group p-5 sm:p-6 space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
-              <div>
-                <h3 className="text-[17px] font-semibold text-neutral-900 dark:text-neutral-100">
-                  Suivi des créances & Balance âgée
-                </h3>
-                <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                  Surveillance du portefeuille client et délais moyens de paiement
-                </p>
+      {/* SECTION 3 : PREUVES VISUELLES INTERACTIVES (EXEMPLES FICTIFS) */}
+      <section id="exemples" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
+        <Reveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div className="max-w-2xl space-y-2">
+              <div className="text-[13px] font-medium text-[var(--accent)]">
+                Preuves visuelles
               </div>
-              <div className="text-right">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Taux actuel</div>
-                <div className="text-[20px] font-bold text-[#0071E3] dark:text-[#0A84FF]">
-                  {agingReport.recoveryRatePercent}%
-                </div>
-              </div>
+              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                Modèles de suivi et de relance.
+              </h2>
+              <p className="text-[15px] text-[var(--muted)]">
+                Simulations interactives construites avec mes méthodes de travail.
+              </p>
             </div>
 
-            {/* Apple style key numbers row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Total facturé</div>
-                <div className="text-[17px] font-bold text-neutral-900 dark:text-neutral-100 mt-1">
+            {/* Clean borderless text tabs with animated underline */}
+            <div className="flex flex-wrap items-center gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Exemples métiers">
+              {[
+                { id: 'recouvrement', label: 'Recouvrement' },
+                { id: 'commerce', label: 'Commerce' },
+                { id: 'tresorerie', label: 'Trésorerie' },
+                { id: 'management', label: 'Management' },
+              ].map((tab) => {
+                const isActive = activeProof === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveProof(tab.id as typeof activeProof)}
+                    className={`relative pb-3 text-[14px] font-medium cursor-pointer transition-colors whitespace-nowrap ${
+                      isActive
+                        ? 'text-[var(--ink)]'
+                        : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span
+                      className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-150 origin-left ${
+                        isActive ? 'scale-x-100' : 'scale-x-0'
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Sub-view 1: Recouvrement */}
+        {activeProof === 'recouvrement' && (
+          <div className="space-y-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-6 border-y border-[var(--hairline)]">
+              <div>
+                <div className="text-[13px] text-[var(--subtle)]">Total créances émises</div>
+                <div className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] mt-1 tnum">
                   {formatFCFA(agingReport.totalInvoiced)}
                 </div>
               </div>
-              <div className="p-3.5 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Encaissé</div>
-                <div className="text-[17px] font-bold text-neutral-900 dark:text-neutral-100 mt-1">
+              <div>
+                <div className="text-[13px] text-[var(--subtle)]">Total encaissé</div>
+                <div className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] mt-1 tnum">
                   {formatFCFA(agingReport.totalCollected)}
                 </div>
               </div>
-              <div className="p-3.5 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Reste dû</div>
-                <div className="text-[17px] font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-                  {formatFCFA(agingReport.totalOutstanding)}
+              <div>
+                <div className="text-[13px] text-[var(--subtle)]">Taux de recouvrement</div>
+                <div className="text-[24px] sm:text-[28px] font-light text-[var(--accent)] mt-1 tnum">
+                  {agingReport.recoveryRatePercent}%
                 </div>
               </div>
-              <div className="p-3.5 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Retard moyen</div>
-                <div className="text-[17px] font-bold text-neutral-900 dark:text-neutral-100 mt-1">
+              <div>
+                <div className="text-[13px] text-[var(--subtle)]">Retard moyen constaté</div>
+                <div className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] mt-1 tnum">
                   {agingReport.averageOverdueDays} jours
                 </div>
               </div>
             </div>
 
-            {/* Minimalist stacked aging bar */}
-            <div className="space-y-2 pt-2">
-              <div className="flex justify-between text-[12px] text-neutral-500 dark:text-neutral-400">
-                <span>Structure des retards</span>
-                <span>0-30j (vert) · 31-60j (bleu) · &gt;60j (sombre)</span>
-              </div>
-              <div className="w-full h-4 rounded-full bg-neutral-200 dark:bg-neutral-800 overflow-hidden flex">
-                <div 
-                  style={{ width: `${(agingReport.buckets.current.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                  className="h-full bg-neutral-400 dark:bg-neutral-500"
-                  title="0-30 jours"
-                />
-                <div 
-                  style={{ width: `${(agingReport.buckets.moderate.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                  className="h-full bg-[#0071E3] dark:bg-[#0A84FF]"
-                  title="31-60 jours"
-                />
-                <div 
-                  style={{ width: `${((agingReport.buckets.critical.amount + agingReport.buckets.contentious.amount) / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                  className="h-full bg-neutral-900 dark:bg-neutral-100"
-                  title="Plus de 60 jours"
-                />
-              </div>
-            </div>
-
-            {/* Protocol of progressive dunning */}
-            <div className="pt-4 border-t border-neutral-200/80 dark:border-neutral-800 space-y-3">
-              <div className="text-[14px] font-semibold text-neutral-900 dark:text-neutral-100">
-                Protocole de relance amiable (J+3 à J+35)
-              </div>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { days: 3, label: 'J+3', name: 'Rappel courtois', channel: 'SMS / WhatsApp' },
-                  { days: 10, label: 'J+10', name: 'Relance formelle', channel: 'Email avec relevé' },
-                  { days: 20, label: 'J+20', name: 'Mise en demeure', channel: 'Courrier recommandé' },
-                  { days: 35, label: 'J+35', name: 'Échéancier', channel: 'Entretien direct' }
-                ].map((s) => (
-                  <button
-                    key={s.days}
-                    type="button"
-                    onClick={() => setSelectedDunningStage(s.days)}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
-                      selectedDunningStage === s.days
-                        ? 'border-[#0071E3] bg-[#0071E3]/5 dark:bg-[#0A84FF]/10 text-neutral-900 dark:text-neutral-100'
-                        : 'border-neutral-200/80 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400'
-                    }`}
-                  >
-                    <div className="text-[13px] font-bold">{s.label}</div>
-                    <div className="text-[12px] font-medium mt-0.5">{s.name}</div>
-                    <div className="text-[11px] text-neutral-500 dark:text-neutral-500 mt-1">{s.channel}</div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Dunning message snippet */}
-              <div className="p-3.5 rounded-xl bg-neutral-100/60 dark:bg-neutral-800/50 text-[13px] text-neutral-700 dark:text-neutral-300">
-                <div className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
-                  Action terrain pour l'étape {currentDunningInfo.code} :
+            {/* Balance âgée & Simulator */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              <div className="lg:col-span-6 space-y-5">
+                <h3 className="text-[17px] font-medium text-[var(--ink)]">
+                  Répartition de la balance âgée
+                </h3>
+                <div className="w-full h-3 rounded-[4px] bg-[var(--surface)] overflow-hidden flex">
+                  <div
+                    style={{ width: `${(agingReport.buckets.current.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
+                    className="h-full bg-slate-400"
+                    title="0-30 jours"
+                  />
+                  <div
+                    style={{ width: `${(agingReport.buckets.moderate.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
+                    className="h-full bg-[var(--accent)]"
+                    title="31-60 jours"
+                  />
+                  <div
+                    style={{ width: `${((agingReport.buckets.critical.amount + agingReport.buckets.contentious.amount) / (agingReport.totalOutstanding || 1)) * 100}%` }}
+                    className="h-full bg-[var(--ink)]"
+                    title="Plus de 60 jours"
+                  />
                 </div>
-                <div>{currentDunningInfo.action}</div>
+
+                <div className="grid grid-cols-2 gap-4 text-[13px]">
+                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
+                    <span className="text-[var(--muted)]">0 – 30 jours</span>
+                    <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.current.amount)}</span>
+                  </div>
+                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
+                    <span className="text-[var(--muted)]">31 – 60 jours</span>
+                    <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.moderate.amount)}</span>
+                  </div>
+                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
+                    <span className="text-[var(--muted)]">61 – 90 jours</span>
+                    <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.critical.amount)}</span>
+                  </div>
+                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
+                    <span className="text-[var(--muted)]">&gt; 90 jours</span>
+                    <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.contentious.amount)}</span>
+                  </div>
+                </div>
+
+                <div className="pt-2 space-y-2">
+                  <div className="flex items-center justify-between text-[13px]">
+                    <label htmlFor="sim-recovery-range" className="text-[var(--muted)]">
+                      Simuler un encaissement suite à relance :
+                    </label>
+                    <span className="font-medium text-[var(--accent)] tnum">
+                      +{formatFCFA(recoveryBonus)}
+                    </span>
+                  </div>
+                  <input
+                    id="sim-recovery-range"
+                    type="range"
+                    min={0}
+                    max={500000}
+                    step={50000}
+                    value={recoveryBonus}
+                    onChange={(e) => setRecoveryBonus(Number(e.target.value))}
+                    className="w-full accent-[var(--accent)] cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Protocole de relance J+3 à J+35 */}
+              <div className="lg:col-span-6 space-y-4">
+                <h3 className="text-[17px] font-medium text-[var(--ink)]">
+                  Protocole de relance amiable (<span className="tnum">J+3 à J+35</span>)
+                </h3>
+
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { days: 3, code: 'J+3', title: 'Rappel courtois' },
+                    { days: 10, code: 'J+10', title: 'Relance formelle' },
+                    { days: 20, code: 'J+20', title: 'Mise en demeure' },
+                    { days: 35, code: 'J+35', title: 'Échéancier' },
+                  ].map((s) => (
+                    <button
+                      key={s.days}
+                      type="button"
+                      onClick={() => setSelectedDunningStage(s.days)}
+                      className={`h-[44px] px-4 rounded-[6px] text-[14px] font-medium cursor-pointer transition-colors tnum ${
+                        selectedDunningStage === s.days
+                          ? 'bg-[var(--accent)] text-white'
+                          : 'bg-[var(--surface)] text-[var(--ink)] hover:bg-[var(--hairline)]'
+                      }`}
+                    >
+                      {s.code} · {s.title}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="pt-3 space-y-2 text-[14px]">
+                  <div className="font-medium text-[var(--ink)] tnum">
+                    Étape {currentDunningInfo.code} — Canal : {currentDunningInfo.recommendedChannel}
+                  </div>
+                  <p className="text-[var(--muted)] leading-relaxed">
+                    {currentDunningInfo.action}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="text-[12px] text-neutral-400 dark:text-neutral-500 italic text-center pt-2">
-              Exemple illustratif, données fictives
-            </div>
+            <p className="text-[12px] text-[var(--subtle)] italic">
+              Exemple illustratif, données fictives.
+            </p>
           </div>
         )}
 
-        {/* 2. Commerce (Entonnoir de vente & PAC) */}
+        {/* Sub-view 2: Commerce */}
         {activeProof === 'commerce' && (
-          <div className="ios-inset-group p-5 sm:p-6 space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
-              <div>
-                <h3 className="text-[17px] font-semibold text-neutral-900 dark:text-neutral-100">
+          <div className="space-y-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--hairline)]">
+              <div className="space-y-1">
+                <h3 className="text-[18px] font-medium text-[var(--ink)]">
                   Entonnoir de prospection commerciale
                 </h3>
-                <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                  Transformation des contacts qualifiés en contrats signés
+                <p className="text-[14px] text-[var(--muted)]">
+                  Suivi du taux de transformation entre prise de contact et signature.
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Conversion</div>
-                <div className="text-[20px] font-bold text-neutral-900 dark:text-neutral-100">
-                  {funnelData.overallConversionRate}%
-                </div>
+              <div className="flex flex-wrap items-center gap-4 text-[14px]">
+                <label className="flex items-center gap-2 text-[var(--muted)]">
+                  <span>Prospects :</span>
+                  <select
+                    value={funnelLeads}
+                    onChange={(e) => setFunnelLeads(Number(e.target.value))}
+                    className="h-[44px] px-3 rounded-[6px] bg-[var(--surface)] border border-[var(--hairline)] text-[var(--ink)] tnum"
+                  >
+                    <option value={60}>60</option>
+                    <option value={120}>120</option>
+                    <option value={250}>250</option>
+                  </select>
+                </label>
+                <label className="flex items-center gap-2 text-[var(--muted)]">
+                  <span>Panier moyen :</span>
+                  <select
+                    value={funnelTicket}
+                    onChange={(e) => setFunnelTicket(Number(e.target.value))}
+                    className="h-[44px] px-3 rounded-[6px] bg-[var(--surface)] border border-[var(--hairline)] text-[var(--ink)] tnum"
+                  >
+                    <option value={150000}>150 000 FCFA</option>
+                    <option value={350000}>350 000 FCFA</option>
+                    <option value={750000}>750 000 FCFA</option>
+                  </select>
+                </label>
               </div>
             </div>
 
-            {/* Funnel rows */}
-            <div className="space-y-2">
+            <div className="divide-y divide-[var(--hairline)] border-b border-[var(--hairline)]">
               {[
-                { label: '1. Cibles identifiées (terrain & annuaire)', count: funnelData.prospects, percent: '100%' },
-                { label: '2. Contacts qualifiés (décideur joint)', count: funnelData.qualified, percent: '45%' },
-                { label: '3. Devis transmis après rendez-vous', count: funnelData.pitched, percent: '27%' },
-                { label: '4. Commandes conclues & acomptes', count: `${funnelData.deals} ventes`, percent: '11%' }
-              ].map((step, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 flex items-center justify-between">
-                  <span className="text-[14px] text-neutral-800 dark:text-neutral-200">{step.label}</span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[14px] font-bold text-neutral-900 dark:text-neutral-100">{step.count}</span>
-                    <span className="text-[12px] text-neutral-500 dark:text-neutral-400 font-mono w-10 text-right">{step.percent}</span>
+                { label: '1. Prospects ciblés (Brazzaville)', count: funnelData.prospects, rate: '100%' },
+                { label: '2. Décideurs qualifiés', count: funnelData.qualified, rate: '45%' },
+                { label: '3. Rendez-vous & devis remis', count: funnelData.pitched, rate: '27%' },
+                { label: '4. Contrats signés', count: `${funnelData.deals} ventes`, rate: `${funnelData.overallConversionRate}%` },
+              ].map((row, idx) => (
+                <div key={idx} className="py-4 flex items-center justify-between text-[15px]">
+                  <span className="text-[var(--ink)]">{row.label}</span>
+                  <div className="flex items-center gap-8 tnum">
+                    <span className="font-medium text-[var(--ink)]">{row.count}</span>
+                    <span className="text-[var(--muted)] w-16 text-right">{row.rate}</span>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Estimated revenue */}
-            <div className="p-4 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 flex items-center justify-between">
-              <div>
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">Chiffre d'affaires estimé généré :</div>
-                <div className="text-[20px] font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">
-                  {formatFCFA(funnelData.estimatedRevenue)}
-                </div>
-              </div>
-              <span className="text-[13px] text-neutral-600 dark:text-neutral-400">
-                Panier moyen : {formatFCFA(funnelTicket)}
+            <div className="flex items-baseline justify-between">
+              <span className="text-[14px] text-[var(--muted)]">Chiffre d'affaires prévisionnel simulé</span>
+              <span className="text-[28px] font-light text-[var(--ink)] tnum">
+                {formatFCFA(funnelData.estimatedRevenue)}
               </span>
             </div>
 
-            <div className="text-[12px] text-neutral-400 dark:text-neutral-500 italic text-center pt-2">
-              Exemple illustratif, données fictives
-            </div>
+            <p className="text-[12px] text-[var(--subtle)] italic">
+              Exemple illustratif, données fictives.
+            </p>
           </div>
         )}
 
-        {/* 3. Trésorerie (Budget de caisse & Suivi DAS) */}
+        {/* Sub-view 3: Trésorerie */}
         {activeProof === 'tresorerie' && (
-          <div className="ios-inset-group p-5 sm:p-6 space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
-              <div>
-                <h3 className="text-[17px] font-semibold text-neutral-900 dark:text-neutral-100">
-                  Modèle de suivi de trésorerie sur 6 mois
-                </h3>
-                <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                  Anticipation des encaissements et décaissements pour éviter les découverts
-                </p>
-              </div>
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-[18px] font-medium text-[var(--ink)]">
+                Modèle de suivi de trésorerie prévisionnelle
+              </h3>
+              <p className="text-[14px] text-[var(--muted)]">
+                Anticipation mensuelle des flux d'encaissements et décaissements (trésorerie de départ : <span className="tnum">1 500 000 FCFA</span>).
+              </p>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[13px]">
+            <div className="overflow-x-auto border-y border-[var(--hairline)]">
+              <table className="w-full text-left text-[14px]">
                 <thead>
-                  <tr className="border-b border-neutral-200/80 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400">
-                    <th className="py-2.5 px-3 font-semibold">Mois</th>
-                    <th className="py-2.5 px-3 font-semibold">Encaissements</th>
-                    <th className="py-2.5 px-3 font-semibold">Décaissements</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">Solde clôture</th>
+                  <tr className="border-b border-[var(--hairline)] text-[var(--subtle)]">
+                    <th className="py-3 px-2 font-medium">Période</th>
+                    <th className="py-3 px-2 font-medium">Encaissements</th>
+                    <th className="py-3 px-2 font-medium">Décaissements</th>
+                    <th className="py-3 px-2 font-medium text-right">Solde fin de mois</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                  {treasurySim.monthlyResults.slice(0, 4).map((m, idx) => (
+                <tbody className="divide-y divide-[var(--hairline)] tnum">
+                  {treasurySim.monthlyResults.map((m, idx) => (
                     <tr key={idx}>
-                      <td className="py-2.5 px-3 font-medium text-neutral-900 dark:text-neutral-100">{m.month}</td>
-                      <td className="py-2.5 px-3 text-neutral-600 dark:text-neutral-400 font-mono">+{formatFCFA(m.inflow)}</td>
-                      <td className="py-2.5 px-3 text-neutral-600 dark:text-neutral-400 font-mono">-{formatFCFA(m.outflow)}</td>
-                      <td className="py-2.5 px-3 text-right font-bold text-neutral-900 dark:text-neutral-100 font-mono">
+                      <td className="py-3 px-2 text-[var(--ink)]">{m.month}</td>
+                      <td className="py-3 px-2 text-[var(--muted)]">+{formatFCFA(m.inflow)}</td>
+                      <td className="py-3 px-2 text-[var(--muted)]">-{formatFCFA(m.outflow)}</td>
+                      <td className="py-3 px-2 text-right font-medium text-[var(--ink)]">
                         {formatFCFA(m.endingBalance)}
                       </td>
                     </tr>
@@ -423,174 +478,172 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
               </table>
             </div>
 
-            <div className="p-4 rounded-xl bg-neutral-100/60 dark:bg-neutral-800/50 text-[13px] space-y-1">
-              <div className="font-semibold text-neutral-900 dark:text-neutral-100">
-                Application pratique DAS 1 & 2 (Cabinet Émeraude) :
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-400">
-                Montage et contrôle des Déclarations Annuelles des Salaires sous la direction de M. Yves Miatoko, Expert-Comptable. Contrôle des pièces de caisse et lettrage OHADA.
-              </p>
-            </div>
-
-            <div className="text-[12px] text-neutral-400 dark:text-neutral-500 italic text-center pt-2">
-              Exemple illustratif, données fictives
-            </div>
+            <p className="text-[12px] text-[var(--subtle)] italic">
+              Exemple illustratif, données fictives.
+            </p>
           </div>
         )}
 
-        {/* 4. Management (Organisation & planning) */}
+        {/* Sub-view 4: Management */}
         {activeProof === 'management' && (
-          <div className="ios-inset-group p-5 sm:p-6 space-y-6">
-            <div className="pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
-              <h3 className="text-[17px] font-semibold text-neutral-900 dark:text-neutral-100">
-                Organisation des priorités hebdomadaires
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-[18px] font-medium text-[var(--ink)]">
+                Organisation hebdomadaire et priorisation
               </h3>
-              <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                Matrice d'efficacité pour sécuriser les urgences sans bloquer le long terme
+              <p className="text-[14px] text-[var(--muted)]">
+                Répartition structurée des tâches pour un pôle administratif et commercial.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px]">
-              <div className="p-4 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 space-y-2">
-                <div className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  Urgences du matin (J+0)
-                </div>
-                <ul className="space-y-1 text-neutral-600 dark:text-neutral-400 text-[13px]">
-                  <li>• Pointage des encaissements de la veille</li>
-                  <li>• Relances téléphoniques des factures &gt; 30 jours</li>
-                  <li>• Traitement des urgences clients</li>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4 border-t border-[var(--hairline)]">
+              <div className="space-y-3">
+                <h4 className="text-[15px] font-medium text-[var(--ink)]">
+                  Priorités du matin (Urgent &amp; Trésorerie)
+                </h4>
+                <ul className="space-y-2 text-[14px] text-[var(--muted)]">
+                  <li>• Pointage des encaissements et pièces de caisse de la veille</li>
+                  <li>• Appels et messages de relance pour les factures échues (&gt; 30 jours)</li>
+                  <li>• Traitement des demandes clients prioritaires</li>
                 </ul>
               </div>
-
-              <div className="p-4 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 space-y-2">
-                <div className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  Fond & Structuration (Après-midi)
-                </div>
-                <ul className="space-y-1 text-neutral-600 dark:text-neutral-400 text-[13px]">
-                  <li>• Rapprochement bancaire et classement des pièces</li>
-                  <li>• Prospection commerciale et envoi des devis</li>
-                  <li>• Automatisation des tableurs récurrents</li>
+              <div className="space-y-3">
+                <h4 className="text-[15px] font-medium text-[var(--ink)]">
+                  Structuration l'après-midi (Fond &amp; Commerce)
+                </h4>
+                <ul className="space-y-2 text-[14px] text-[var(--muted)]">
+                  <li>• Rapprochement bancaire et lettrage comptable OHADA</li>
+                  <li>• Prospection B2B, relance de devis envoyés et suivi CRM</li>
+                  <li>• Mise à jour des tableaux de bord automatisés</li>
                 </ul>
               </div>
             </div>
 
-            <div className="text-[12px] text-neutral-400 dark:text-neutral-500 italic text-center pt-2">
-              Exemple illustratif, données fictives
-            </div>
+            <p className="text-[12px] text-[var(--subtle)] italic">
+              Exemple illustratif, données fictives.
+            </p>
           </div>
         )}
       </section>
 
-      {/* SECTION 4 : PARCOURS (Timeline interactive en liste groupée iOS) */}
-      <section className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
-            Parcours
-          </h2>
-          
-          {/* Timeline Filter */}
-          <div className="ios-segmented">
-            <button
-              type="button"
-              onClick={() => setTimelineFilter('all')}
-              className={`ios-segmented-item cursor-pointer ${timelineFilter === 'all' ? 'active' : ''}`}
-            >
-              Tout
-            </button>
-            <button
-              type="button"
-              onClick={() => setTimelineFilter('education')}
-              className={`ios-segmented-item cursor-pointer ${timelineFilter === 'education' ? 'active' : ''}`}
-            >
-              Formation
-            </button>
-            <button
-              type="button"
-              onClick={() => setTimelineFilter('experience')}
-              className={`ios-segmented-item cursor-pointer ${timelineFilter === 'experience' ? 'active' : ''}`}
-            >
-              Expérience
-            </button>
-          </div>
-        </div>
+      {/* SECTION 4 : PARCOURS (TIMELINE INTERACTIVE) */}
+      <section id="parcours" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
+        <Reveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div className="space-y-2">
+              <div className="text-[13px] font-medium text-[var(--accent)]">
+                Parcours vérifiable
+              </div>
+              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                Formation et expériences.
+              </h2>
+            </div>
 
-        <div className="ios-inset-group">
-          {filteredTimeline.map((item, idx) => (
-            <div key={item.id} className="ios-row items-start py-4">
-              <div className="space-y-1 pr-4">
-                <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100">
+            <div className="flex flex-wrap items-center gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Filtrer le parcours">
+              {[
+                { id: 'all', label: 'Tout' },
+                { id: 'education', label: 'Formation' },
+                { id: 'experience', label: 'Expériences' },
+                { id: 'certification', label: 'Certifications' },
+              ].map((f) => {
+                const isActive = timelineFilter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setTimelineFilter(f.id as typeof timelineFilter)}
+                    className={`relative pb-3 text-[14px] font-medium cursor-pointer transition-colors whitespace-nowrap ${
+                      isActive ? 'text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    <span>{f.label}</span>
+                    <span
+                      className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-150 origin-left ${
+                        isActive ? 'scale-x-100' : 'scale-x-0'
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="divide-y divide-[var(--hairline)] border-y border-[var(--hairline)]">
+          {filteredTimeline.map((item) => (
+            <div key={item.id} className="py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
+              <div className="md:col-span-3 text-[14px] text-[var(--subtle)] tnum">
+                {item.period}
+              </div>
+              <div className="md:col-span-9 space-y-1.5">
+                <div className="text-[17px] font-medium text-[var(--ink)]">
                   {item.title}
                 </div>
-                <div className="text-[13px] text-neutral-600 dark:text-neutral-400">
+                <div className="text-[14px] text-[var(--muted)]">
                   {item.organization} · {item.location}
                 </div>
-                <div className="text-[13px] text-neutral-500 dark:text-neutral-400 pt-0.5 leading-normal">
+                <p className="text-[14px] text-[var(--muted)] leading-relaxed pt-1 max-w-2xl">
                   {item.description}
-                </div>
-              </div>
-              <div className="text-[12px] font-mono text-neutral-500 dark:text-neutral-400 whitespace-nowrap shrink-0 pt-0.5">
-                {item.period}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* SECTION 5 : POURQUOI MOI ? (Ce que j'apporte dès la première semaine) */}
-      <section className="space-y-3">
-        <h2 className="text-[20px] sm:text-[22px] font-bold text-neutral-900 dark:text-neutral-100 tracking-[-0.015em]">
-          Pourquoi moi ?
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="ios-inset-group p-5 space-y-1.5">
-            <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100">
-              Autonomie opérationnelle
+      {/* SECTION 5 : POURQUOI MOI ? */}
+      <section className="pt-16 border-t border-[var(--hairline)]">
+        <Reveal>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-4 space-y-4">
+              <div className="text-[13px] font-medium text-[var(--accent)]">
+                Engagement dès la semaine 1
+              </div>
+              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                Pourquoi me confier un stage ?
+              </h2>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onOpenContact}
+                  className="btn-primary group"
+                >
+                  <span>Me contacter</span>
+                  <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
+                </button>
+              </div>
             </div>
-            <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-normal">
-              Habitué à manipuler des pièces comptables réelles et à relancer des clients sans hésitation, je comprends vite les consignes et j'exécute avec soin.
-            </p>
-          </div>
 
-          <div className="ios-inset-group p-5 space-y-1.5">
-            <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100">
-              Rigueur de recouvrement
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
+              <div className="space-y-1.5">
+                <h3 className="text-[16px] font-medium text-[var(--ink)]">01. Autonomie immédiate</h3>
+                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                  Habitué à travailler sur des pièces réelles (DAS 1 &amp; 2 chez Émeraude), j'assimile rapidement les consignes sans bloquer mon encadrant.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <h3 className="text-[16px] font-medium text-[var(--ink)]">02. Méthode de recouvrement</h3>
+                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                  Je sais tenir une balance âgée à jour et conduire des relances graduées de J+3 à J+35 qui préservent la relation commerciale.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <h3 className="text-[16px] font-medium text-[var(--ink)]">03. Automatisation utile</h3>
+                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                  Là où les tâches manuelles ralentissent l'équipe, je mets en place des tableurs connectés et formulaires Google Workspace simples.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <h3 className="text-[16px] font-medium text-[var(--ink)]">04. Mobilité sur Brazzaville</h3>
+                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                  Basé à Mansimou avec le permis B opérationnel, disponible immédiatement pour les visites clients et démarches terrain.
+                </p>
+              </div>
             </div>
-            <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-normal">
-              Une méthode claire pour suivre les échéances : balance âgée tenue à jour, relances graduées pour faire rentrer la trésorerie tout en ménageant la relation commerciale.
-            </p>
           </div>
-
-          <div className="ios-inset-group p-5 space-y-1.5">
-            <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100">
-              Optimisation par le digital
-            </div>
-            <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-normal">
-              Là où d'autres perdent des heures à recalculer manuellement, je crée des tableurs connectés et des formulaires simples pour supprimer la paperasse inutile.
-            </p>
-          </div>
-
-          <div className="ios-inset-group p-5 space-y-1.5">
-            <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100">
-              Mobilité & Disponibilité
-            </div>
-            <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-normal">
-              Basé à Mansimou (Brazzaville) avec le permis B opérationnel, disponible immédiatement pour les déplacements administratifs et démarches terrain.
-            </p>
-          </div>
-        </div>
-
-        {/* Small CTA banner */}
-        <div className="pt-2 flex justify-center">
-          <button
-            type="button"
-            onClick={onOpenContact}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0071E3] hover:bg-[#0077ED] dark:bg-[#0A84FF] dark:hover:bg-[#409CFF] text-white text-[15px] font-semibold transition-colors shadow-xs cursor-pointer"
-          >
-            <span>Proposer un entretien à Brazzaville</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        </div>
+        </Reveal>
       </section>
 
     </div>

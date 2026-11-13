@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { X, Copy, Download, Check, FileCode } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { X, Copy, Check, ChevronRight } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
 
 interface StandaloneExportModalProps {
@@ -9,21 +9,50 @@ interface StandaloneExportModalProps {
 
 export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModalProps) {
   const [copiedChecklist, setCopiedChecklist] = useState(false);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const prevFocused = document.activeElement as HTMLElement | null;
+    const container = dialogRef.current;
+    if (container) {
+      const firstBtn = container.querySelector<HTMLElement>('button');
+      firstBtn?.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      prevFocused?.focus();
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const checklistItems = [
-    { key: '[PHOTO]', desc: 'Remplacer le bloc photo par votre vrai portrait photo (ex: portrait_marion.jpg).' },
-    { key: '[LIEN_PDF_CV]', desc: 'Lien direct vers votre CV PDF (ex: Google Drive public ou fichier hébergé).' },
-    { key: 'Coordonnées', desc: 'Téléphones +242 06 406 50 70 / +242 06 113 38 15 et email glory3marrion71@gmail.com déjà intégrés.' },
-    { key: 'Captures de projets', desc: 'Remplacer les cadres SVG des projets par vos vraies captures d\'écran si vous le souhaitez.' }
+    { key: '[PHOTO]', desc: 'Remplacer le bloc photo par votre portrait recadré.' },
+    { key: '[LIEN_PDF_CV]', desc: 'Mettre le lien public vers votre CV PDF téléchargeable.' },
+    { key: '[HÉBERGEUR]', desc: 'Compléter le nom et les coordonnées de l’hébergeur (Mentions légales & Confidentialité).' },
+    { key: '[CAPTURE_PROJET]', desc: 'Remplacer les aperçus des projets par vos captures réelles si souhaité.' },
+    { key: '[À COMPLÉTER]', desc: 'Vérifier les compteurs/liens externes (LinkedIn, formulaire Google, mesure d’audience).' },
   ];
 
-  const handleCopyChecklist = () => {
-    const text = checklistItems.map(c => `- ${c.key} : ${c.desc}`).join('\n');
-    navigator.clipboard.writeText(text);
-    setCopiedChecklist(true);
-    setTimeout(() => setCopiedChecklist(false), 2000);
+  const handleCopyChecklist = async () => {
+    const text = checklistItems.map((c) => `- ${c.key} : ${c.desc}`).join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedChecklist(true);
+      window.setTimeout(() => setCopiedChecklist(false), 2000);
+    } catch {
+      // Ignore clipboard failures
+    }
   };
 
   const handleDownloadStandaloneHtml = () => {
@@ -32,235 +61,559 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marion Moun — Portfolio LPAE Gestion & Recouvrement | Brazzaville</title>
-  <meta name="description" content="Portfolio professionnel de Marion Moun, diplômé LPAE ESGAE. Stage en Commerce, Comptabilité, Recouvrement et Management à Brazzaville." />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Marion Moun — Gestion, Recouvrement &amp; Digital Web | Brazzaville</title>
+  <meta name="description" content="Portfolio professionnel de Marion Moun, diplômé LPAE à l'ESGAE (Brazzaville). Recherche de stage en commerce, comptabilité, recouvrement et management." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ios-bg: #F2F2F7;
-      --ios-card: #FFFFFF;
-      --ios-separator: rgba(60, 60, 67, 0.12);
-      --ios-label: #000000;
-      --ios-secondary: #3C3C4399;
-      --ios-blue: #0071E3;
+      --accent: #3B49DF;
+      --accent-hover: #2E3BC7;
+      --ink: #0A2540;
+      --muted: #425466;
+      --subtle: #697386;
+      --bg: #FFFFFF;
+      --surface: #F6F9FC;
+      --elevated: #FFFFFF;
+      --hairline: rgba(10, 37, 64, 0.09);
+      --glass: rgba(255, 255, 255, 0.86);
+      --shadow: 0 4px 14px rgba(10, 37, 64, 0.06), 0 1px 3px rgba(10, 37, 64, 0.04);
+      --shadow-hover: 0 14px 30px rgba(10, 37, 64, 0.1), 0 4px 10px rgba(10, 37, 64, 0.06);
     }
     .dark {
-      --ios-bg: #000000;
-      --ios-card: #1C1C1E;
-      --ios-separator: rgba(255, 255, 255, 0.12);
-      --ios-label: #FFFFFF;
-      --ios-secondary: #EBEBF599;
-      --ios-blue: #0A84FF;
+      --accent: #6875F5;
+      --accent-hover: #7E8AF8;
+      --ink: #F8FAFC;
+      --muted: #B4C0D0;
+      --subtle: #8895A7;
+      --bg: #070B14;
+      --surface: #0D1422;
+      --elevated: #121B2D;
+      --hairline: rgba(248, 250, 252, 0.1);
+      --glass: rgba(7, 11, 20, 0.86);
+      --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      --shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.45);
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--ios-bg);
-      color: var(--ios-label);
-      letter-spacing: -0.011em;
+    * { box-sizing: border-box; }
+    html {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
     }
-    .liquid-glass {
-      background-color: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(20px) saturate(190%);
-      -webkit-backdrop-filter: blur(20px) saturate(190%);
-      border-color: rgba(0, 0, 0, 0.08);
+    body { margin: 0; background: var(--bg); color: var(--ink); overflow-x: hidden; line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font-family: inherit; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .hidden { display: none !important; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 44px; padding: 0 18px; border-radius: 6px; font-size: 15px; font-weight: 500;
+      cursor: pointer; border: 1px solid transparent; transition: background-color 150ms ease, border-color 150ms ease;
+      white-space: nowrap;
     }
-    .dark .liquid-glass {
-      background-color: rgba(28, 28, 30, 0.82);
-      border-color: rgba(255, 255, 255, 0.12);
+    .btn-primary { background: var(--accent); color: #FFF; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--elevated); color: var(--ink); border-color: var(--hairline); }
+    .btn-secondary:hover { background: var(--surface); border-color: var(--muted); }
+    .chev { transition: transform 150ms ease; display: inline-block; }
+    .btn-primary:hover .chev { transform: translateX(3px); }
+
+    header {
+      position: sticky; top: 0; z-index: 40; transition: background-color 180ms ease, backdrop-filter 180ms ease;
     }
-    .ios-inset-group {
-      background-color: var(--ios-card);
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid var(--ios-separator);
+    header.scrolled {
+      background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
-    .ios-segmented {
-      background-color: rgba(118, 118, 128, 0.12);
-      border-radius: 12px;
-      padding: 3px;
-      display: inline-flex;
+    .header-inner { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+    .monogram {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--ink); color: var(--bg);
+      font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;
     }
-    .ios-segmented-btn {
-      border-radius: 9px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ios-secondary);
-      transition: all 0.2s ease;
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-item { position: relative; }
+    .nav-btn {
+      background: none; border: none; color: var(--muted); font-size: 15px; font-weight: 500;
+      padding: 8px 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; position: relative;
     }
-    .ios-segmented-btn.active {
-      background-color: var(--ios-card);
-      color: var(--ios-label);
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    .nav-btn.active, .nav-btn:hover { color: var(--ink); }
+    .nav-btn::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+      background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 180ms ease;
+    }
+    .nav-btn.active::after { transform: scaleX(1); }
+    .dropdown {
+      position: absolute; top: 100%; left: 0; margin-top: 8px; width: 256px; padding: 8px;
+      background: var(--elevated); border-radius: 8px; box-shadow: 0 20px 44px rgba(10,37,64,0.14);
+      animation: ddEnter 160ms cubic-bezier(0.16, 1, 0.3, 1); z-index: 50;
+    }
+    .dropdown button {
+      width: 100%; text-align: left; background: none; border: none; padding: 10px 12px;
+      border-radius: 6px; cursor: pointer; color: var(--ink); display: block;
+    }
+    .dropdown button:hover { background: var(--surface); }
+    .dropdown small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    @keyframes ddEnter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero { position: relative; overflow: hidden; padding: 72px 0 64px; }
+    .ribbon {
+      position: absolute; top: -80px; right: -80px; width: 640px; height: 600px; border-radius: 40%;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED 30%, #EC4899 58%, #F97316 80%, #38BDF8);
+      filter: blur(56px); opacity: 0.38; animation: ribbonMove 22s linear infinite; pointer-events: none;
+    }
+    .hero-scrim {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(90deg, var(--bg) 0%, rgba(255,255,255,0.88) 55%, transparent 100%);
+    }
+    .dark .hero-scrim {
+      background: linear-gradient(90deg, var(--bg) 0%, rgba(7,11,20,0.88) 55%, transparent 100%);
+    }
+    @keyframes ribbonMove {
+      0% { transform: translate3d(0,0,0) rotate(-12deg); }
+      50% { transform: translate3d(-24px,16px,0) rotate(-9deg); }
+      100% { transform: translate3d(0,0,0) rotate(-12deg); }
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.7fr 0.9fr; gap: 48px; align-items: center; position: relative; z-index: 2; }
+    h1 { font-size: clamp(36px, 5vw, 68px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 20px; }
+    .lead { font-size: 20px; color: var(--muted); margin: 0 0 18px; max-width: 620px; }
+    .metrics {
+      margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--hairline);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; position: relative; z-index: 2;
+    }
+    .metric-val { font-size: 40px; font-weight: 300; line-height: 1; }
+    .marquee-wrap {
+      margin-top: 56px; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
+      background: var(--surface); padding: 14px 0; overflow: hidden;
+    }
+    .marquee-track { display: flex; width: max-content; animation: marquee 34s linear infinite; }
+    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-item { padding: 0 28px; font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+
+    .section { padding: 88px 0; border-top: 1px solid var(--hairline); }
+    .section h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 300; letter-spacing: -0.02em; margin: 0 0 12px; }
+    .eyebrow { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 8px; }
+    .tabs-underline { display: flex; gap: 24px; border-bottom: 1px solid var(--hairline); margin-bottom: 28px; overflow-x: auto; }
+    .tab-u {
+      background: none; border: none; padding: 12px 0; font-size: 14px; font-weight: 500;
+      color: var(--subtle); cursor: pointer; position: relative; white-space: nowrap;
+    }
+    .tab-u.active { color: var(--ink); }
+    .tab-u.active::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent);
+    }
+    .cards-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .project-card {
+      background: var(--elevated); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden;
+      transition: transform 200ms ease, box-shadow 200ms ease; cursor: pointer;
+    }
+    .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .project-media { background: var(--surface); height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .project-card:hover .project-media-inner { transform: scale(1.03); }
+    .project-media-inner { transition: transform 260ms ease; }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.52); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 60;
+    }
+    .modal-box {
+      background: var(--elevated); border: 1px solid var(--hairline); border-radius: 10px;
+      max-width: 640px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+    .cookie-banner {
+      position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 960px; margin: 0 auto;
+      background: var(--elevated); border: 1px solid var(--hairline); border-radius: 8px;
+      box-shadow: 0 18px 40px rgba(10,37,64,0.16); padding: 20px; display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between; gap: 16px; z-index: 55;
+    }
+    footer {
+      border-top: 1px solid var(--hairline); background: var(--surface); padding: 48px 0; font-size: 13px; color: var(--muted);
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+    .mobile-only { display: none; }
+    .mobile-panel {
+      position: fixed; inset: 72px 0 0; background: var(--bg); z-index: 45; padding: 24px;
+      display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto;
+    }
+    @media (max-width: 767px) {
+      .desktop-only { display: none !important; }
+      .mobile-only { display: inline-flex; }
+      .hero-grid, .cards-2 { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ribbon, .marquee-track { animation: none !important; }
+      * { transition: none !important; }
     }
   </style>
 </head>
-<body class="transition-colors duration-200 min-h-screen flex flex-col">
+<body>
+  <header id="site-header">
+    <div class="container header-inner">
+      <a href="#stage" onclick="switchTab('stage'); return false;" class="brand">
+        <span class="monogram">MM</span>
+        <span>Marion Moun</span>
+      </a>
 
-  <!-- En-tête Liquid Glass -->
-  <header class="sticky top-0 z-40 w-full liquid-glass border-b">
-    <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold text-xs flex items-center justify-center">MM</div>
-        <div>
-          <div class="text-[14px] font-semibold">Marion Moun</div>
-          <div class="text-[11px] text-neutral-500 hidden sm:block">LPAE · ESGAE Brazzaville</div>
+      <nav class="nav-links desktop-only" aria-label="Navigation principale">
+        <div class="nav-item">
+          <button type="button" id="nav-stage-btn" class="nav-btn active" onclick="toggleDd('dd-stage')">
+            Profil &amp; Stage ▾
+          </button>
+          <div id="dd-stage" class="dropdown hidden">
+            <button type="button" onclick="navTo('stage', 'a-propos')">À propos &amp; Objectif<small>Stage à Brazzaville</small></button>
+            <button type="button" onclick="navTo('stage', 'competences')">Compétences<small>Commerce, Compta, Recouvrement</small></button>
+            <button type="button" onclick="navTo('stage', 'exemples')">Exemples métiers<small>Balance âgée, relance, trésorerie</small></button>
+            <button type="button" onclick="navTo('stage', 'parcours')">Parcours<small>ESGAE, ULC, Émeraude</small></button>
+          </div>
         </div>
-      </div>
 
-      <nav class="hidden sm:inline-flex ios-segmented">
-        <button id="btn-seg-stage" onclick="switchTab('stage')" class="ios-segmented-btn active">Profil & Stage</button>
-        <button id="btn-seg-digital" onclick="switchTab('digital')" class="ios-segmented-btn">Digital Web</button>
+        <div class="nav-item">
+          <button type="button" id="nav-digital-btn" class="nav-btn" onclick="toggleDd('dd-digital')">
+            Digital Web ▾
+          </button>
+          <div id="dd-digital" class="dropdown hidden">
+            <button type="button" onclick="navTo('digital', 'projets')">Projets<small>Cas concrets &amp; outils PME</small></button>
+            <button type="button" onclick="navTo('digital', 'services')">Services<small>Sites, tableaux de bord, devis</small></button>
+          </div>
+        </div>
+
+        <button type="button" class="nav-btn" onclick="openModal('modal-contact')">Contact</button>
       </nav>
 
-      <div class="flex items-center gap-2">
-        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300">🌓</button>
-        <a href="https://wa.me/242064065070" target="_blank" class="px-3.5 py-1.5 rounded-full bg-[#0071E3] text-white text-[13px] font-semibold">Me contacter</a>
+      <div class="desktop-only" style="display:flex; gap:12px;">
+        <a href="${PERSONAL_INFO.cvDownloadUrl}" target="_blank" rel="noreferrer" class="btn btn-secondary">Mon CV</a>
+        <button type="button" class="btn btn-primary" onclick="openModal('modal-contact')">
+          Me contacter <span class="chev">›</span>
+        </button>
       </div>
+
+      <button type="button" class="btn btn-secondary mobile-only" onclick="toggleMobileMenu()" aria-label="Menu">Menu</button>
     </div>
   </header>
 
-  <!-- Contenu Principal -->
-  <main class="flex-1 max-w-4xl mx-auto px-4 py-8 space-y-10 w-full">
-    
-    <!-- Hero Handcrafted -->
-    <section class="space-y-6">
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0071E3]/10 text-[#0071E3] text-[13px] font-medium">
-        <span>Stage recherché · Brazzaville</span>
-      </div>
+  <div id="mobile-panel" class="mobile-panel hidden">
+    <div style="display:flex; flex-direction:column; gap:16px; font-size:18px; font-weight:500;">
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','a-propos')">Profil &amp; Stage — À propos</button>
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','competences')">Compétences métiers</button>
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','exemples')">Exemples &amp; Parcours</button>
+      <hr style="border:none; border-top:1px solid var(--hairline); width:100%;" />
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('digital','projets')">Digital Web — Projets</button>
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('digital','services')">Services &amp; Devis</button>
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="toggleMobileMenu(); openModal('modal-contact')">Contact</button>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:24px; border-top:1px solid var(--hairline);">
+      <a href="${PERSONAL_INFO.cvDownloadUrl}" target="_blank" rel="noreferrer" class="btn btn-secondary">Mon CV</a>
+      <button type="button" class="btn btn-primary" onclick="toggleMobileMenu(); openModal('modal-contact')">Me contacter ›</button>
+    </div>
+  </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-        <div class="md:col-span-4 flex flex-col items-start">
-          <div class="w-44 h-52 rounded-[24px] bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 flex flex-col items-center justify-center text-center p-3">
-            <div class="w-16 h-16 rounded-full bg-neutral-300 dark:bg-neutral-700 flex items-center justify-center text-xl mb-2">👤</div>
-            <div class="text-[12px] font-semibold text-neutral-700 dark:text-neutral-200">[PHOTO]</div>
-            <div class="text-[10px] text-neutral-500">Photo portrait recadrée</div>
-          </div>
-          <div class="w-full mt-3 ios-inset-group p-3 text-[12px] space-y-1.5">
-            <div class="flex justify-between"><span>Localisation :</span><strong>Mansimou, Brazza</strong></div>
-            <div class="flex justify-between"><span>Diplôme :</span><strong>LPAE (ESGAE)</strong></div>
-            <div class="flex justify-between"><span>Permis :</span><strong>Permis B</strong></div>
+  <main>
+    <section class="hero">
+      <div class="ribbon" aria-hidden="true"></div>
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div>
+          <p class="tnum" style="font-size:13px; color:var(--muted); margin:0 0 20px;">
+            Stage recherché à Brazzaville · Heures de pratique ([À COMPLÉTER]) : <strong id="live-ticker">1 840,00 h</strong>
+          </p>
+          <h1>Gestion d'entreprise, recouvrement et rigueur numérique.</h1>
+          <p class="lead">
+            Je suis Marion Moun, diplômé LPAE de l'ESGAE à Brazzaville. Je recherche un stage en commerce, comptabilité, recouvrement ou management — et je maîtrise aussi les outils web pour automatiser le quotidien.
+          </p>
+          <p style="font-size:14px; color:var(--subtle); margin-bottom:24px;">
+            Projet DAS 1 &amp; 2 chez Émeraude avec M. Yves Miatoko · Masterclass Recouvrement (Mai 2026) · Permis B.
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:12px;">
+            <button type="button" class="btn btn-primary" onclick="openModal('modal-contact')">Me contacter <span class="chev">›</span></button>
+            <a href="${PERSONAL_INFO.cvDownloadUrl}" target="_blank" rel="noreferrer" class="btn btn-secondary">Mon CV</a>
           </div>
         </div>
+        <div style="background:var(--surface); border-radius:8px; padding:32px; text-align:center; box-shadow:var(--shadow);">
+          <div style="font-weight:500;">[PHOTO]</div>
+          <p style="font-size:13px; color:var(--muted); margin:8px 0 0;">Remplacer par mon portrait recadré</p>
+        </div>
+      </div>
 
-        <div class="md:col-span-8 space-y-4">
-          <h1 class="text-[34px] font-bold tracking-tight">Marion Moun</h1>
-          <p class="text-[16px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
-            Diplômé en administration des entreprises (LPAE) à l'ESGAE, je recherche un stage opérationnel de 3 à 6 mois à Brazzaville en commerce, comptabilité, recouvrement ou management.
-          </p>
-          <p class="text-[14px] text-neutral-600 dark:text-neutral-400 leading-relaxed">
-            Pratique réelle des déclarations fiscales DAS 1 & 2 chez Émeraude avec M. Yves Miatoko, et spécialisation en réduction des délais de paiement lors de la Masterclass Recouvrement de mai 2026.
-          </p>
-          <div class="flex flex-wrap gap-2.5 pt-2">
-            <a href="https://wa.me/242064065070" target="_blank" class="px-5 py-2 rounded-xl bg-[#0071E3] text-white text-[14px] font-semibold">WhatsApp</a>
-            <a href="tel:+242064065070" class="px-5 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-[14px] font-semibold">Appel direct</a>
-          </div>
+      <div class="container metrics tnum">
+        <div><div class="metric-val" data-count="3">3</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Années de gestion</div><div style="font-size:13px; color:var(--muted);">ULC + LPAE ESGAE</div></div>
+        <div><div class="metric-val" data-count="10">10</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Étapes clés</div><div style="font-size:13px; color:var(--muted);">Bac D à DAS 1 &amp; 2</div></div>
+        <div><div class="metric-val" data-count="4">4</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Domaines ciblés</div><div style="font-size:13px; color:var(--muted);">Commerce, Compta, Recouvrement, Management</div></div>
+        <div><div class="metric-val" data-count="1">1</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Masterclass Recouvrement</div><div style="font-size:13px; color:var(--muted);">Certifiée Mai 2026</div></div>
+      </div>
+
+      <div class="marquee-wrap">
+        <div class="marquee-track">
+          <span class="marquee-item">Comptabilité OHADA révisée</span>
+          <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
+          <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
+          <span class="marquee-item">Google Sheets &amp; Apps Script</span>
+          <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
+          <span class="marquee-item">Permis B · Brazzaville</span>
+          <span class="marquee-item">Comptabilité OHADA révisée</span>
+          <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
+          <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
+          <span class="marquee-item">Google Sheets &amp; Apps Script</span>
+          <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
+          <span class="marquee-item">Permis B · Brazzaville</span>
         </div>
       </div>
     </section>
 
-    <!-- Navigation Mobile In-Page -->
-    <div class="flex sm:hidden justify-center">
-      <nav class="ios-segmented">
-        <button id="btn-seg-stage-mob" onclick="switchTab('stage')" class="ios-segmented-btn active">Profil & Stage</button>
-        <button id="btn-seg-digital-mob" onclick="switchTab('digital')" class="ios-segmented-btn">Digital Web</button>
-      </nav>
-    </div>
-
-    <!-- ONGLET 1: STAGE & PROFIL -->
-    <div id="tab-stage" class="space-y-8">
-      <section class="space-y-3">
-        <h2 class="text-[20px] font-bold">Compétences par domaine</h2>
-        <div class="ios-inset-group">
-          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
-            <span>Balance âgée & Suivi des échéances</span><strong>Expert</strong>
-          </div>
-          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
-            <span>Plan de relance multi-canaux (J+3 à J+35)</span><strong>Pratique</strong>
-          </div>
-          <div class="p-3.5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between">
-            <span>Déclarations fiscales DAS 1 & 2 (OHADA)</span><strong>Spécialité</strong>
-          </div>
-          <div class="p-3.5 flex justify-between">
-            <span>Tableaux de bord connectés & Automatisation</span><strong>Avancé</strong>
-          </div>
-        </div>
-      </section>
-
-      <section class="ios-inset-group p-5 space-y-4">
-        <h3 class="text-[17px] font-semibold">Tableau de bord Recouvrement (Données fictives)</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[13px]">
-          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Facturé : <strong>5 050 000 FCFA</strong></div>
-          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Encaissé : <strong>4 150 000 FCFA</strong></div>
-          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Taux : <strong>82.1%</strong></div>
-          <div class="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">Retard moyen : <strong>19 jours</strong></div>
-        </div>
-        <div class="text-[11px] text-neutral-400 italic text-center">Exemple illustratif, données fictives</div>
-      </section>
-    </div>
-
-    <!-- ONGLET 2: DIGITAL WEB -->
-    <div id="tab-digital" class="hidden space-y-6">
-      <section class="ios-inset-group p-5 space-y-3">
-        <h2 class="text-[18px] font-bold">La passerelle Gestion + Web</h2>
-        <p class="text-[14px] text-neutral-600 dark:text-neutral-400 leading-relaxed">
-          Un profil de gestion capable d'automatiser apporte une valeur immédiate : zéro ressaisie papier, clôture quotidienne de trésorerie en 5 minutes, et visibilité client en direct sur smartphone.
+    <!-- ONGLET 1 : PROFIL & STAGE -->
+    <div id="tab-stage" class="container">
+      <section id="a-propos" class="section" style="border-top:none;">
+        <div class="eyebrow">Profil &amp; Objectif</div>
+        <h2>Un stagiaire opérationnel dès la première semaine.</h2>
+        <p style="color:var(--muted); max-width:740px;">
+          Diplômé en Administration des Entreprises (LPAE) à l'ESGAE après deux ans à l'ULC, je recherche un stage en commerce, comptabilité, recouvrement ou management à Brazzaville. J'ai travaillé sur les DAS 1 &amp; 2 chez Émeraude avec M. Yves Miatoko et suivi la Masterclass Recouvrement de mai 2026.
         </p>
       </section>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="ios-inset-group p-4 space-y-2">
-          <h4 class="font-bold text-[15px]">Facturation & Recouvrement Télécom</h4>
-          <p class="text-[13px] text-neutral-500">Calcul automatique d'intérêts et relances WhatsApp : -45% de temps de gestion.</p>
+      <section id="competences" class="section">
+        <div class="eyebrow">Compétences par domaine</div>
+        <h2>Savoir-faire vérifiés</h2>
+        <div style="display:grid; gap:16px; margin-top:24px;">
+          <div style="padding:18px 0; border-bottom:1px solid var(--hairline); display:flex; justify-content:space-between; gap:16px;">
+            <div><strong>Recouvrement de créances</strong><div style="font-size:14px; color:var(--muted);">Balance âgée, relance J+3 à J+35, négociation amiable</div></div>
+            <span class="tnum" style="color:var(--accent); font-weight:500;">95 %</span>
+          </div>
+          <div style="padding:18px 0; border-bottom:1px solid var(--hairline); display:flex; justify-content:space-between; gap:16px;">
+            <div><strong>Comptabilité &amp; Gestion OHADA</strong><div style="font-size:14px; color:var(--muted);">DAS 1 &amp; 2, rapprochements, contrôle budgétaire</div></div>
+            <span class="tnum" style="color:var(--accent); font-weight:500;">90 %</span>
+          </div>
+          <div style="padding:18px 0; border-bottom:1px solid var(--hairline); display:flex; justify-content:space-between; gap:16px;">
+            <div><strong>Commerce &amp; Management</strong><div style="font-size:14px; color:var(--muted);">Prospection locale, plan d'action commercial, organisation d'équipe</div></div>
+            <span class="tnum" style="color:var(--accent); font-weight:500;">90 %</span>
+          </div>
         </div>
-        <div class="ios-inset-group p-4 space-y-2">
-          <h4 class="font-bold text-[15px]">Tableau de Bord Trésorerie Google Sheets</h4>
-          <p class="text-[13px] text-neutral-500">Formulaire mobile de dépenses et suivi prévisionnel sans abonnement payant.</p>
+      </section>
+
+      <section id="exemples" class="section">
+        <div class="eyebrow">Exemples métiers interactifs</div>
+        <h2>Aperçus opérationnels (Exemple illustratif, données fictives)</h2>
+        <div class="tabs-underline">
+          <button type="button" class="tab-u active" onclick="showProof('recouvrement', this)">Recouvrement</button>
+          <button type="button" class="tab-u" onclick="showProof('tresorerie', this)">Trésorerie</button>
         </div>
-      </div>
+        <div id="proof-recouvrement" class="tnum" style="background:var(--surface); border-radius:10px; padding:24px;">
+          <p style="margin:0 0 12px; font-weight:500;">Balance âgée fictive — Portefeuille PME</p>
+          <p style="margin:0; color:var(--muted); font-size:14px;">Facturé : 5 050 000 FCFA · Encaissé : 3 150 000 FCFA · Taux de recouvrement : 62,4 % · Relances : J+3, J+10, J+20, J+35.</p>
+        </div>
+        <div id="proof-tresorerie" class="tnum hidden" style="background:var(--surface); border-radius:10px; padding:24px;">
+          <p style="margin:0 0 12px; font-weight:500;">Suivi prévisionnel de trésorerie (Données fictives)</p>
+          <p style="margin:0; color:var(--muted); font-size:14px;">Solde initial : 1 500 000 FCFA · Encaissements M+1 : 4 200 000 FCFA · Décaissements M+1 : 3 600 000 FCFA · Solde net : +2 100 000 FCFA.</p>
+        </div>
+      </section>
+
+      <section id="parcours" class="section">
+        <div class="eyebrow">Parcours</div>
+        <h2>Formation &amp; expériences terrain</h2>
+        <ul style="list-style:none; padding:0; margin:24px 0 0;">
+          <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">2025 – 2026</strong> · LPAE — ESGAE Brazzaville</li>
+          <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">Mai 2026</strong> · Masterclass Recouvrement de créances &amp; Gestion des impayés</li>
+          <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">2025 – 2026</strong> · Projet DAS 1 &amp; 2 — Cabinet Émeraude (M. Yves Miatoko)</li>
+          <li style="padding:14px 0;"><strong class="tnum">2023 – 2025</strong> · 1ère et 2ème année Gestion Tronc Commun — ULC Brazzaville</li>
+        </ul>
+      </section>
     </div>
 
+    <!-- ONGLET 2 : DIGITAL WEB -->
+    <div id="tab-digital" class="container hidden">
+      <section id="projets" class="section" style="border-top:none;">
+        <div class="eyebrow">Digital Web</div>
+        <h2>Cas concrets &amp; projets livrés</h2>
+        <div class="cards-2" style="margin-top:28px;">
+          <article class="project-card" onclick="openModal('modal-contact')">
+            <div class="project-media"><div class="project-media-inner" style="font-size:13px; color:var(--subtle);">[CAPTURE_PROJET] Facturation &amp; Recouvrement</div></div>
+            <div style="padding:24px;">
+              <div style="font-size:12px; color:var(--accent); font-weight:500;">Gestion &amp; Recouvrement</div>
+              <h3 style="margin:6px 0 8px; font-size:19px; font-weight:500;">Facturation &amp; Recouvrement Télécoms</h3>
+              <p style="margin:0; font-size:14px; color:var(--muted);">-45 % de temps administratif · +32 % d'encaissements sous 30 jours.</p>
+            </div>
+          </article>
+          <article class="project-card" onclick="openModal('modal-contact')">
+            <div class="project-media"><div class="project-media-inner" style="font-size:13px; color:var(--subtle);">[CAPTURE_PROJET] Trésorerie Google Workspace</div></div>
+            <div style="padding:24px;">
+              <div style="font-size:12px; color:var(--accent); font-weight:500;">Automatisation PME</div>
+              <h3 style="margin:6px 0 8px; font-size:19px; font-weight:500;">Tableau de bord Trésorerie</h3>
+              <p style="margin:0; font-size:14px; color:var(--muted);">Saisie mobile sur Google Forms, clôture de caisse en 5 minutes.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="services" class="section">
+        <div class="eyebrow">Prestations</div>
+        <h2>Services pour entreprises locales</h2>
+        <p style="color:var(--muted); max-width:640px;">Création de sites vitrines, tableaux de bord automatisés sous Google Sheets, boutiques reliées à WhatsApp et campagnes Facebook Ads à Brazzaville.</p>
+        <div style="margin-top:20px;">
+          <a href="https://wa.me/${PERSONAL_INFO.phone1Raw}" target="_blank" rel="noreferrer" class="btn btn-primary">Demander un devis sur WhatsApp <span class="chev">›</span></a>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <footer class="border-t border-neutral-200 dark:border-neutral-800 p-6 text-center text-[13px] text-neutral-500">
-    « Ce site a été conçu pour aller à l'essentiel : des compétences vérifiables, sans artifice. » — Marion Moun, Brazzaville.
+  <footer>
+    <div class="container" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; align-items:center;">
+      <div>
+        <strong style="color:var(--ink);">© 2026 Marion Moun</strong> · Mansimou, Brazzaville, Congo
+      </div>
+      <div class="footer-links">
+        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openLegal('mentions-legales')">Mentions légales</button>
+        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openLegal('confidentialite')">Confidentialité</button>
+        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openLegal('cgu')">CGU</button>
+        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openLegal('cookies')">Cookies</button>
+        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openModal('modal-cookies')">Gérer mes cookies</button>
+        <button type="button" style="background:none; border:none; color:var(--ink); font-weight:500; cursor:pointer;" onclick="toggleDark()">Thème clair/sombre</button>
+      </div>
+    </div>
   </footer>
+
+  <!-- Bannière Cookies -->
+  <aside id="cookie-banner" class="cookie-banner hidden" aria-label="Bannière cookies">
+    <div style="max-width:520px;">
+      <strong style="font-size:14px;">Respect de votre vie privée</strong>
+      <p style="margin:4px 0 0; font-size:13px; color:var(--muted);">Ce site mémorise vos préférences essentielles. La mesure d'audience reste désactivée sans votre accord.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      <button type="button" class="btn btn-secondary" onclick="openModal('modal-cookies')">Personnaliser</button>
+      <button type="button" class="btn btn-secondary" onclick="saveConsent(false)">Tout refuser</button>
+      <button type="button" class="btn btn-primary" onclick="saveConsent(true)">Tout accepter</button>
+    </div>
+  </aside>
+
+  <!-- Modale Contact -->
+  <div id="modal-contact" class="modal-backdrop hidden" role="dialog" aria-modal="true" onclick="closeModal('modal-contact')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0; font-size:20px; font-weight:500;">Me contacter — Marion Moun</h3>
+        <button type="button" class="btn btn-secondary" style="height:36px; padding:0 12px;" onclick="closeModal('modal-contact')">Fermer</button>
+      </div>
+      <p style="font-size:14px; color:var(--muted);">Téléphones : <strong class="tnum">${PERSONAL_INFO.phone1}</strong> / <strong class="tnum">${PERSONAL_INFO.phone2}</strong><br/>Email : ${PERSONAL_INFO.email}<br/>Adresse : ${PERSONAL_INFO.address}</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;">
+        <a href="https://wa.me/${PERSONAL_INFO.phone1Raw}" target="_blank" rel="noreferrer" class="btn btn-primary">WhatsApp ›</a>
+        <a href="mailto:${PERSONAL_INFO.email}" class="btn btn-secondary">Envoyer un e-mail</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Cookies -->
+  <div id="modal-cookies" class="modal-backdrop hidden" role="dialog" aria-modal="true" onclick="closeModal('modal-cookies')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 style="margin:0 0 12px;">Personnaliser mes cookies</h3>
+      <p style="font-size:14px; color:var(--muted);">Essentiels (thème &amp; consentement) : toujours actifs.</p>
+      <label style="display:flex; align-items:center; gap:10px; margin:16px 0; font-size:14px;">
+        <input type="checkbox" id="chk-analytics" /> Mesure d'audience (désactivée par défaut)
+      </label>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn btn-secondary" onclick="saveConsent(false); closeModal('modal-cookies');">Tout refuser</button>
+        <button type="button" class="btn btn-primary" onclick="saveConsent(document.getElementById('chk-analytics').checked); closeModal('modal-cookies');">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Légale -->
+  <div id="modal-legal" class="modal-backdrop hidden" role="dialog" aria-modal="true" onclick="closeModal('modal-legal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="legal-title" style="margin:0;">Informations légales</h3>
+        <button type="button" class="btn btn-secondary" style="height:36px; padding:0 12px;" onclick="closeModal('modal-legal')">Fermer</button>
+      </div>
+      <div id="legal-body" style="font-size:14px; color:var(--muted);"></div>
+    </div>
+  </div>
 
   <script>
     function switchTab(tab) {
-      const stage = document.getElementById('tab-stage');
-      const digital = document.getElementById('tab-digital');
-      const b1 = document.getElementById('btn-seg-stage');
-      const b2 = document.getElementById('btn-seg-digital');
-      const b1m = document.getElementById('btn-seg-stage-mob');
-      const b2m = document.getElementById('btn-seg-digital-mob');
-
+      var st = document.getElementById('tab-stage');
+      var dg = document.getElementById('tab-digital');
+      var bs = document.getElementById('nav-stage-btn');
+      var bd = document.getElementById('nav-digital-btn');
       if (tab === 'digital') {
-        stage.classList.add('hidden');
-        digital.classList.remove('hidden');
-        if (b1) { b1.classList.remove('active'); b2.classList.add('active'); }
-        if (b1m) { b1m.classList.remove('active'); b2m.classList.add('active'); }
-        window.location.hash = 'digital';
+        st.classList.add('hidden'); dg.classList.remove('hidden');
+        if (bs) bs.classList.remove('active'); if (bd) bd.classList.add('active');
       } else {
-        digital.classList.add('hidden');
-        stage.classList.remove('hidden');
-        if (b1) { b1.classList.add('active'); b2.classList.remove('active'); }
-        if (b1m) { b1m.classList.add('active'); b2m.classList.remove('active'); }
-        window.location.hash = 'stage';
+        dg.classList.add('hidden'); st.classList.remove('hidden');
+        if (bd) bd.classList.remove('active'); if (bs) bs.classList.add('active');
       }
+      document.getElementById('dd-stage').classList.add('hidden');
+      document.getElementById('dd-digital').classList.add('hidden');
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const p = new URLSearchParams(window.location.search);
-      const h = window.location.hash;
-      if (h === '#digital') switchTab('digital');
+    function navTo(tab, id) {
+      switchTab(tab);
+      var mp = document.getElementById('mobile-panel');
+      if (!mp.classList.contains('hidden')) mp.classList.add('hidden');
+      setTimeout(function() {
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 30);
+    }
+    function toggleDd(id) {
+      var other = id === 'dd-stage' ? 'dd-digital' : 'dd-stage';
+      document.getElementById(other).classList.add('hidden');
+      document.getElementById(id).classList.toggle('hidden');
+    }
+    function toggleMobileMenu() {
+      document.getElementById('mobile-panel').classList.toggle('hidden');
+    }
+    function showProof(id, btn) {
+      document.getElementById('proof-recouvrement').classList.add('hidden');
+      document.getElementById('proof-tresorerie').classList.add('hidden');
+      document.getElementById('proof-' + id).classList.remove('hidden');
+      btn.parentElement.querySelectorAll('.tab-u').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function openLegal(doc) {
+      var t = document.getElementById('legal-title');
+      var b = document.getElementById('legal-body');
+      var texts = {
+        'mentions-legales': ['Mentions légales', 'Éditeur : Marion Moun — ${PERSONAL_INFO.address} — ${PERSONAL_INFO.email}. Hébergeur : [À COMPLÉTER].'],
+        'confidentialite': ['Politique de confidentialité', 'Responsable : Marion Moun (${PERSONAL_INFO.email}). Les données saisies servent uniquement à répondre à vos propositions de stage ou devis (conservation max 24 mois). Droits d’accès/suppression sur simple e-mail. Hébergeur : [À COMPLÉTER].'],
+        'cgu': ["Conditions Générales d'Utilisation", "Ce site présente le parcours de Marion Moun. Les simulations utilisent des données fictives. Droit applicable : République du Congo [À VÉRIFIER]."],
+        'cookies': ['Politique relative aux cookies', 'Stockage mm_cookie_consent_v1 et mm_theme_v1 (12 mois). Mesure d’audience chargée uniquement après consentement.']
+      };
+      t.textContent = texts[doc][0]; b.textContent = texts[doc][1];
+      openModal('modal-legal');
+    }
+    function saveConsent(analytics) {
+      try { localStorage.setItem('mm_cookie_consent_v1', JSON.stringify({ essential: true, analytics: !!analytics })); } catch (e) {}
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark');
+      try { localStorage.setItem('mm_theme_v1', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+    }
+    window.addEventListener('scroll', function() {
+      var h = document.getElementById('site-header');
+      if (window.scrollY > 8) h.classList.add('scrolled'); else h.classList.remove('scrolled');
+    }, { passive: true });
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        ['modal-contact', 'modal-cookies', 'modal-legal', 'dd-stage', 'dd-digital'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+      }
+    });
+    window.addEventListener('DOMContentLoaded', function() {
+      try {
+        var t = localStorage.getItem('mm_theme_v1');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+        if (!localStorage.getItem('mm_cookie_consent_v1')) document.getElementById('cookie-banner').classList.remove('hidden');
+      } catch (e) {}
+      var p = new URLSearchParams(window.location.search);
+      var h = window.location.hash.toLowerCase();
+      if (h === '#digital' || h === '#projets' || h === '#services') switchTab('digital');
+      else if (['#confidentialite', '#cgu', '#cookies', '#mentions-legales'].indexOf(h) !== -1) openLegal(h.slice(1));
       else if (p.get('src') === 'cv' || h === '#stage') switchTab('stage');
     });
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
   </script>
 </body>
 </html>`;
@@ -277,87 +630,88 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs transition-opacity duration-200"
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="export-modal-title"
       onClick={onClose}
     >
-      <div 
-        className="w-full max-w-lg bg-white dark:bg-[#1C1C1E] rounded-[24px] p-6 shadow-2xl space-y-5 border border-black/5 dark:border-white/10"
+      <div
+        ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg rounded-[10px] bg-[var(--surface-elevated)] border border-[var(--hairline)] shadow-2xl p-6 sm:p-8 space-y-6"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4 pb-4 border-b border-[var(--hairline)]">
           <div>
-            <h3 className="text-[18px] font-bold text-neutral-900 dark:text-neutral-100">
-              Export Fichier Unique index.html
+            <h3 id="export-modal-title" className="text-[20px] font-medium text-[var(--ink)]">
+              Export fichier unique index.html
             </h3>
-            <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
-              Prêt à héberger gratuitement sur GitHub Pages ou Netlify
+            <p className="text-[13px] text-[var(--muted)] mt-1">
+              Version autonome HTML/CSS/JS prête pour Cloudflare Pages, Netlify ou GitHub Pages.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white flex items-center justify-center cursor-pointer"
+            aria-label="Fermer la fenêtre d'export"
+            className="w-9 h-9 rounded-[6px] flex items-center justify-center text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-4 rounded-xl bg-neutral-100/70 dark:bg-neutral-800/60 flex items-center justify-between gap-3">
+        <div className="p-5 rounded-[8px] bg-[var(--surface)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="text-[14px] font-semibold text-neutral-900 dark:text-neutral-100">
-              Télécharger le fichier index.html autonome
+            <div className="text-[15px] font-medium text-[var(--ink)]">
+              Télécharger index.html autonome
             </div>
-            <div className="text-[12px] text-neutral-500 dark:text-neutral-400">
-              Aucune dépendance externe, CSS et scripts inclus.
+            <div className="text-[13px] text-[var(--muted)] mt-0.5">
+              Inclut la navigation unique, le ruban hero, les cookies et les pages légales.
             </div>
           </div>
           <button
             type="button"
             onClick={handleDownloadStandaloneHtml}
-            className="px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-[13px] font-semibold shrink-0 cursor-pointer"
+            className="btn-primary group shrink-0"
           >
-            Télécharger
+            <span>Télécharger</span>
+            <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Checklist */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[13px] font-medium text-neutral-700 dark:text-neutral-300">
-            <span>Éléments à remplacer dans le fichier :</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-[13px] font-medium text-[var(--ink)]">
+            <span>Éléments à compléter avant mise en ligne :</span>
             <button
               type="button"
               onClick={handleCopyChecklist}
-              className="text-[#0071E3] dark:text-[#0A84FF] hover:underline flex items-center gap-1 cursor-pointer text-[12px]"
+              className="text-[var(--accent)] hover:underline inline-flex items-center gap-1 cursor-pointer text-[12px]"
             >
               {copiedChecklist ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedChecklist ? 'Copié' : 'Copier liste'}</span>
+              <span>{copiedChecklist ? 'Copié' : 'Copier la liste'}</span>
             </button>
           </div>
 
-          <div className="ios-inset-group text-[13px]">
+          <div className="divide-y divide-[var(--hairline)] border-y border-[var(--hairline)] text-[13px]">
             {checklistItems.map((item, idx) => (
-              <div key={idx} className="p-3 border-b last:border-b-0 border-neutral-100 dark:border-neutral-800 flex items-start gap-2">
-                <span className="font-mono font-semibold text-neutral-900 dark:text-neutral-100 shrink-0">
+              <div key={idx} className="py-2.5 flex items-start gap-2">
+                <span className="font-mono font-medium text-[var(--ink)] shrink-0">
                   {item.key}
                 </span>
-                <span className="text-neutral-600 dark:text-neutral-400">
-                  : {item.desc}
+                <span className="text-[var(--muted)]">
+                  — {item.desc}
                 </span>
               </div>
             ))}
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[14px] font-semibold cursor-pointer"
-        >
-          Fermer
-        </button>
+        <div className="flex justify-end">
+          <button type="button" onClick={onClose} className="btn-secondary">
+            Fermer
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActiveTab } from './types.ts';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
@@ -6,257 +6,298 @@ import { ProfileStageTab } from './components/ProfileStageTab.tsx';
 import { DigitalWebTab } from './components/DigitalWebTab.tsx';
 import { ContactModal } from './components/ContactModal.tsx';
 import { StandaloneExportModal } from './components/StandaloneExportModal.tsx';
+import { CookieBanner, CookiePreferencesModal } from './components/CookieConsent.tsx';
+import { LegalModal } from './components/LegalModals.tsx';
 import { PERSONAL_INFO } from './data/portfolioData.ts';
-import { 
-  Briefcase, 
-  Globe, 
-  ArrowUp,
-  FileCode,
-  MapPin,
-  MessageCircle,
-  Phone
-} from 'lucide-react';
+import {
+  CookiePreferences,
+  LegalDocType,
+  readCookiePreferences,
+  readSavedTheme,
+  resolveInitialTab,
+  resolveLegalHash,
+  saveCookiePreferences,
+  saveThemePreference,
+} from './utils/storage.ts';
+import { Moon, Sun } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('stage');
   const [isDark, setIsDark] = useState<boolean>(false);
 
-  // Modals state
+  // Modals & Consent states
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
+  const [cookiePrefs, setCookiePrefs] = useState<CookiePreferences | null>(null);
+  const [showCookieBanner, setShowCookieBanner] = useState<boolean>(false);
+  const [isCookieModalOpen, setIsCookieModalOpen] = useState<boolean>(false);
+  const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType | null>(null);
 
-  // Handle URL parameters (?src=cv) and hash (#stage, #digital)
   useEffect(() => {
-    // Check dark mode preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
+    // 1. Theme initialization (saved preference or automatic OS prefers-color-scheme)
+    const savedTheme = readSavedTheme();
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // QR Code / URL routing logic
-    const handleRoute = () => {
-      const params = new URLSearchParams(window.location.search);
-      const hash = window.location.hash.toLowerCase();
-      if (hash === '#digital') {
-        setActiveTab('digital');
-      } else if (params.get('src') === 'cv' || hash === '#stage' || !hash) {
-        setActiveTab('stage');
+    const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    setIsDark(shouldUseDark);
+    document.documentElement.classList.toggle('dark', shouldUseDark);
+
+    // 2. Cookie consent initialization
+    const storedConsent = readCookiePreferences();
+    setCookiePrefs(storedConsent);
+    setShowCookieBanner(!storedConsent);
+
+    // 3. Initial route & hash handler (?src=cv, #stage, #digital, #confidentialite, #cgu, #cookies, #mentions-legales)
+    const syncRoute = () => {
+      const legalDoc = resolveLegalHash(window.location.hash);
+      if (legalDoc) {
+        setActiveLegalDoc(legalDoc);
+      }
+
+      const resolvedTab = resolveInitialTab(window.location.search, window.location.hash);
+      setActiveTab(resolvedTab);
+
+      const cleanHash = window.location.hash.replace('#', '');
+      if (cleanHash && !legalDoc && cleanHash !== 'stage' && cleanHash !== 'digital') {
+        window.setTimeout(() => {
+          const el = document.getElementById(cleanHash);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
       }
     };
 
-    handleRoute();
-    window.addEventListener('hashchange', handleRoute);
-    return () => window.removeEventListener('hashchange', handleRoute);
+    syncRoute();
+    window.addEventListener('hashchange', syncRoute);
+    return () => window.removeEventListener('hashchange', syncRoute);
   }, []);
 
-  // Dark mode toggle
   const toggleDarkMode = () => {
-    setIsDark(prev => {
+    setIsDark((prev) => {
       const next = !prev;
-      if (next) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      }
+      document.documentElement.classList.toggle('dark', next);
+      saveThemePreference(next ? 'dark' : 'light');
       return next;
     });
   };
 
-  const handleSelectTab = (tab: ActiveTab) => {
+  const handleNavigate = (tab: ActiveTab, sectionId?: string) => {
     setActiveTab(tab);
-    window.history.replaceState(null, '', `#${tab}`);
-    setTimeout(() => {
-      const el = document.getElementById('tab-content-area');
+    const targetHash = sectionId ? `#${sectionId}` : `#${tab}`;
+    try {
+      window.history.replaceState(null, '', targetHash);
+    } catch {
+      window.location.hash = targetHash;
+    }
+
+    window.setTimeout(() => {
+      const targetId = sectionId || 'tab-content-area';
+      const el = document.getElementById(targetId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 40);
+    }, 50);
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleAcceptAllCookies = () => {
+    const saved = saveCookiePreferences(true);
+    setCookiePrefs(saved);
+    setShowCookieBanner(false);
+    setIsCookieModalOpen(false);
+  };
+
+  const handleRejectAllCookies = () => {
+    const saved = saveCookiePreferences(false);
+    setCookiePrefs(saved);
+    setShowCookieBanner(false);
+    setIsCookieModalOpen(false);
+  };
+
+  const handleSaveCustomCookies = (analyticsEnabled: boolean) => {
+    const saved = saveCookiePreferences(analyticsEnabled);
+    setCookiePrefs(saved);
+    setShowCookieBanner(false);
+    setIsCookieModalOpen(false);
+  };
+
+  const openLegalDoc = (doc: LegalDocType) => {
+    setActiveLegalDoc(doc);
+    try {
+      window.history.replaceState(null, '', `#${doc}`);
+    } catch {
+      // Ignore history restriction
+    }
+  };
+
+  const closeLegalDoc = () => {
+    setActiveLegalDoc(null);
+    try {
+      window.history.replaceState(null, '', `#${activeTab}`);
+    } catch {
+      // Ignore history restriction
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] text-black dark:bg-[#000000] dark:text-white flex flex-col antialiased selection:bg-[#0071E3] selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col selection:bg-[var(--accent)] selection:text-white">
       
-      {/* Liquid Glass Header */}
+      {/* Single Sticky Navigation Header */}
       <Header
         activeTab={activeTab}
-        setActiveTab={handleSelectTab}
-        isDark={isDark}
-        toggleDarkMode={toggleDarkMode}
+        onNavigate={handleNavigate}
         onOpenContact={() => setIsContactOpen(true)}
       />
 
-      {/* Main Container */}
+      {/* Main Content */}
       <main className="flex-1">
-        
-        {/* Large Title & Hero */}
         <Hero
           onOpenContact={() => setIsContactOpen(true)}
-          onSelectTab={handleSelectTab}
+          onNavigate={handleNavigate}
         />
 
-        {/* Anchor point & In-Page Segmented Tab Switcher */}
-        <div id="tab-content-area" className="scroll-mt-18 max-w-5xl mx-auto px-4 sm:px-6 pt-4 pb-6">
-          <div className="flex justify-center">
-            <nav aria-label="Onglets de navigation" className="ios-segmented p-1">
-              <button
-                type="button"
-                onClick={() => handleSelectTab('stage')}
-                className={`ios-segmented-item flex items-center gap-2 cursor-pointer text-[14px] ${activeTab === 'stage' ? 'active' : ''}`}
-              >
-                <Briefcase className="w-4 h-4" />
-                <span>Profil & Stage Métier</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectTab('digital')}
-                className={`ios-segmented-item flex items-center gap-2 cursor-pointer text-[14px] ${activeTab === 'digital' ? 'active' : ''}`}
-              >
-                <Globe className="w-4 h-4" />
-                <span>Digital Web</span>
-              </button>
-            </nav>
-          </div>
+        <div id="tab-content-area" className="scroll-mt-20 border-t border-[var(--hairline)]">
+          {activeTab === 'stage' ? (
+            <div id="stage">
+              <ProfileStageTab onOpenContact={() => setIsContactOpen(true)} />
+            </div>
+          ) : (
+            <div id="digital">
+              <DigitalWebTab onOpenContact={() => setIsContactOpen(true)} />
+            </div>
+          )}
         </div>
-
-        {/* Tab 1: Profil & Stage */}
-        {activeTab === 'stage' && (
-          <div id="stage" className="animate-in fade-in duration-200">
-            <ProfileStageTab onOpenContact={() => setIsContactOpen(true)} />
-          </div>
-        )}
-
-        {/* Tab 2: Digital Web */}
-        {activeTab === 'digital' && (
-          <div id="digital" className="animate-in fade-in duration-200">
-            <DigitalWebTab onOpenContact={() => setIsContactOpen(true)} />
-          </div>
-        )}
-
       </main>
 
-      {/* Mobile Floating iOS Tab Bar (Liquid Glass) */}
-      <nav 
-        aria-label="Barre d'onglets mobile"
-        className="fixed bottom-5 left-4 right-4 z-40 md:hidden flex items-center justify-between p-1.5 rounded-full liquid-glass shadow-lg border border-black/10 dark:border-white/15 max-w-sm mx-auto"
-      >
-        <button
-          type="button"
-          onClick={() => handleSelectTab('stage')}
-          className={`flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-[13px] font-semibold transition-all cursor-pointer ${
-            activeTab === 'stage'
-              ? 'bg-white dark:bg-[#2C2C2E] text-black dark:text-white shadow-xs'
-              : 'text-neutral-500 dark:text-neutral-400'
-          }`}
-        >
-          <Briefcase className="w-4 h-4" />
-          <span>Profil</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectTab('digital')}
-          className={`flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-[13px] font-semibold transition-all cursor-pointer ${
-            activeTab === 'digital'
-              ? 'bg-white dark:bg-[#2C2C2E] text-black dark:text-white shadow-xs'
-              : 'text-neutral-500 dark:text-neutral-400'
-          }`}
-        >
-          <Globe className="w-4 h-4" />
-          <span>Digital</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsContactOpen(true)}
-          className="w-9 h-9 rounded-full bg-[#0071E3] dark:bg-[#0A84FF] text-white flex items-center justify-center shrink-0 ml-1 shadow-xs"
-          aria-label="Contacter"
-        >
-          <Phone className="w-4 h-4" />
-        </button>
-      </nav>
-
-      {/* Handcrafted Footer */}
-      <footer className="border-t border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-[#1C1C1E] py-12 pb-24 md:pb-12 text-[14px]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
+      {/* Quiet Stripe-Inspired Footer */}
+      <footer className="border-t border-[var(--hairline)] bg-[var(--surface)] py-14 text-[13px] text-[var(--muted)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-neutral-100 dark:border-neutral-800">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-[var(--hairline)]">
             <div className="space-y-1">
-              <div className="font-bold text-neutral-900 dark:text-neutral-100 text-[16px]">
+              <div className="text-[15px] font-medium text-[var(--ink)]">
                 {PERSONAL_INFO.name}
               </div>
-              <div className="text-[13px] text-neutral-500 dark:text-neutral-400">
-                Diplômé LPAE · ESGAE Brazzaville
+              <div>
+                Diplômé LPAE (ESGAE) · Mansimou, arr8 Madibou, Brazzaville, Congo
               </div>
-              <div className="flex items-center gap-1.5 text-[13px] text-neutral-500 dark:text-neutral-400 pt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                <span>Mansimou, arr8 Madibou, Brazzaville, Congo</span>
+              <div className="tnum text-[var(--subtle)]">
+                {PERSONAL_INFO.phone1} · {PERSONAL_INFO.email}
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                aria-label={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
+                className="btn-secondary !h-[38px] !px-3.5 !text-[13px]"
+              >
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                <span>{isDark ? 'Thème clair' : 'Thème sombre'}</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setIsExportOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-[12px] font-medium transition-colors cursor-pointer"
-                title="Exporter un fichier HTML autonome"
+                className="btn-secondary !h-[38px] !px-3.5 !text-[13px]"
               >
-                <FileCode className="w-3.5 h-3.5 text-neutral-500" />
-                <span>Export HTML unique</span>
+                Export HTML unique
               </button>
 
-              <button
-                type="button"
-                onClick={scrollToTop}
-                className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-colors cursor-pointer"
-                title="Haut de page"
-                aria-label="Remonter en haut de page"
-              >
-                <ArrowUp className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Warm personal phrase in the footer */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[13px] text-neutral-500 dark:text-neutral-400">
-            <p className="italic">
-              « Ce site a été conçu pour aller à l'essentiel : montrer à un recruteur des compétences concrètes et vérifiables, sans artifice. »
-            </p>
-            <div className="flex items-center gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsContactOpen(true)}
-                className="hover:text-neutral-900 dark:hover:text-white transition-colors"
+                className="btn-primary !h-[38px] !px-4 !text-[13px]"
               >
-                Coordonnées
+                Me contacter
               </button>
-              <span>·</span>
-              <a
-                href={`https://wa.me/${PERSONAL_INFO.phone1Raw}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-neutral-900 dark:hover:text-white transition-colors"
-              >
-                WhatsApp
-              </a>
             </div>
           </div>
 
-          <div className="text-[12px] text-neutral-400 dark:text-neutral-500">
-            © 2026 {PERSONAL_INFO.name}. Conçu selon les principes Human Interface d'Apple.
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="text-[var(--subtle)]">
+              © 2026 {PERSONAL_INFO.name}. Conçu pour aller à l'essentiel, sans artifice.
+            </div>
+
+            <nav aria-label="Liens légaux et confidentialité" className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <a
+                href="#mentions-legales"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLegalDoc('mentions-legales');
+                }}
+                className="hover:text-[var(--ink)] transition-colors"
+              >
+                Mentions légales
+              </a>
+              <a
+                href="#confidentialite"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLegalDoc('confidentialite');
+                }}
+                className="hover:text-[var(--ink)] transition-colors"
+              >
+                Politique de confidentialité
+              </a>
+              <a
+                href="#cgu"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLegalDoc('cgu');
+                }}
+                className="hover:text-[var(--ink)] transition-colors"
+              >
+                CGU
+              </a>
+              <a
+                href="#cookies"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLegalDoc('cookies');
+                }}
+                className="hover:text-[var(--ink)] transition-colors"
+              >
+                Politique cookies
+              </a>
+              <button
+                type="button"
+                onClick={() => setIsCookieModalOpen(true)}
+                className="hover:text-[var(--ink)] transition-colors cursor-pointer font-medium text-[var(--ink)]"
+              >
+                Gérer mes cookies
+              </button>
+            </nav>
           </div>
 
         </div>
       </footer>
 
-      {/* Global Modals */}
+      {/* Cookie Banner & Customization Modal */}
+      <CookieBanner
+        visible={showCookieBanner}
+        onAcceptAll={handleAcceptAllCookies}
+        onRejectAll={handleRejectAllCookies}
+        onOpenCustomize={() => setIsCookieModalOpen(true)}
+      />
+
+      <CookiePreferencesModal
+        isOpen={isCookieModalOpen}
+        currentPrefs={cookiePrefs}
+        onClose={() => setIsCookieModalOpen(false)}
+        onSave={handleSaveCustomCookies}
+      />
+
+      {/* Legal Modals (#confidentialite, #cgu, #cookies, #mentions-legales) */}
+      <LegalModal
+        activeDoc={activeLegalDoc}
+        onClose={closeLegalDoc}
+        onOpenCookiePrefs={() => setIsCookieModalOpen(true)}
+      />
+
+      {/* Contact & Standalone Export Modals */}
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
