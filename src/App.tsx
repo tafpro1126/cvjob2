@@ -5,7 +5,6 @@ import { Hero } from './components/Hero.tsx';
 import { ProfileStageTab } from './components/ProfileStageTab.tsx';
 import { DigitalWebTab } from './components/DigitalWebTab.tsx';
 import { ContactModal } from './components/ContactModal.tsx';
-import { StandaloneExportModal } from './components/StandaloneExportModal.tsx';
 import { CookieBanner, CookiePreferencesModal } from './components/CookieConsent.tsx';
 import { LegalModal } from './components/LegalModals.tsx';
 import { PERSONAL_INFO } from './data/portfolioData.ts';
@@ -30,7 +29,6 @@ export default function App() {
 
   // Modals & Consent states
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
-  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
   const [cookiePrefs, setCookiePrefs] = useState<CookiePreferences | null>(null);
   const [showCookieBanner, setShowCookieBanner] = useState<boolean>(false);
   const [isCookieModalOpen, setIsCookieModalOpen] = useState<boolean>(false);
@@ -228,7 +226,7 @@ export default function App() {
                 {PERSONAL_INFO.name}
               </div>
               <div>
-                Diplômé LPAE (ESGAE) · Brazzaville, Congo
+                Titulaire LPAE (ESGAE) · {PERSONAL_INFO.location} · {PERSONAL_INFO.driverLicense}
               </div>
               <div className="tnum text-[var(--subtle)]">
                 {PERSONAL_INFO.phone1} · {PERSONAL_INFO.email}
@@ -248,14 +246,6 @@ export default function App() {
 
               <button
                 type="button"
-                onClick={() => setIsExportOpen(true)}
-                className="btn-secondary !h-[38px] !px-3.5 !text-[13px]"
-              >
-                Export HTML unique
-              </button>
-
-              <button
-                type="button"
                 onClick={() => setIsContactOpen(true)}
                 className="btn-primary !h-[38px] !px-4 !text-[13px]"
               >
@@ -266,7 +256,7 @@ export default function App() {
 
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="text-[var(--subtle)]">
-              © 2026 {PERSONAL_INFO.name}. Conçu pour aller à l'essentiel, sans artifice.
+              © 2026 {PERSONAL_INFO.name} · Édition : {PERSONAL_INFO.legalEditorName} · Hébergeur : Cloudflare, Inc.
             </div>
 
             <nav aria-label="Liens légaux et confidentialité" className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -345,15 +335,10 @@ export default function App() {
         onOpenCookiePrefs={() => setIsCookieModalOpen(true)}
       />
 
-      {/* Contact & Standalone Export Modals */}
+      {/* Contact Modal */}
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
-      />
-
-      <StandaloneExportModal
-        isOpen={isExportOpen}
-        onClose={() => setIsExportOpen(false)}
       />
 
     </div>

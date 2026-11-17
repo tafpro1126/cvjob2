@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { 
-  TIMELINE_DATA, 
-  SKILL_CATEGORIES, 
-  SAMPLE_INVOICES_DEMO 
+import {
+  TIMELINE_DATA,
+  SKILL_CATEGORIES,
+  SAMPLE_INVOICES_DEMO,
+  TODAY_VS_STAGE,
+  PERSONAL_INFO,
 } from '../data/portfolioData.ts';
-import { 
-  calculateAgingReport, 
-  simulateTreasury, 
+import {
+  calculateAgingReport,
+  simulateTreasury,
   calculateCommercialFunnel,
-  getDunningStage
+  getDunningStage,
 } from '../utils/calculations.ts';
+import { SkillLevelTier } from '../types.ts';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Reveal } from './MotionPrimitives.tsx';
 
@@ -17,10 +20,35 @@ interface ProfileStageTabProps {
   onOpenContact: () => void;
 }
 
+function SkillDots({ tier, label }: { tier: SkillLevelTier; label: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-2 shrink-0"
+      aria-label={`Niveau : ${label} (${tier} sur 3)`}
+    >
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        {[1, 2, 3].map((step) => (
+          <span
+            key={step}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              step <= tier
+                ? 'bg-[var(--accent)]'
+                : 'border border-[var(--subtle)]/50 bg-transparent'
+            }`}
+          />
+        ))}
+      </span>
+      <span className="text-[12.5px] text-[var(--muted)] w-[54px] text-right">{label}</span>
+    </span>
+  );
+}
+
 export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
-  const [timelineFilter, setTimelineFilter] = useState<'all' | 'education' | 'experience' | 'certification'>('all');
+  const [timelineFilter, setTimelineFilter] = useState<'all' | 'education' | 'experience' | 'workshop'>('all');
   const [activeProof, setActiveProof] = useState<'recouvrement' | 'commerce' | 'tresorerie' | 'management'>('recouvrement');
-  const [expandedSkill, setExpandedSkill] = useState<string | null>('Balance âgée & Suivi des échéances');
+  const [expandedSkill, setExpandedSkill] = useState<string | null>(
+    'Déclarations annuelles des salaires (DAS 1 & 2)'
+  );
 
   const [selectedDunningStage, setSelectedDunningStage] = useState<number>(10);
   const [recoveryBonus, setRecoveryBonus] = useState<number>(0);
@@ -41,12 +69,12 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
   const agingReport = calculateAgingReport(dynamicInvoices, '2026-11-12');
   const funnelData = calculateCommercialFunnel(funnelLeads, 45, 60, 40, funnelTicket);
   const treasurySim = simulateTreasury(1500000, [
-    { month: 'Mois 1 (Actuel)', inflow: 4200000, outflow: 3600000 },
-    { month: 'Mois 2 (M+1)', inflow: 3800000, outflow: 3900000 },
-    { month: 'Mois 3 (M+2)', inflow: 5100000, outflow: 4200000 },
-    { month: 'Mois 4 (M+3)', inflow: 4600000, outflow: 4100000 },
-    { month: 'Mois 5 (M+4)', inflow: 5800000, outflow: 4400000 },
-    { month: 'Mois 6 (M+5)', inflow: 6200000, outflow: 4700000 },
+    { month: 'Mois 1', inflow: 4200000, outflow: 3600000 },
+    { month: 'Mois 2', inflow: 3800000, outflow: 3900000 },
+    { month: 'Mois 3', inflow: 5100000, outflow: 4200000 },
+    { month: 'Mois 4', inflow: 4600000, outflow: 4100000 },
+    { month: 'Mois 5', inflow: 5800000, outflow: 4400000 },
+    { month: 'Mois 6', inflow: 6200000, outflow: 4700000 },
   ]);
 
   const currentDunningInfo = getDunningStage(selectedDunningStage);
@@ -60,10 +88,16 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
     return item.type === timelineFilter;
   });
 
+  const bucketTotal = agingReport.totalOutstanding || 1;
+  const pctBucket1 = (agingReport.buckets.current.amount / bucketTotal) * 100;
+  const pctBucket2 = (agingReport.buckets.moderate.amount / bucketTotal) * 100;
+  const pctBucket3 = (agingReport.buckets.critical.amount / bucketTotal) * 100;
+  const pctBucket4 = (agingReport.buckets.contentious.amount / bucketTotal) * 100;
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 space-y-24 lg:space-y-32">
-      
-      {/* SECTION 1 : À PROPOS */}
+
+      {/* SECTION 1 : PROFIL & OBJECTIF */}
       <section id="a-propos" className="scroll-mt-24">
         <Reveal>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
@@ -72,7 +106,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 Profil &amp; Objectif
               </div>
               <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
-                Utile dès la première semaine.
+                Ici pour apprendre, et me rendre utile vite.
               </h2>
             </div>
 
@@ -85,30 +119,30 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                   Je cherche un stage de 3 à 6 mois en <strong className="font-medium text-[var(--ink)]">commerce</strong>, <strong className="font-medium text-[var(--ink)]">comptabilité</strong>, <strong className="font-medium text-[var(--ink)]">recouvrement</strong> ou <strong className="font-medium text-[var(--ink)]">management</strong>, auprès d’une entreprise locale. Un stage en gestion, pas en informatique.
                 </p>
                 <p>
-                  J’ai déjà touché au concret : j’ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) dans un cabinet d’expertise comptable, et suivi en mai 2026 une Masterclass sur le recouvrement de créances et la gestion des impayés.
+                  J’ai déjà touché au concret : j’ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) dans un cabinet d’expertise comptable, avec l’aide d’un expert-comptable, et suivi en mai 2026 une Masterclass de 4 h sur le recouvrement de créances.
                 </p>
                 <p>
-                  Je me forme aussi en autonomie aux outils numériques et à l’IA, pour gagner du temps sur les tâches répétitives de gestion. Je travaille en français et en anglais.
+                  Je me forme aussi en autonomie aux outils numériques et à l’IA, pour gagner du temps sur les tâches répétitives. Je travaille en français et en anglais.
                 </p>
               </div>
 
-              {/* Clean tabular facts without boxed cards */}
+              {/* Fiche d'infos honnête et sobre */}
               <div className="pt-6 border-t border-[var(--hairline)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-[13px]">
                 <div>
                   <div className="text-[var(--subtle)]">Diplôme</div>
                   <div className="font-medium text-[var(--ink)] mt-1">LPAE (ESGAE)</div>
                 </div>
                 <div>
-                  <div className="text-[var(--subtle)]">Anglais</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Intermédiaire, formation BYU-Pathway</div>
+                  <div className="text-[var(--subtle)]">Langues</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">{PERSONAL_INFO.languages}</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Mobilité</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (en cours d&apos;obtention)</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">{PERSONAL_INFO.driverLicense}</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Disponibilité</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Immédiate</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">{PERSONAL_INFO.availability}</div>
                 </div>
               </div>
             </div>
@@ -116,25 +150,58 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
         </Reveal>
       </section>
 
-      {/* SECTION 2 : COMPÉTENCES PAR DOMAINE */}
+      {/* SECTION 2 : COMPÉTENCES HONNÊTES (●○○ Notions / ●●○ Bases / ●●● À l'aise) */}
       <section id="competences" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
         <Reveal>
-          <div className="max-w-2xl space-y-2 mb-12">
-            <div className="text-[13px] font-medium text-[var(--accent)]">
-              Compétences métiers
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+            <div className="max-w-2xl space-y-2">
+              <div className="text-[13px] font-medium text-[var(--accent)]">
+                Compétences
+              </div>
+              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                Mes bases, et ce que je viens apprendre.
+              </h2>
+              <p className="text-[15px] text-[var(--muted)]">
+                Je suis au début de mon parcours professionnel. Voici ce que j’ai déjà vu ou pratiqué, avec l’aide dont j’ai bénéficié.
+              </p>
             </div>
-            <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
-              Ce que je sais faire concrètement en entreprise.
-            </h2>
-            <p className="text-[15px] text-[var(--muted)]">
-              Sélectionnez une compétence pour afficher le détail pratique de son application.
-            </p>
+
+            {/* Légende visuelle des 3 segments */}
+            <div
+              aria-label="Légende des niveaux"
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-[var(--muted)] py-2.5 px-3.5 rounded-[6px] bg-[var(--surface)] shrink-0"
+            >
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-flex gap-1" aria-hidden="true">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  <span className="w-2 h-2 rounded-full border border-[var(--subtle)]/50" />
+                  <span className="w-2 h-2 rounded-full border border-[var(--subtle)]/50" />
+                </span>
+                <span><strong className="font-medium text-[var(--ink)]">Notions</strong> (vu en formation)</span>
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-flex gap-1" aria-hidden="true">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  <span className="w-2 h-2 rounded-full border border-[var(--subtle)]/50" />
+                </span>
+                <span><strong className="font-medium text-[var(--ink)]">Bases</strong> (pratiqué avec aide)</span>
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-flex gap-1" aria-hidden="true">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                </span>
+                <span><strong className="font-medium text-[var(--ink)]">À l’aise</strong> (utilisé seul)</span>
+              </span>
+            </div>
           </div>
         </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
           {SKILL_CATEGORIES.map((category, cIdx) => (
-            <Reveal key={category.id} delayMs={cIdx * 60}>
+            <Reveal key={category.id} delayMs={cIdx * 50}>
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-[18px] font-medium text-[var(--ink)]">
@@ -159,17 +226,17 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                           <span className="text-[15px] font-normal text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
                             {skill.name}
                           </span>
-                          <span className="inline-flex items-center gap-2 text-[13px] text-[var(--subtle)] shrink-0">
-                            <span>{skill.tag}</span>
+                          <span className="inline-flex items-center gap-2.5 shrink-0">
+                            <SkillDots tier={skill.tier} label={skill.levelLabel} />
                             {isOpen ? (
-                              <ChevronDown className="w-4 h-4" />
+                              <ChevronDown className="w-4 h-4 text-[var(--subtle)]" />
                             ) : (
-                              <ChevronRight className="w-4 h-4" />
+                              <ChevronRight className="w-4 h-4 text-[var(--subtle)]" />
                             )}
                           </span>
                         </button>
                         {isOpen && (
-                          <div className="pb-4 pr-6 text-[14px] text-[var(--muted)] leading-relaxed">
+                          <div className="pb-4 pr-6 text-[14px] text-[var(--muted)] leading-relaxed transition-all duration-150">
                             {skill.description}
                           </div>
                         )}
@@ -183,23 +250,66 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
         </div>
       </section>
 
-      {/* SECTION 3 : PREUVES VISUELLES INTERACTIVES (EXEMPLES FICTIFS) */}
+      {/* SECTION 3 : BLOC "AUJOURD'HUI -> EN STAGE" (Deux colonnes sur fond teinté) */}
+      <section id="objectifs-stage" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
+        <Reveal>
+          <div className="space-y-2 mb-8">
+            <div className="text-[13px] font-medium text-[var(--accent)]">
+              Projection honnête
+            </div>
+            <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+              Aujourd’hui → Ce que je viens apprendre en stage
+            </h2>
+          </div>
+
+          <div className="rounded-[10px] bg-[var(--surface)] p-6 sm:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <div className="space-y-4">
+              <h3 className="text-[17px] font-medium text-[var(--ink)]">
+                Ce que je sais faire aujourd’hui
+              </h3>
+              <ul className="space-y-3 text-[15px] text-[var(--muted)] leading-relaxed">
+                {TODAY_VS_STAGE.today.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-[var(--accent)] font-medium">—</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-4 pt-6 md:pt-0 border-t md:border-t-0 md:border-l border-[var(--hairline)] md:pl-10">
+              <h3 className="text-[17px] font-medium text-[var(--ink)]">
+                Ce que je viens apprendre en stage
+              </h3>
+              <ul className="space-y-3 text-[15px] text-[var(--muted)] leading-relaxed">
+                {TODAY_VS_STAGE.inStage.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-[var(--accent)] font-medium">→</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* SECTION 4 : PREUVES VISUELLES INTERACTIVES (EXEMPLES FICTIFS) */}
       <section id="exemples" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div className="max-w-2xl space-y-2">
               <div className="text-[13px] font-medium text-[var(--accent)]">
-                Preuves visuelles
+                Maquettes d’entraînement · Exemple illustratif, données fictives
               </div>
               <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
                 Modèles de suivi et de relance.
               </h2>
               <p className="text-[15px] text-[var(--muted)]">
-                Simulations interactives construites avec mes méthodes de travail.
+                Simulations fictives réalisées pour illustrer les notions étudiées en cours et en Masterclass.
               </p>
             </div>
 
-            {/* Clean borderless text tabs with animated underline */}
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Exemples métiers">
               {[
                 { id: 'recouvrement', label: 'Recouvrement' },
@@ -257,52 +367,69 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 </div>
               </div>
               <div>
-                <div className="text-[13px] text-[var(--subtle)]">Retard moyen constaté</div>
+                <div className="text-[13px] text-[var(--subtle)]">Retard moyen simulé</div>
                 <div className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] mt-1 tnum">
                   {agingReport.averageOverdueDays} jours
                 </div>
               </div>
             </div>
 
-            {/* Balance âgée & Simulator */}
+            {/* Balance âgée & Légende avec couleurs strictement identiques */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
               <div className="lg:col-span-6 space-y-5">
                 <h3 className="text-[17px] font-medium text-[var(--ink)]">
-                  Répartition de la balance âgée
+                  Répartition de la balance âgée (simulation)
                 </h3>
                 <div className="w-full h-3 rounded-[4px] bg-[var(--surface)] overflow-hidden flex">
                   <div
-                    style={{ width: `${(agingReport.buckets.current.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                    className="h-full bg-slate-400"
+                    style={{ width: `${pctBucket1}%`, backgroundColor: 'var(--bucket-1)' }}
+                    className="h-full"
                     title="0-30 jours"
                   />
                   <div
-                    style={{ width: `${(agingReport.buckets.moderate.amount / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                    className="h-full bg-[var(--accent)]"
+                    style={{ width: `${pctBucket2}%`, backgroundColor: 'var(--bucket-2)' }}
+                    className="h-full"
                     title="31-60 jours"
                   />
                   <div
-                    style={{ width: `${((agingReport.buckets.critical.amount + agingReport.buckets.contentious.amount) / (agingReport.totalOutstanding || 1)) * 100}%` }}
-                    className="h-full bg-[var(--ink)]"
-                    title="Plus de 60 jours"
+                    style={{ width: `${pctBucket3}%`, backgroundColor: 'var(--bucket-3)' }}
+                    className="h-full"
+                    title="61-90 jours"
+                  />
+                  <div
+                    style={{ width: `${pctBucket4}%`, backgroundColor: 'var(--bucket-4)' }}
+                    className="h-full"
+                    title="Plus de 90 jours"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
-                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
-                    <span className="text-[var(--muted)]">0 – 30 jours</span>
+                  <div className="py-2 border-b border-[var(--hairline)] flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-2 text-[var(--muted)]">
+                      <span className="w-2.5 h-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: 'var(--bucket-1)' }} aria-hidden="true" />
+                      <span>0 – 30 jours</span>
+                    </span>
                     <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.current.amount)}</span>
                   </div>
-                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
-                    <span className="text-[var(--muted)]">31 – 60 jours</span>
+                  <div className="py-2 border-b border-[var(--hairline)] flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-2 text-[var(--muted)]">
+                      <span className="w-2.5 h-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: 'var(--bucket-2)' }} aria-hidden="true" />
+                      <span>31 – 60 jours</span>
+                    </span>
                     <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.moderate.amount)}</span>
                   </div>
-                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
-                    <span className="text-[var(--muted)]">61 – 90 jours</span>
+                  <div className="py-2 border-b border-[var(--hairline)] flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-2 text-[var(--muted)]">
+                      <span className="w-2.5 h-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: 'var(--bucket-3)' }} aria-hidden="true" />
+                      <span>61 – 90 jours</span>
+                    </span>
                     <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.critical.amount)}</span>
                   </div>
-                  <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
-                    <span className="text-[var(--muted)]">&gt; 90 jours</span>
+                  <div className="py-2 border-b border-[var(--hairline)] flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-2 text-[var(--muted)]">
+                      <span className="w-2.5 h-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: 'var(--bucket-4)' }} aria-hidden="true" />
+                      <span>&gt; 90 jours</span>
+                    </span>
                     <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.contentious.amount)}</span>
                   </div>
                 </div>
@@ -310,7 +437,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 <div className="pt-2 space-y-2">
                   <div className="flex items-center justify-between text-[13px]">
                     <label htmlFor="sim-recovery-range" className="text-[var(--muted)]">
-                      Simuler un encaissement suite à relance :
+                      Simuler un encaissement fictif :
                     </label>
                     <span className="font-medium text-[var(--accent)] tnum">
                       +{formatFCFA(recoveryBonus)}
@@ -329,10 +456,9 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 </div>
               </div>
 
-              {/* Protocole de relance J+3 à J+35 */}
               <div className="lg:col-span-6 space-y-4">
                 <h3 className="text-[17px] font-medium text-[var(--ink)]">
-                  Protocole de relance amiable (<span className="tnum">J+3 à J+35</span>)
+                  Étapes d’un plan de relance amiable (<span className="tnum">J+3 à J+35</span>)
                 </h3>
 
                 <div className="flex flex-wrap gap-2">
@@ -380,10 +506,10 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
             <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--hairline)]">
               <div className="space-y-1">
                 <h3 className="text-[18px] font-medium text-[var(--ink)]">
-                  Entonnoir de prospection commerciale
+                  Exemple d’entonnoir de prospection
                 </h3>
                 <p className="text-[14px] text-[var(--muted)]">
-                  Suivi du taux de transformation entre prise de contact et signature.
+                  Simulation théorique du passage entre prise de contact et devis signé.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-4 text-[14px]">
@@ -416,10 +542,10 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
 
             <div className="divide-y divide-[var(--hairline)] border-b border-[var(--hairline)]">
               {[
-                { label: '1. Prospects ciblés (Brazzaville)', count: funnelData.prospects, rate: '100%' },
-                { label: '2. Décideurs qualifiés', count: funnelData.qualified, rate: '45%' },
+                { label: '1. Prospects contactés', count: funnelData.prospects, rate: '100%' },
+                { label: '2. Contacts qualifiés', count: funnelData.qualified, rate: '45%' },
                 { label: '3. Rendez-vous & devis remis', count: funnelData.pitched, rate: '27%' },
-                { label: '4. Contrats signés', count: `${funnelData.deals} ventes`, rate: `${funnelData.overallConversionRate}%` },
+                { label: '4. Contrats conclus', count: `${funnelData.deals} ventes`, rate: `${funnelData.overallConversionRate}%` },
               ].map((row, idx) => (
                 <div key={idx} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[15px]">
                   <span className="text-[var(--ink)]">{row.label}</span>
@@ -432,7 +558,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-              <span className="text-[14px] text-[var(--muted)]">Chiffre d'affaires prévisionnel simulé</span>
+              <span className="text-[14px] text-[var(--muted)]">Total simulé sur cet exemple</span>
               <span className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] tnum">
                 {formatFCFA(funnelData.estimatedRevenue)}
               </span>
@@ -449,10 +575,10 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
           <div className="space-y-6">
             <div className="space-y-1">
               <h3 className="text-[18px] font-medium text-[var(--ink)]">
-                Modèle de suivi de trésorerie prévisionnelle
+                Tableau d’exemple : suivi de trésorerie
               </h3>
               <p className="text-[14px] text-[var(--muted)]">
-                Anticipation mensuelle des flux d'encaissements et décaissements (trésorerie de départ : <span className="tnum">1 500 000 FCFA</span>).
+                Notions de suivi des encaissements et décaissements (base fictive de départ : <span className="tnum">1 500 000 FCFA</span>).
               </p>
             </div>
 
@@ -492,32 +618,32 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
           <div className="space-y-6">
             <div className="space-y-1">
               <h3 className="text-[18px] font-medium text-[var(--ink)]">
-                Organisation hebdomadaire et priorisation
+                Exemple d’organisation hebdomadaire
               </h3>
               <p className="text-[14px] text-[var(--muted)]">
-                Répartition structurée des tâches pour un pôle administratif et commercial.
+                Méthode simple de priorisation pour garder des dossiers propres au quotidien.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4 border-t border-[var(--hairline)]">
               <div className="space-y-3">
                 <h4 className="text-[15px] font-medium text-[var(--ink)]">
-                  Priorités du matin (Urgent &amp; Trésorerie)
+                  Priorités du matin
                 </h4>
                 <ul className="space-y-2 text-[14px] text-[var(--muted)]">
-                  <li>• Pointage des encaissements et pièces de caisse de la veille</li>
-                  <li>• Appels et messages de relance pour les factures échues (&gt; 30 jours)</li>
-                  <li>• Traitement des demandes clients prioritaires</li>
+                  <li>• Vérifier les pièces reçues et les échéances du jour</li>
+                  <li>• Préparer ou suivre les rappels clients selon les consignes</li>
+                  <li>• Traiter les demandes urgentes confiées par le responsable</li>
                 </ul>
               </div>
               <div className="space-y-3">
                 <h4 className="text-[15px] font-medium text-[var(--ink)]">
-                  Structuration l'après-midi (Fond &amp; Commerce)
+                  Suivi de l’après-midi
                 </h4>
                 <ul className="space-y-2 text-[14px] text-[var(--muted)]">
-                  <li>• Rapprochement bancaire et lettrage comptable OHADA</li>
-                  <li>• Prospection B2B, relance de devis envoyés et suivi CRM</li>
-                  <li>• Mise à jour des tableaux de bord automatisés</li>
+                  <li>• Mettre à jour les classeurs Excel et dossiers Word</li>
+                  <li>• Faire relire les saisies comptables en cas de doute</li>
+                  <li>• Préparer les comptes rendus courts pour le lendemain</li>
                 </ul>
               </div>
             </div>
@@ -529,13 +655,13 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
         )}
       </section>
 
-      {/* SECTION 4 : PARCOURS (TIMELINE INTERACTIVE) */}
+      {/* SECTION 5 : PARCOURS (Frise verticale fine avec points, élément actuel mis en avant, ordre chronologique inversé) */}
       <section id="parcours" className="scroll-mt-24 pt-16 border-t border-[var(--hairline)]">
         <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div className="space-y-2">
               <div className="text-[13px] font-medium text-[var(--accent)]">
-                Parcours vérifiable
+                Parcours chronologique
               </div>
               <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
                 Formation et expériences.
@@ -547,7 +673,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 { id: 'all', label: 'Tout' },
                 { id: 'education', label: 'Formation' },
                 { id: 'experience', label: 'Expériences' },
-                { id: 'certification', label: 'Certifications' },
+                { id: 'workshop', label: 'Ateliers & auto-formation' },
               ].map((f) => {
                 const isActive = timelineFilter === f.id;
                 return (
@@ -574,35 +700,51 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
           </div>
         </Reveal>
 
-        <div className="divide-y divide-[var(--hairline)] border-y border-[var(--hairline)]">
+        {/* Frise verticale fine avec points */}
+        <div className="relative pl-7 sm:pl-9 border-l border-[var(--hairline)] space-y-10">
           {filteredTimeline.map((item) => (
-            <div key={item.id} className="py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
-              <div className="md:col-span-3 text-[14px] text-[var(--subtle)] tnum">
-                {item.period}
-              </div>
-              <div className="md:col-span-9 space-y-1.5">
-                <div className="text-[17px] font-medium text-[var(--ink)]">
-                  {item.title}
+            <div key={item.id} className="relative">
+              <span
+                aria-hidden="true"
+                className={`absolute -left-[33px] sm:-left-[41px] top-1.5 w-2.5 h-2.5 rounded-full ${
+                  item.current
+                    ? 'bg-[var(--accent)] ring-4 ring-[var(--accent-subtle)]'
+                    : 'bg-[var(--bg)] border-2 border-[var(--subtle)]'
+                }`}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-6 items-baseline">
+                <div className="md:col-span-3 text-[13.5px] text-[var(--subtle)] tnum flex flex-wrap items-center gap-2">
+                  <span>{item.period}</span>
+                  {item.current && (
+                    <span className="text-[11px] font-medium text-[var(--accent)]">
+                      Récent
+                    </span>
+                  )}
                 </div>
-                <div className="text-[14px] text-[var(--muted)]">
-                  {item.organization} · {item.location}
+                <div className="md:col-span-9 space-y-1.5">
+                  <div className="text-[17px] font-medium text-[var(--ink)]">
+                    {item.title}
+                  </div>
+                  <div className="text-[14px] text-[var(--muted)]">
+                    {item.organization}{item.location ? ` · ${item.location}` : ''}
+                  </div>
+                  <p className="text-[14px] text-[var(--muted)] leading-relaxed pt-1 max-w-2xl">
+                    {item.description}
+                  </p>
                 </div>
-                <p className="text-[14px] text-[var(--muted)] leading-relaxed pt-1 max-w-2xl">
-                  {item.description}
-                </p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* SECTION 5 : POURQUOI MOI ? */}
+      {/* SECTION 6 : POURQUOI MOI ? (3 lignes courtes, sans cartes identiques) */}
       <section className="pt-16 border-t border-[var(--hairline)]">
         <Reveal>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-4 space-y-4">
               <div className="text-[13px] font-medium text-[var(--accent)]">
-                Engagement dès la semaine 1
+                État d’esprit
               </div>
               <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
                 Pourquoi me confier un stage ?
@@ -619,31 +761,22 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
               </div>
             </div>
 
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
-              <div className="space-y-1.5">
-                <h3 className="text-[16px] font-medium text-[var(--ink)]">01. Autonomie immédiate</h3>
-                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                  Habitué à travailler sur des pièces réelles (DAS 1 &amp; 2 chez Émeraude), j'assimile rapidement les consignes sans bloquer mon encadrant.
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-[16px] font-medium text-[var(--ink)]">02. Méthode de recouvrement</h3>
-                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                  Je sais tenir une balance âgée à jour et conduire des relances graduées de J+3 à J+35 qui préservent la relation commerciale.
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-[16px] font-medium text-[var(--ink)]">03. Automatisation utile</h3>
-                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                  Là où les tâches manuelles ralentissent l'équipe, je mets en place des tableurs connectés et formulaires Google Workspace simples.
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-[16px] font-medium text-[var(--ink)]">04. Mobilité sur Brazzaville</h3>
-                <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                  Basé à Brazzaville avec le permis B en cours d'obtention, disponible immédiatement pour les visites clients et démarches terrain.
-                </p>
-              </div>
+            <div className="lg:col-span-8 divide-y divide-[var(--hairline)] border-y border-[var(--hairline)]">
+              {PERSONAL_INFO.whyMePoints.map((pt, idx) => (
+                <div key={idx} className="py-5 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6">
+                  <span className="text-[13px] font-normal text-[var(--subtle)] tnum shrink-0">
+                    0{idx + 1}
+                  </span>
+                  <div className="space-y-1">
+                    <h3 className="text-[16px] font-medium text-[var(--ink)]">
+                      {pt.title}
+                    </h3>
+                    <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                      {pt.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>

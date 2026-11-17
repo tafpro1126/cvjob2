@@ -82,7 +82,7 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
               {titles[activeDoc]}
             </h2>
             <p className="text-[13px] text-[var(--muted)] mt-1 tnum">
-              Dernière mise à jour : 13 novembre 2026
+              Dernière mise à jour : 17 novembre 2026
             </p>
           </div>
           <button
@@ -98,37 +98,46 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
         {activeDoc === 'confidentialite' && (
           <div className="space-y-4 text-[14px] text-[var(--muted)] leading-relaxed">
             <section className="space-y-1">
-              <h3 className="text-[15px] font-medium text-[var(--ink)]">1. Responsable du traitement</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">1. Éditeur et responsable du traitement</h3>
               <p>
-                Marion Moun — Email : <span className="text-[var(--ink)]">{PERSONAL_INFO.email}</span> — Localisation : {PERSONAL_INFO.location}.
+                Éditeur : <span className="text-[var(--ink)]">{PERSONAL_INFO.legalEditorName}</span> ({PERSONAL_INFO.legalEditorStatus}) —{' '}
+                <a href={`mailto:${PERSONAL_INFO.legalEditorEmail}`} className="text-[var(--accent)] underline">
+                  {PERSONAL_INFO.legalEditorEmail}
+                </a>.
+              </p>
+              <p>
+                Directeur de la publication &amp; contact dossier : <span className="text-[var(--ink)]">{PERSONAL_INFO.publicationDirector}</span> —{' '}
+                <a href={`mailto:${PERSONAL_INFO.email}`} className="text-[var(--accent)] underline">
+                  {PERSONAL_INFO.email}
+                </a>.
               </p>
             </section>
 
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">2. Données collectées</h3>
               <p>
-                Lorsque vous utilisez les formulaires de contact ou de devis, vous transmettez volontairement votre nom, votre téléphone ou e-mail et le contenu de votre message. Le paramètre <code className="text-[var(--ink)]">?src=cv</code> est lu localement par le navigateur pour ouvrir la partie « Profil &amp; Stage ».
+                Lorsque vous utilisez les formulaires de prise de contact, vous transmettez volontairement votre nom, votre téléphone ou e-mail et le contenu de votre message. Le paramètre <code className="text-[var(--ink)]">?src=cv</code> est lu localement par le navigateur pour ouvrir la partie « Profil &amp; Stage ».
               </p>
             </section>
 
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">3. Finalités et base légale</h3>
               <p>
-                Ces informations servent exclusivement à répondre à vos propositions de stage en entreprise ou demandes de prestations web, sur la base de votre démarche volontaire.
+                Ces informations servent exclusivement à répondre à vos propositions de stage en entreprise ou demandes d’échanges sur des besoins numériques simples, sur la base de votre démarche volontaire.
               </p>
             </section>
 
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">4. Durée de conservation et destinataires</h3>
               <p>
-                Les échanges reçus sont conservés le temps du suivi de candidature ou de la mission, et au maximum 24 mois après le dernier contact. Marion Moun en est l’unique destinataire ; aucune donnée n’est cédée à des tiers.
+                Les échanges reçus sont conservés le temps du suivi de candidature ou du besoin échangé, et au maximum 24 mois après le dernier contact. {PERSONAL_INFO.publicationDirector} en est l’unique destinataire ; aucune donnée n’est cédée à des tiers.
               </p>
             </section>
 
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">5. Hébergeur</h3>
               <p>
-                Hébergement du site : [À COMPLÉTER : Nom, adresse et contact de l’hébergeur].
+                Hébergement du site : {PERSONAL_INFO.hostInfo}.
               </p>
             </section>
 
@@ -149,14 +158,14 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">1. Objet du site</h3>
               <p>
-                Ce site présente le parcours de Marion Moun en vue d’un stage de 3 à 6 mois en commerce, comptabilité, recouvrement et management, ainsi que ses prestations web pour les entreprises locales.
+                Ce site présente le parcours de Marion Moun en vue d’un stage de 3 à 6 mois en commerce, comptabilité, recouvrement ou management à Brazzaville, ainsi que ses apprentissages et petits projets numériques.
               </p>
             </section>
 
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">2. Propriété intellectuelle</h3>
               <p>
-                Les textes, maquettes et présentations publiés sur ce site sont la propriété de Marion Moun, sauf mention contraire.
+                Les textes, maquettes et présentations publiés sur ce site appartiennent à Marion Moun, sauf mention contraire.
               </p>
             </section>
 
@@ -238,7 +247,18 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">Éditeur du site</h3>
               <p>
-                Marion Moun — Diplômé en Licence Professionnelle en Administration des Entreprises (LPAE, ESGAE).
+                <span className="text-[var(--ink)] font-medium">{PERSONAL_INFO.legalEditorName}</span> — {PERSONAL_INFO.legalEditorStatus}.<br />
+                Email éditeur :{' '}
+                <a href={`mailto:${PERSONAL_INFO.legalEditorEmail}`} className="text-[var(--accent)] underline">
+                  {PERSONAL_INFO.legalEditorEmail}
+                </a>
+              </p>
+            </section>
+
+            <section className="space-y-1">
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">Directeur de la publication</h3>
+              <p>
+                <span className="text-[var(--ink)] font-medium">{PERSONAL_INFO.publicationDirector}</span> — Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE, ESGAE).
               </p>
               <p>
                 Localisation : {PERSONAL_INFO.location}<br />
@@ -254,7 +274,7 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
             <section className="space-y-1">
               <h3 className="text-[15px] font-medium text-[var(--ink)]">Hébergement</h3>
               <p>
-                [À COMPLÉTER : Raison sociale de l’hébergeur, adresse postale et contact].
+                {PERSONAL_INFO.hostInfo}
               </p>
             </section>
           </div>

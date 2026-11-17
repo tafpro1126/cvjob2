@@ -10,23 +10,21 @@ interface HeroProps {
 }
 
 const CREDENTIAL_CAROUSEL = [
-  'Projet DAS 1 & 2 chez Émeraude',
-  'Masterclass Recouvrement (Mai 2026)',
-  'Permis B (en cours d’obtention)',
-  'Diplômé LPAE · ESGAE Brazzaville',
+  'Participation aux DAS 1 & 2 (cabinet comptable)',
+  'Masterclass Recouvrement · 4 h (Mai 2026)',
+  'Permis B (en cours) [À CONFIRMER]',
+  'Titulaire LPAE · ESGAE Brazzaville',
 ];
 
 const TOOLS_MARQUEE = [
-  'Comptabilité OHADA révisée',
-  'Déclarations DAS 1 & 2',
-  'Balance âgée & Recouvrement',
-  'Plan de relance J+3 à J+35',
-  'Google Sheets & Apps Script',
-  'Google Forms & Drive',
-  'Prospection B2B locale',
-  'Facebook Ads & Meta Pixel',
-  'WordPress & WooCommerce',
-  'Permis B (en cours d’obtention) · Brazzaville',
+  'Excel',
+  'Word',
+  'PowerPoint',
+  'Canva',
+  'n8n',
+  'Zapier',
+  'Facebook Ads',
+  'TikTok Ads',
 ];
 
 export function Hero({ onOpenContact, onNavigate }: HeroProps) {
@@ -52,7 +50,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Centered status line matching capture-3 style & colors */}
+        {/* Centered status line matching Capture 1 */}
         <div className="mb-7 flex justify-center">
           <div className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[13px] leading-snug">
             <span className="font-medium text-[#0071E3] dark:text-[#3B82F6]">
@@ -61,16 +59,16 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
             <span aria-hidden="true" className="text-[var(--subtle)]">·</span>
             <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--subtle)]" aria-hidden="true" />
-              <span>Brazzaville, Congo</span>
+              <span>{PERSONAL_INFO.location}</span>
             </span>
             <span aria-hidden="true" className="text-[var(--subtle)]">·</span>
             <span className="text-[var(--muted)]">
-              Permis B (en cours d&apos;obtention)
+              {PERSONAL_INFO.driverLicense}
             </span>
           </div>
         </div>
 
-        {/* Hero Split: Single-line Bold Italic Headline on Left, Centered Compact ID Portrait on Right */}
+        {/* Hero Split (Structure identique à Capture 1) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           <div className="lg:col-span-8 space-y-6">
@@ -81,13 +79,13 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
             </div>
 
             <p className="text-[18px] sm:text-[20px] font-normal text-[var(--muted)] leading-[1.55] max-w-2xl">
-              Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE Brazzaville après deux années de gestion à l’Université Libre du Congo, je recherche une opportunité pour mettre ma rigueur au service d’une équipe locale.
+              Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE à Brazzaville après deux ans en gestion à l’Université Libre du Congo, je cherche un stage de 3 à 6 mois pour apprendre sur le terrain et me rendre utile rapidement.
             </p>
 
             {/* Centered horizontal credential carousel */}
             <div className="w-full max-w-2xl mx-auto pt-1">
               <div
-                aria-label="Références et repères clés"
+                aria-label="Repères de parcours"
                 className="marquee-wrapper overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
               >
                 <div className="marquee-track-credential flex items-center">
@@ -104,7 +102,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
               </div>
             </div>
 
-            {/* Primary & Explorer Actions (Mon CV removed from Hero; Explorer Digital Web black at rest) */}
+            {/* Primary & Explorer Actions (Structure Capture 1) */}
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
@@ -135,7 +133,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
             </div>
           </div>
 
-          {/* Centered Compact ID Portrait Slot + Handwritten SVG Signature */}
+          {/* Right: Compact Portrait Frame (photo1 placeholder, zero explanatory clutter) + Handwritten Signature */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center">
             <div className="w-full max-w-[176px] mx-auto space-y-3">
               <div className="aspect-[4/5] w-full rounded-[8px] bg-[var(--surface)] flex flex-col items-center justify-center text-center p-4 shadow-[var(--card-shadow)]">
@@ -153,10 +151,8 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
                     d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                   />
                 </svg>
-                <div className="text-[13px] font-medium text-[var(--ink)]">[PHOTO]</div>
-                <p className="text-[11px] text-[var(--muted)] mt-1 leading-snug">
-                  Photo d&apos;identité
-                </p>
+                <div className="text-[13px] font-medium text-[var(--ink)]">photo1</div>
+                <div className="text-[11px] text-[var(--muted)] mt-0.5">[PHOTO]</div>
               </div>
 
               <div className="flex items-center justify-between pt-0.5">
@@ -173,53 +169,67 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
                   <path d="M 12 36 C 18 16, 26 12, 30 32 C 34 14, 42 16, 46 34 C 54 22, 60 26, 68 32 C 78 12, 84 38, 92 28 C 102 18, 110 32, 118 24 C 126 16, 134 32, 148 20" />
                   <path d="M 28 38 C 50 42, 95 40, 144 32" strokeWidth="1.1" opacity="0.5" />
                 </svg>
-                <span className="text-[11px] text-[var(--subtle)]">Brazzaville</span>
+                <span className="text-[11px] text-[var(--subtle)]">{PERSONAL_INFO.location}</span>
               </div>
             </div>
           </div>
 
         </div>
 
-        {/* Key Metrics Row (3 well-balanced columns: 3 ans, Domaines visés, Anglais) */}
-        <div className="mt-16 pt-10 border-t border-[var(--hairline)] grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12">
+        {/* Key Metrics Row (4 honest items requested) */}
+        <div className="mt-16 pt-10 border-t border-[var(--hairline)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           <Reveal delayMs={0}>
             <div className="space-y-1.5">
-              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={3} durationMs={1200} />
+              <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
+                <AnimatedCounter target={3} durationMs={1100} suffix=" ans" />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
-                Années de formation en gestion
+                Formation en gestion
               </div>
               <div className="text-[13px] text-[var(--muted)]">
-                ULC Tronc Commun + LPAE ESGAE
+                ULC (2 ans) + ESGAE (LPAE)
               </div>
             </div>
           </Reveal>
 
           <Reveal delayMs={60}>
             <div className="space-y-1.5">
-              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={4} durationMs={1200} />
+              <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
+                <AnimatedCounter target={2} durationMs={1100} suffix=" DAS" />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
-                Domaines visés
+                Participation (DAS 1 &amp; 2)
               </div>
               <div className="text-[13px] text-[var(--muted)] leading-relaxed">
-                Commerce, Comptabilité, Recouvrement, Management
+                Avec l’aide d’un expert-comptable
               </div>
             </div>
           </Reveal>
 
           <Reveal delayMs={120}>
             <div className="space-y-1.5">
-              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none">
+              <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
+                Mai 2026
+              </div>
+              <div className="text-[14px] font-medium text-[var(--ink)]">
+                Masterclass Recouvrement · 4 h
+              </div>
+              <div className="text-[13px] text-[var(--muted)]">
+                Cas pratiques à l’ESGAE (sans certificat)
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delayMs={180}>
+            <div className="space-y-1.5">
+              <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none">
                 Anglais
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
-                Intermédiaire
+                Niveau intermédiaire
               </div>
               <div className="text-[13px] text-[var(--muted)]">
-                Formation BYU-Pathway
+                Formation BYU-Pathway · Français
               </div>
             </div>
           </Reveal>
@@ -227,9 +237,12 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
       </div>
 
-      {/* Container-Bounded Marquee Strip respecting site width limits (same fade style as upper carousel) */}
+      {/* Container-Bounded Marquee Strip with strictly real tools used */}
       <div className="mt-14 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="border-y border-[var(--hairline)] bg-[var(--surface)]/75 py-3.5 marquee-wrapper overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+        <div
+          aria-label="Outils utilisés"
+          className="border-y border-[var(--hairline)] bg-[var(--surface)]/75 py-3.5 marquee-wrapper overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
+        >
           <div className="marquee-track flex items-center">
             {[...TOOLS_MARQUEE, ...TOOLS_MARQUEE].map((item, idx) => (
               <span

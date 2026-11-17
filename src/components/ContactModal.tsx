@@ -9,7 +9,7 @@ interface ContactModalProps {
 
 const CONTACT_TOPICS = [
   'Proposer un entretien (stage 3 à 6 mois)',
-  'Prestation Web / Tableau de bord / Automatisation',
+  'Un petit besoin numérique (bureautique, n8n/Zapier, web + IA)',
   'Prise de contact générale',
 ];
 
@@ -69,7 +69,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   if (!isOpen) return null;
 
   const handleCopy = async () => {
-    const text = `Marion Moun — Diplômé LPAE (ESGAE)\nTél / WhatsApp : ${PERSONAL_INFO.phone1}\nTél secondaire : ${PERSONAL_INFO.phone2}\nEmail : ${PERSONAL_INFO.email}\nLocalisation : ${PERSONAL_INFO.location}`;
+    const text = `Marion Moun — Titulaire LPAE (ESGAE)\nTél / WhatsApp : ${PERSONAL_INFO.phone1}\nTél secondaire : ${PERSONAL_INFO.phone2}\nEmail : ${PERSONAL_INFO.email}\nLocalisation : ${PERSONAL_INFO.location}`;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);

@@ -184,8 +184,24 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
                   onClick={() => handleSelectItem('stage', 'a-propos')}
                   className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
                 >
-                  <div className="text-[14px] font-medium text-[var(--ink)]">Vue d'ensemble &amp; À propos</div>
-                  <div className="text-[12px] text-[var(--muted)]">Objectif de stage à Brazzaville</div>
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Profil &amp; Objectif</div>
+                  <div className="text-[12px] text-[var(--muted)]">Stage de 3 à 6 mois à Brazzaville</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'competences')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Mes bases &amp; compétences</div>
+                  <div className="text-[12px] text-[var(--muted)]">Notions, bases et outils bureautiques</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectItem('stage', 'exemples')}
+                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
+                >
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Exemples fictifs</div>
+                  <div className="text-[12px] text-[var(--muted)]">Balance âgée, relance, trésorerie</div>
                 </button>
                 <button
                   type="button"
@@ -193,23 +209,7 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
                   className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
                 >
                   <div className="text-[14px] font-medium text-[var(--ink)]">Parcours</div>
-                  <div className="text-[12px] text-[var(--muted)]">ESGAE, ULC, Émeraude, Masterclass</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectItem('stage', 'competences')}
-                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
-                >
-                  <div className="text-[14px] font-medium text-[var(--ink)]">Compétences</div>
-                  <div className="text-[12px] text-[var(--muted)]">Commerce, Comptabilité, Recouvrement</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectItem('stage', 'exemples')}
-                  className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
-                >
-                  <div className="text-[14px] font-medium text-[var(--ink)]">Exemples</div>
-                  <div className="text-[12px] text-[var(--muted)]">Balance âgée, relance, trésorerie</div>
+                  <div className="text-[12px] text-[var(--muted)]">ESGAE, ULC, DAS 1 &amp; 2, Masterclass 4 h</div>
                 </button>
               </div>
             )}
@@ -271,16 +271,16 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
                   onClick={() => handleSelectItem('digital', 'projets')}
                   className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
                 >
-                  <div className="text-[14px] font-medium text-[var(--ink)]">Projets</div>
-                  <div className="text-[12px] text-[var(--muted)]">Cas concrets : Facturation, Portails, Ads</div>
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Mes projets numériques</div>
+                  <div className="text-[12px] text-[var(--muted)]">n8n, Zapier, Facebook Ads, web + IA</div>
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSelectItem('digital', 'services')}
+                  onClick={() => handleSelectItem('digital', 'devis')}
                   className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
                 >
-                  <div className="text-[14px] font-medium text-[var(--ink)]">Services</div>
-                  <div className="text-[12px] text-[var(--muted)]">Sites, tableaux de bord, devis</div>
+                  <div className="text-[14px] font-medium text-[var(--ink)]">Un petit besoin ?</div>
+                  <div className="text-[12px] text-[var(--muted)]">Formulaire simple WhatsApp &amp; e-mail</div>
                 </button>
               </div>
             )}
@@ -401,14 +401,14 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
                   onClick={() => handleSelectItem('digital', 'projets')}
                   className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
                 >
-                  Projets réalisés
+                  Mes projets numériques
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSelectItem('digital', 'services')}
+                  onClick={() => handleSelectItem('digital', 'devis')}
                   className="w-full text-left py-2.5 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
                 >
-                  Services &amp; Devis
+                  Un petit besoin ?
                 </button>
               </div>
             </div>
