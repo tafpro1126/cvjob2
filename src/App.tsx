@@ -21,8 +21,11 @@ import {
 } from './utils/storage.ts';
 import { Moon, Sun } from 'lucide-react';
 
+export type NavSection = 'home' | 'stage' | 'digital';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('stage');
+  const [activeNav, setActiveNav] = useState<NavSection>('home');
   const [isDark, setIsDark] = useState<boolean>(false);
 
   // Modals & Consent states
@@ -60,8 +63,18 @@ export default function App() {
       const resolvedTab = resolveInitialTab(window.location.search, window.location.hash);
       setActiveTab(resolvedTab);
 
-      const cleanHash = window.location.hash.replace('#', '');
-      if (cleanHash && !legalDoc && cleanHash !== 'stage' && cleanHash !== 'digital') {
+      const cleanHash = window.location.hash.replace('#', '').toLowerCase();
+      if (resolvedTab === 'digital') {
+        setActiveNav('digital');
+      } else if (cleanHash && !legalDoc && cleanHash !== 'home' && cleanHash !== 'stage') {
+        setActiveNav('stage');
+      } else if (cleanHash === 'stage') {
+        setActiveNav('stage');
+      } else {
+        setActiveNav('home');
+      }
+
+      if (cleanHash && !legalDoc && cleanHash !== 'home' && cleanHash !== 'stage' && cleanHash !== 'digital') {
         window.setTimeout(() => {
           const el = document.getElementById(cleanHash);
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -74,6 +87,27 @@ export default function App() {
     return () => window.removeEventListener('hashchange', syncRoute);
   }, []);
 
+  // Automatically sync Home vs Profil & Stage underline as user scrolls between Hero and #tab-content-area
+  const [navScrollLockUntil, setNavScrollLockUntil] = useState<number>(0);
+
+  useEffect(() => {
+    if (activeTab !== 'stage') return;
+    const onScroll = () => {
+      if (Date.now() < navScrollLockUntil) return;
+      const contentEl = document.getElementById('tab-content-area');
+      if (!contentEl) return;
+      const rect = contentEl.getBoundingClientRect();
+      // When tab content reaches upper viewport, highlight Profil & Stage; above it, highlight Home
+      if (rect.top <= 180) {
+        setActiveNav((prev) => (prev === 'stage' ? prev : 'stage'));
+      } else {
+        setActiveNav((prev) => (prev === 'home' ? prev : 'home'));
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [activeTab, navScrollLockUntil]);
+
   const toggleDarkMode = () => {
     setIsDark((prev) => {
       const next = !prev;
@@ -84,17 +118,26 @@ export default function App() {
   };
 
   const handleNavigate = (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => {
+    setNavScrollLockUntil(Date.now() + 700);
     setActiveTab(tab);
+
+    if (scrollToTop) {
+      setActiveNav('home');
+      try {
+        window.history.replaceState(null, '', '#home');
+      } catch {
+        window.location.hash = '#home';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setActiveNav(tab);
     const targetHash = sectionId ? `#${sectionId}` : `#${tab}`;
     try {
       window.history.replaceState(null, '', targetHash);
     } catch {
       window.location.hash = targetHash;
-    }
-
-    if (scrollToTop) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
     }
 
     window.setTimeout(() => {
@@ -139,7 +182,7 @@ export default function App() {
   const closeLegalDoc = () => {
     setActiveLegalDoc(null);
     try {
-      window.history.replaceState(null, '', `#${activeTab}`);
+      window.history.replaceState(null, '', `#${activeNav === 'home' ? 'home' : activeTab}`);
     } catch {
       // Ignore history restriction
     }
@@ -150,7 +193,7 @@ export default function App() {
       
       {/* Single Sticky Navigation Header */}
       <Header
-        activeTab={activeTab}
+        activeNav={activeNav}
         onNavigate={handleNavigate}
         onOpenContact={() => setIsContactOpen(true)}
       />

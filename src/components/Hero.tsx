@@ -1,6 +1,7 @@
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
 import { ChevronRight, MapPin } from 'lucide-react';
 import { AnimatedCounter, Reveal } from './MotionPrimitives.tsx';
+import { StripeGradientCanvas } from './StripeGradientCanvas.tsx';
 import { ActiveTab } from '../types.ts';
 
 interface HeroProps {
@@ -32,20 +33,14 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
   return (
     <section className="relative overflow-hidden pt-7 pb-16 sm:pt-10 sm:pb-24">
       
-      {/* Living multi-layer animated gradient mesh behind hero content */}
+      {/* Stripe-style flowing liquid gradient backdrop (bright pastel hues, never dark) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden z-0"
       >
-        <div
-          className="hero-mesh-1 absolute -top-28 -right-24 w-[460px] h-[460px] sm:w-[680px] sm:h-[600px] rounded-full"
-        />
-        <div
-          className="hero-mesh-2 absolute top-10 right-[8%] w-[380px] h-[380px] sm:w-[540px] sm:h-[500px] rounded-full"
-        />
-        <div
-          className="hero-mesh-3 absolute -top-12 right-[24%] w-[340px] h-[340px] sm:w-[480px] sm:h-[440px] rounded-full"
-        />
+        <div className="absolute inset-0">
+          <StripeGradientCanvas />
+        </div>
         {/* Contrast scrim ensuring WCAG AA readability for left-column hero typography */}
         <div
           className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/72 via-42% to-transparent"
@@ -75,13 +70,15 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
           </div>
         </div>
 
-        {/* Hero Split: Lightweight Giant Headline on Left, Centered Compact ID Portrait on Right */}
+        {/* Hero Split: Single-line Bold Italic Headline on Left, Centered Compact ID Portrait on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           <div className="lg:col-span-8 space-y-6">
-            <h1 className="text-[40px] sm:text-[56px] lg:text-[68px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.05] [text-wrap:balance]">
-              Gérer, relancer, digitaliser
-            </h1>
+            <div className="lg:min-h-[143px] lg:flex lg:items-center">
+              <h1 className="text-[clamp(19px,5.2vw,38px)] lg:text-[40px] xl:text-[48px] font-bold italic text-[var(--ink)] tracking-[-0.02em] leading-[1.08] whitespace-nowrap">
+                Gérer, relancer, digitaliser
+              </h1>
+            </div>
 
             <p className="text-[18px] sm:text-[20px] font-normal text-[var(--muted)] leading-[1.55] max-w-2xl">
               Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE Brazzaville après deux années de gestion à l’Université Libre du Congo, je recherche une opportunité pour mettre ma rigueur au service d’une équipe locale.
@@ -183,11 +180,11 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
         </div>
 
-        {/* Animated Key Metrics Row (Tabular numerals, light weight, IntersectionObserver count-up) */}
-        <div className="mt-16 pt-10 border-t border-[var(--hairline)] grid grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Key Metrics Row (3 well-balanced columns: 3 ans, Domaines visés, Anglais) */}
+        <div className="mt-16 pt-10 border-t border-[var(--hairline)] grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12">
           <Reveal delayMs={0}>
             <div className="space-y-1.5">
-              <div className="text-[36px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
+              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
                 <AnimatedCounter target={3} durationMs={1200} />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
@@ -201,42 +198,28 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
           <Reveal delayMs={60}>
             <div className="space-y-1.5">
-              <div className="text-[36px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={10} durationMs={1200} />
+              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
+                <AnimatedCounter target={4} durationMs={1200} />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
-                Étapes académiques &amp; terrain
+                Domaines visés
               </div>
-              <div className="text-[13px] text-[var(--muted)]">
-                Du Bac D aux travaux DAS 1 &amp; 2
+              <div className="text-[13px] text-[var(--muted)] leading-relaxed">
+                Commerce, Comptabilité, Recouvrement, Management
               </div>
             </div>
           </Reveal>
 
           <Reveal delayMs={120}>
             <div className="space-y-1.5">
-              <div className="text-[36px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={4} durationMs={1200} />
+              <div className="text-[34px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none">
+                Anglais
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
-                Domaines d'immersion ciblés
+                Intermédiaire
               </div>
               <div className="text-[13px] text-[var(--muted)]">
-                Commerce, Compta, Recouvrement, Management
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delayMs={180}>
-            <div className="space-y-1.5">
-              <div className="text-[36px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={1} durationMs={1200} />
-              </div>
-              <div className="text-[14px] font-medium text-[var(--ink)]">
-                Masterclass Recouvrement
-              </div>
-              <div className="text-[13px] text-[var(--muted)] tnum">
-                Certifiée en Mai 2026
+                Formation BYU-Pathway
               </div>
             </div>
           </Reveal>
@@ -244,18 +227,20 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
       </div>
 
-      {/* Infinite Marquee Strip of Verified Tools & Competencies (Pauses on Hover) */}
-      <div className="mt-14 border-y border-[var(--hairline)] bg-[var(--surface)] py-4 marquee-wrapper overflow-hidden relative z-10">
-        <div className="marquee-track flex items-center">
-          {[...TOOLS_MARQUEE, ...TOOLS_MARQUEE].map((item, idx) => (
-            <span
-              key={idx}
-              className="inline-flex items-center text-[13px] font-medium text-[var(--muted)] whitespace-nowrap px-6"
-            >
-              <span>{item}</span>
-              <span aria-hidden="true" className="ml-12 text-[var(--hairline)]">·</span>
-            </span>
-          ))}
+      {/* Container-Bounded Marquee Strip respecting site width limits (same fade style as upper carousel) */}
+      <div className="mt-14 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="border-y border-[var(--hairline)] bg-[var(--surface)]/75 py-3.5 marquee-wrapper overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          <div className="marquee-track flex items-center">
+            {[...TOOLS_MARQUEE, ...TOOLS_MARQUEE].map((item, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center text-[13px] font-medium text-[var(--muted)] whitespace-nowrap px-5"
+              >
+                <span>{item}</span>
+                <span aria-hidden="true" className="ml-10 text-[var(--subtle)]/50">·</span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -271,7 +271,7 @@ export function DigitalWebTab({ onOpenContact }: DigitalWebTabProps) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 space-y-24 lg:space-y-32">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 space-y-24 lg:space-y-32">
       
       {/* SECTION 1 : PASSERELLE GESTION & OUTILS WEB */}
       <section id="passerelle" className="scroll-mt-24">
@@ -314,7 +314,7 @@ export function DigitalWebTab({ onOpenContact }: DigitalWebTabProps) {
               </p>
             </div>
 
-            <div role="tablist" aria-label="Filtrer les projets par catégorie" className="flex items-center gap-6 border-b border-[var(--hairline)] overflow-x-auto">
+            <div role="tablist" aria-label="Filtrer les projets par catégorie" className="flex flex-wrap items-center gap-4 sm:gap-6 border-b border-[var(--hairline)]">
               {[
                 { id: 'all' as const, label: `Tous (${projects.length})` },
                 { id: 'gestion' as const, label: 'Gestion' },
@@ -566,11 +566,11 @@ export function DigitalWebTab({ onOpenContact }: DigitalWebTabProps) {
               </p>
             )}
 
-            <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-3 pt-2">
               <a
                 href={quoteMailtoUrl}
                 onClick={handleQuoteChannelClick}
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
               >
                 Envoyer par e-mail
               </a>
@@ -579,7 +579,7 @@ export function DigitalWebTab({ onOpenContact }: DigitalWebTabProps) {
                 target="_blank"
                 rel="noreferrer"
                 onClick={handleQuoteChannelClick}
-                className="btn-primary group"
+                className="btn-primary group w-full sm:w-auto"
               >
                 <span>Envoyer sur WhatsApp</span>
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />

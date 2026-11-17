@@ -161,25 +161,11 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     @keyframes ddEnter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
     .hero { position: relative; overflow: hidden; padding: 36px 0 56px; }
-    .mesh-1, .mesh-2, .mesh-3 {
-      position: absolute; border-radius: 999px; pointer-events: none; will-change: transform, opacity;
+    .stripe-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.12); filter: blur(26px); opacity: 0.75; pointer-events: none;
     }
-    .mesh-1 {
-      top: -110px; right: -90px; width: 620px; height: 560px; filter: blur(56px);
-      background: radial-gradient(circle at 35% 35%, #4F46E5 0%, #7C3AED 44%, #EC4899 82%, transparent 100%);
-      animation: meshFlow1 10s ease-in-out infinite;
-    }
-    .mesh-2 {
-      top: 40px; right: 8%; width: 500px; height: 460px; filter: blur(58px);
-      background: radial-gradient(circle at 60% 45%, #F97316 0%, #FB7185 48%, #8B5CF6 88%, transparent 100%);
-      animation: meshFlow2 13s ease-in-out infinite;
-    }
-    .mesh-3 {
-      top: -40px; right: 24%; width: 440px; height: 420px; filter: blur(52px);
-      background: radial-gradient(circle at 50% 50%, #38BDF8 0%, #60A5FA 42%, #6366F1 84%, transparent 100%);
-      animation: meshFlow3 9.5s ease-in-out infinite;
-    }
-    .dark .mesh-1, .dark .mesh-2, .dark .mesh-3 { filter: blur(66px) brightness(0.68); }
+    .dark .stripe-canvas { opacity: 0.35; }
     .hero-scrim {
       position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(90deg, var(--bg) 0%, rgba(255,255,255,0.72) 42%, transparent 100%);
@@ -187,22 +173,9 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     .dark .hero-scrim {
       background: linear-gradient(90deg, var(--bg) 0%, rgba(7,11,20,0.75) 42%, transparent 100%);
     }
-    @keyframes meshFlow1 {
-      0%, 100% { transform: translate3d(0,0,0) rotate(-14deg) scale(1); opacity: 0.48; }
-      33% { transform: translate3d(-78px,42px,0) rotate(-4deg) scale(1.1); opacity: 0.62; }
-      66% { transform: translate3d(44px,76px,0) rotate(-20deg) scale(0.95); opacity: 0.42; }
-    }
-    @keyframes meshFlow2 {
-      0%, 100% { transform: translate3d(0,0,0) rotate(10deg) scale(0.96); opacity: 0.42; }
-      50% { transform: translate3d(-96px,-54px,0) rotate(24deg) scale(1.14); opacity: 0.58; }
-    }
-    @keyframes meshFlow3 {
-      0%, 100% { transform: translate3d(0,0,0) rotate(0deg) scale(1.04); opacity: 0.36; }
-      40% { transform: translate3d(68px,-46px,0) rotate(14deg) scale(0.92); opacity: 0.52; }
-      75% { transform: translate3d(-52px,56px,0) rotate(-10deg) scale(1.1); opacity: 0.44; }
-    }
     .hero-grid { display: grid; grid-template-columns: 1.7fr 0.9fr; gap: 48px; align-items: center; position: relative; z-index: 2; }
-    h1 { font-size: clamp(36px, 5vw, 68px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 20px; }
+    .h1-wrap { min-height: 143px; display: flex; align-items: center; margin-bottom: 20px; }
+    h1 { font-size: clamp(19px, 5.2vw, 48px); font-weight: 700; font-style: italic; letter-spacing: -0.02em; line-height: 1.08; margin: 0; white-space: nowrap; }
     .lead { font-size: 20px; color: var(--muted); margin: 0 0 18px; max-width: 620px; }
     .explorer-link {
       display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px;
@@ -219,22 +192,28 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     .cred-carousel:hover .cred-track { animation-play-state: paused; }
     .metrics {
       margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--hairline);
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; position: relative; z-index: 2;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; position: relative; z-index: 2;
     }
     .metric-val { font-size: 40px; font-weight: 300; line-height: 1; }
     .marquee-wrap {
       margin-top: 56px; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
       background: var(--surface); padding: 14px 0; overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
     }
     .marquee-track { display: flex; width: max-content; animation: marquee 34s linear infinite; }
     .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     .marquee-item { padding: 0 28px; font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 
+    .facts-grid {
+      margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--hairline);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; font-size: 13px;
+    }
     .section { padding: 88px 0; border-top: 1px solid var(--hairline); }
     .section h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 300; letter-spacing: -0.02em; margin: 0 0 12px; }
     .eyebrow { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 8px; }
-    .tabs-underline { display: flex; gap: 24px; border-bottom: 1px solid var(--hairline); margin-bottom: 28px; overflow-x: auto; }
+    .tabs-underline { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--hairline); margin-bottom: 28px; }
     .tab-u {
       background: none; border: none; padding: 12px 0; font-size: 14px; font-weight: 500;
       color: var(--subtle); cursor: pointer; position: relative; white-space: nowrap;
@@ -276,14 +255,27 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       position: fixed; inset: 72px 0 0; background: var(--bg); z-index: 45; padding: 24px;
       display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto;
     }
+    @media (max-width: 1023px) {
+      .nav-links { gap: 16px; }
+      .nav-btn { font-size: 14px; }
+      .hero-grid { gap: 32px; }
+      .facts-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 767px) {
       .desktop-only { display: none !important; }
       .mobile-only { display: inline-flex; }
       .hero-grid, .cards-2 { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .h1-wrap { min-height: auto; }
+      .lead { font-size: 17px; }
+      .metrics { grid-template-columns: 1fr; gap: 24px; }
+      .facts-grid { grid-template-columns: 1fr; }
+      .section { padding: 64px 0; }
+    }
+    @media (max-width: 479px) {
+      .container { padding: 0 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .mesh-1, .mesh-2, .mesh-3, .marquee-track, .cred-track { animation: none !important; }
+      .marquee-track, .cred-track { animation: none !important; }
       * { transition: none !important; }
     }
   </style>
@@ -291,28 +283,28 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 <body>
   <header id="site-header">
     <div class="container header-inner">
-      <a href="#stage" onclick="switchTab('stage'); return false;" class="brand">
+      <a href="#home" onclick="goHome(); return false;" class="brand">
         <span class="monogram">MM</span>
         <span>Marion Moun</span>
       </a>
 
       <nav class="nav-links desktop-only" aria-label="Navigation principale">
-        <button type="button" class="nav-btn" onclick="switchTab('stage'); window.scrollTo({top:0, behavior:'smooth'});">Home</button>
+        <button type="button" id="nav-home-btn" class="nav-btn active" onclick="goHome()">Home</button>
         <div class="nav-item" onmouseenter="hoverOpen('dd-stage')" onmouseleave="hoverClose('dd-stage')">
-          <button type="button" id="nav-stage-btn" class="nav-btn active" onclick="switchTab('stage')">
+          <button type="button" id="nav-stage-btn" class="nav-btn" onclick="switchTab('stage', true)">
             Profil &amp; Stage
           </button>
           <button type="button" class="nav-btn" aria-label="Sous-menu Profil &amp; Stage" onclick="toggleDd('dd-stage')">▾</button>
           <div id="dd-stage" class="dropdown hidden">
             <button type="button" onclick="navTo('stage', 'a-propos')">À propos &amp; Objectif<small>Stage à Brazzaville</small></button>
-            <button type="button" onclick="navTo('stage', 'competences')">Compétences<small>Commerce, Compta, Recouvrement</small></button>
+            <button type="button" onclick="navTo('stage', 'competences')">Compétences<small>Commerce, Comptabilité, Recouvrement</small></button>
             <button type="button" onclick="navTo('stage', 'exemples')">Exemples métiers<small>Balance âgée, relance, trésorerie</small></button>
             <button type="button" onclick="navTo('stage', 'parcours')">Parcours<small>ESGAE, ULC, Émeraude</small></button>
           </div>
         </div>
 
         <div class="nav-item" onmouseenter="hoverOpen('dd-digital')" onmouseleave="hoverClose('dd-digital')">
-          <button type="button" id="nav-digital-btn" class="nav-btn" onclick="switchTab('digital')">
+          <button type="button" id="nav-digital-btn" class="nav-btn" onclick="switchTab('digital', true)">
             Digital Web
           </button>
           <button type="button" class="nav-btn" aria-label="Sous-menu Digital Web" onclick="toggleDd('dd-digital')">▾</button>
@@ -338,7 +330,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 
   <div id="mobile-panel" class="mobile-panel hidden">
     <div style="display:flex; flex-direction:column; gap:16px; font-size:18px; font-weight:500;">
-      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="switchTab('stage'); toggleMobileMenu(); window.scrollTo({top:0, behavior:'smooth'});">Home</button>
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="goHome(); toggleMobileMenu();">Home</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','a-propos')">Profil &amp; Stage — À propos</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','competences')">Compétences métiers</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','exemples')">Exemples &amp; Parcours</button>
@@ -355,9 +347,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 
   <main>
     <section class="hero">
-      <div class="mesh-1" aria-hidden="true"></div>
-      <div class="mesh-2" aria-hidden="true"></div>
-      <div class="mesh-3" aria-hidden="true"></div>
+      <canvas id="stripe-hero-canvas" class="stripe-canvas" aria-hidden="true"></canvas>
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="container" style="position:relative; z-index:2; display:flex; justify-content:center; margin-bottom:26px;">
         <p style="font-size:13px; margin:0; text-align:center; display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;">
@@ -373,7 +363,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       </div>
       <div class="container hero-grid">
         <div>
-          <h1>Gérer, relancer, digitaliser</h1>
+          <div class="h1-wrap"><h1>Gérer, relancer, digitaliser</h1></div>
           <p class="lead">
             Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE Brazzaville après deux années de gestion à l’Université Libre du Congo, je recherche une opportunité pour mettre ma rigueur au service d’une équipe locale.
           </p>
@@ -391,7 +381,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
             <button type="button" class="btn btn-primary" onclick="openModal('modal-contact')">Me contacter <span class="chev">›</span></button>
-            <button type="button" class="explorer-link" onclick="switchTab('stage')">Explorer Profil &amp; Stage ›</button>
+            <button type="button" class="explorer-link" onclick="switchTab('stage', true)">Explorer Profil &amp; Stage ›</button>
             <button type="button" class="explorer-link" onclick="navTo('digital','projets')">Explorer Digital Web ›</button>
           </div>
         </div>
@@ -402,26 +392,39 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       </div>
 
       <div class="container metrics tnum">
-        <div><div class="metric-val" data-count="3">3</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Années de gestion</div><div style="font-size:13px; color:var(--muted);">ULC + LPAE ESGAE</div></div>
-        <div><div class="metric-val" data-count="10">10</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Étapes clés</div><div style="font-size:13px; color:var(--muted);">Bac D à DAS 1 &amp; 2</div></div>
-        <div><div class="metric-val" data-count="4">4</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Domaines ciblés</div><div style="font-size:13px; color:var(--muted);">Commerce, Compta, Recouvrement, Management</div></div>
-        <div><div class="metric-val" data-count="1">1</div><div style="font-size:14px; font-weight:500; margin-top:6px;">Masterclass Recouvrement</div><div style="font-size:13px; color:var(--muted);">Certifiée Mai 2026</div></div>
+        <div>
+          <div class="metric-val" data-count="3">3</div>
+          <div style="font-size:14px; font-weight:500; margin-top:6px;">Années de formation en gestion</div>
+          <div style="font-size:13px; color:var(--muted); margin-top:4px;">ULC Tronc Commun + LPAE ESGAE</div>
+        </div>
+        <div>
+          <div class="metric-val" data-count="4">4</div>
+          <div style="font-size:14px; font-weight:500; margin-top:6px;">Domaines visés</div>
+          <div style="font-size:13px; color:var(--muted); margin-top:4px;">Commerce, Comptabilité, Recouvrement, Management</div>
+        </div>
+        <div>
+          <div class="metric-val">Anglais</div>
+          <div style="font-size:14px; font-weight:500; margin-top:6px;">Intermédiaire</div>
+          <div style="font-size:13px; color:var(--muted); margin-top:4px;">Formation BYU-Pathway</div>
+        </div>
       </div>
 
-      <div class="marquee-wrap">
-        <div class="marquee-track">
-          <span class="marquee-item">Comptabilité OHADA révisée</span>
-          <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
-          <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
-          <span class="marquee-item">Google Sheets &amp; Apps Script</span>
-          <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
-          <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
-          <span class="marquee-item">Comptabilité OHADA révisée</span>
-          <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
-          <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
-          <span class="marquee-item">Google Sheets &amp; Apps Script</span>
-          <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
-          <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
+      <div class="container" style="position:relative; z-index:2;">
+        <div class="marquee-wrap">
+          <div class="marquee-track">
+            <span class="marquee-item">Comptabilité OHADA révisée</span>
+            <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
+            <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
+            <span class="marquee-item">Google Sheets &amp; Apps Script</span>
+            <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
+            <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
+            <span class="marquee-item">Comptabilité OHADA révisée</span>
+            <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
+            <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
+            <span class="marquee-item">Google Sheets &amp; Apps Script</span>
+            <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
+            <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
+          </div>
         </div>
       </div>
     </section>
@@ -430,10 +433,39 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     <div id="tab-stage" class="container">
       <section id="a-propos" class="section" style="border-top:none;">
         <div class="eyebrow">Profil &amp; Objectif</div>
-        <h2>Un stagiaire opérationnel dès la première semaine.</h2>
-        <p style="color:var(--muted); max-width:740px;">
-          Diplômé en Administration des Entreprises (LPAE) à l'ESGAE après deux ans à l'ULC, je recherche un stage en commerce, comptabilité, recouvrement ou management à Brazzaville. J'ai travaillé sur les DAS 1 &amp; 2 chez Émeraude et suivi la Masterclass Recouvrement de mai 2026.
-        </p>
+        <h2>Utile dès la première semaine.</h2>
+        <div style="color:var(--muted); max-width:740px; display:grid; gap:14px;">
+          <p style="margin:0;">
+            Après deux ans de tronc commun en gestion à l’Université Libre du Congo, j’ai obtenu ma Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE, à Brazzaville.
+          </p>
+          <p style="margin:0;">
+            Je cherche un stage de 3 à 6 mois en <strong style="color:var(--ink); font-weight:500;">commerce</strong>, <strong style="color:var(--ink); font-weight:500;">comptabilité</strong>, <strong style="color:var(--ink); font-weight:500;">recouvrement</strong> ou <strong style="color:var(--ink); font-weight:500;">management</strong>, auprès d’une entreprise locale. Un stage en gestion, pas en informatique.
+          </p>
+          <p style="margin:0;">
+            J’ai déjà touché au concret : j’ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) dans un cabinet d’expertise comptable, et suivi en mai 2026 une Masterclass sur le recouvrement de créances et la gestion des impayés.
+          </p>
+          <p style="margin:0;">
+            Je me forme aussi en autonomie aux outils numériques et à l’IA, pour gagner du temps sur les tâches répétitives de gestion. Je travaille en français et en anglais.
+          </p>
+        </div>
+        <div class="facts-grid">
+          <div>
+            <div style="color:var(--subtle);">Diplôme</div>
+            <div style="font-weight:500; color:var(--ink); margin-top:4px;">LPAE (ESGAE)</div>
+          </div>
+          <div>
+            <div style="color:var(--subtle);">Anglais</div>
+            <div style="font-weight:500; color:var(--ink); margin-top:4px;">Intermédiaire, formation BYU-Pathway</div>
+          </div>
+          <div>
+            <div style="color:var(--subtle);">Mobilité</div>
+            <div style="font-weight:500; color:var(--ink); margin-top:4px;">Permis B (en cours d'obtention)</div>
+          </div>
+          <div>
+            <div style="color:var(--subtle);">Disponibilité</div>
+            <div style="font-weight:500; color:var(--ink); margin-top:4px;">Immédiate</div>
+          </div>
+        </div>
       </section>
 
       <section id="competences" class="section">
@@ -591,23 +623,48 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
   </div>
 
   <script>
-    function switchTab(tab) {
-      var st = document.getElementById('tab-stage');
-      var dg = document.getElementById('tab-digital');
+    var currentTab = 'stage';
+    var navScrollLockUntil = 0;
+    function setActiveNav(which) {
+      var bh = document.getElementById('nav-home-btn');
       var bs = document.getElementById('nav-stage-btn');
       var bd = document.getElementById('nav-digital-btn');
+      if (bh) bh.classList.toggle('active', which === 'home');
+      if (bs) bs.classList.toggle('active', which === 'stage');
+      if (bd) bd.classList.toggle('active', which === 'digital');
+    }
+    function goHome() {
+      navScrollLockUntil = Date.now() + 700;
+      currentTab = 'stage';
+      document.getElementById('tab-digital').classList.add('hidden');
+      document.getElementById('tab-stage').classList.remove('hidden');
+      setActiveNav('home');
+      document.getElementById('dd-stage').classList.add('hidden');
+      document.getElementById('dd-digital').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function switchTab(tab, shouldScroll, activeNavOverride) {
+      currentTab = tab;
+      var st = document.getElementById('tab-stage');
+      var dg = document.getElementById('tab-digital');
       if (tab === 'digital') {
         st.classList.add('hidden'); dg.classList.remove('hidden');
-        if (bs) bs.classList.remove('active'); if (bd) bd.classList.add('active');
+        setActiveNav('digital');
       } else {
         dg.classList.add('hidden'); st.classList.remove('hidden');
-        if (bd) bd.classList.remove('active'); if (bs) bs.classList.add('active');
+        setActiveNav(activeNavOverride || 'stage');
       }
       document.getElementById('dd-stage').classList.add('hidden');
       document.getElementById('dd-digital').classList.add('hidden');
+      if (shouldScroll) {
+        navScrollLockUntil = Date.now() + 700;
+        var target = document.getElementById(tab === 'digital' ? 'tab-digital' : 'tab-stage');
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     function navTo(tab, id) {
-      switchTab(tab);
+      navScrollLockUntil = Date.now() + 700;
+      switchTab(tab, false, tab);
       var mp = document.getElementById('mobile-panel');
       if (!mp.classList.contains('hidden')) mp.classList.add('hidden');
       setTimeout(function() {
@@ -671,6 +728,13 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     window.addEventListener('scroll', function() {
       var h = document.getElementById('site-header');
       if (window.scrollY > 8) h.classList.add('scrolled'); else h.classList.remove('scrolled');
+      if (currentTab === 'stage' && Date.now() >= navScrollLockUntil) {
+        var st = document.getElementById('tab-stage');
+        if (st) {
+          var rect = st.getBoundingClientRect();
+          setActiveNav(rect.top <= 180 ? 'stage' : 'home');
+        }
+      }
     }, { passive: true });
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
@@ -687,9 +751,49 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       } catch (e) {}
       var p = new URLSearchParams(window.location.search);
       var h = window.location.hash.toLowerCase();
-      if (h === '#digital' || h === '#projets' || h === '#services') switchTab('digital');
+      if (h === '#digital' || h === '#projets' || h === '#services') switchTab('digital', true);
       else if (['#confidentialite', '#cgu', '#cookies', '#mentions-legales'].indexOf(h) !== -1) openLegal(h.slice(1));
-      else if (p.get('src') === 'cv' || h === '#stage') switchTab('stage');
+      else if (h === '#stage') switchTab('stage', true, 'stage');
+      else if (p.get('src') === 'cv') switchTab('stage', false, 'home');
+
+      (function initStripeHeroCanvas() {
+        var c = document.getElementById('stripe-hero-canvas');
+        if (!c || !c.getContext) return;
+        var ctx = c.getContext('2d', { alpha: false });
+        if (!ctx) return;
+        var w = 88, hh = 52; c.width = w; c.height = hh;
+        var img = ctx.createImageData(w, hh), d = img.data;
+        var cSky = [138,232,255], cLav = [188,152,255], cCor = [255,134,168], cPea = [255,214,136];
+        var t0 = performance.now(), rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function draw(ms) {
+          var t = (ms - t0) * 0.00055, idx = 0;
+          for (var y = 0; y < hh; y++) {
+            var ny = y / hh;
+            for (var x = 0; x < w; x++) {
+              var nx = x / w;
+              var w1 = Math.sin(nx * 3.1 + ny * 1.9 - t * 1.35 + Math.cos(ny * 2.4 + t * 0.8));
+              var w2 = Math.cos(nx * 2.3 - ny * 2.9 + t * 1.1 + Math.sin(nx * 2.1 - t * 0.7));
+              var w3 = Math.sin((nx + ny) * 3.4 + t * 1.6);
+              var u = 0.5 + 0.5 * w1, v = 0.5 + 0.5 * w2, dd = 0.5 + 0.5 * w3, cr = 0.14 * Math.max(0, w1 * w2);
+              var tR = cSky[0]*(1-u)+cLav[0]*u, tG = cSky[1]*(1-u)+cLav[1]*u, tB = cSky[2]*(1-u)+cLav[2]*u;
+              var bR = cCor[0]*(1-dd)+cPea[0]*dd, bG = cCor[1]*(1-dd)+cPea[1]*dd, bB = cCor[2]*(1-dd)+cPea[2]*dd;
+              d[idx++] = Math.min(255, tR*(1-v)+bR*v+28*cr);
+              d[idx++] = Math.min(255, tG*(1-v)+bG*v+28*cr);
+              d[idx++] = Math.min(255, tB*(1-v)+bB*v+28*cr);
+              d[idx++] = 255;
+            }
+          }
+          ctx.putImageData(img, 0, 0);
+        }
+        draw(t0);
+        if (!rm) {
+          var last = 0;
+          (function loop(now) {
+            if (now - last >= 32) { last = now; draw(now); }
+            requestAnimationFrame(loop);
+          })(t0);
+        }
+      })();
     });
   </script>
 </body>

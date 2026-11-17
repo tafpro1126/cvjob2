@@ -293,7 +293,7 @@ export const KEY_METRICS = [
   { value: '3', label: 'Années de formation en Gestion', detail: 'ULC Tronc Commun + Licence ESGAE' },
   { value: '100%', label: 'Disponibilité & Mobilité terrain', detail: 'Basé à Brazzaville · Permis B (en cours d’obtention)' },
   { value: '1', label: 'Masterclass Recouvrement certifiée', detail: 'Spécialisation créances & impayés' },
-  { value: '4', label: 'Piliers d’impact immédiat', detail: 'Commerce, Compta, Recouvrement, Web' }
+  { value: '4', label: 'Domaines visés', detail: 'Commerce, Comptabilité, Recouvrement, Management' }
 ];
 
 export const SAMPLE_INVOICES_DEMO = [

@@ -4,12 +4,12 @@ import { PERSONAL_INFO } from '../data/portfolioData.ts';
 import { ChevronDown, ChevronRight, Home, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: ActiveTab;
+  activeNav: 'home' | 'stage' | 'digital';
   onNavigate: (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => void;
   onOpenContact: () => void;
 }
 
-export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
+export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<'stage' | 'digital' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -85,16 +85,16 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
       ref={navRef}
       className={`sticky top-0 z-40 w-full site-header ${scrolled ? 'scrolled' : ''}`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-2 lg:gap-6">
         
         {/* Left: Monogram & Name */}
         <a
-          href="#stage"
+          href="#home"
           onClick={(e) => {
             e.preventDefault();
             handleSelectItem('stage', undefined, true);
           }}
-          className="inline-flex items-center gap-2.5 text-[16px] font-semibold text-[var(--ink)] whitespace-nowrap shrink-0 tracking-tight"
+          className="inline-flex items-center gap-2 lg:gap-2.5 text-[14px] lg:text-[16px] font-semibold text-[var(--ink)] whitespace-nowrap shrink-0 tracking-tight"
         >
           <span className="w-7 h-7 rounded-[6px] bg-[var(--ink)] text-[var(--bg)] text-[12px] font-semibold flex items-center justify-center">
             MM
@@ -103,18 +103,29 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
         </a>
 
         {/* Center: Home + Direct Tab Links + Chevron/Hover Intent Dropdowns (Desktop md+) */}
-        <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-8">
+        <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-3 lg:gap-7">
 
-          {/* Home link */}
+          {/* Home link with its own violet active underline */}
           <div className="relative py-2 flex items-center">
-            <button
-              type="button"
-              onClick={() => handleSelectItem('stage', undefined, true)}
-              className="inline-flex items-center gap-1.5 pb-1.5 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
-            >
-              <Home className="w-4 h-4" aria-hidden="true" />
-              <span>Home</span>
-            </button>
+            <div className="relative inline-flex items-center pb-1.5">
+              <button
+                type="button"
+                onClick={() => handleSelectItem('stage', undefined, true)}
+                className={`inline-flex items-center gap-1.5 text-[13.5px] lg:text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                  activeNav === 'home'
+                    ? 'text-[var(--ink)]'
+                    : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <Home className="w-3.5 h-3.5 lg:w-4 lg:h-4" aria-hidden="true" />
+                <span>Home</span>
+              </button>
+              <span
+                className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
+                  activeNav === 'home' ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
+            </div>
           </div>
 
           {/* Profil & Stage (Text clicks directly to tab; Hover delay or Chevron click opens dropdown) */}
@@ -123,12 +134,12 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
             onMouseEnter={() => handleMouseEnterNav('stage')}
             onMouseLeave={handleMouseLeaveNav}
           >
-            <div className="relative inline-flex items-center gap-1 pb-1.5">
+            <div className="relative inline-flex items-center gap-0.5 lg:gap-1 pb-1.5">
               <button
                 type="button"
                 onClick={() => handleSelectItem('stage')}
-                className={`text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
-                  activeTab === 'stage'
+                className={`text-[13.5px] lg:text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                  activeNav === 'stage'
                     ? 'text-[var(--ink)]'
                     : 'text-[var(--muted)] hover:text-[var(--ink)]'
                 }`}
@@ -145,7 +156,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
                   setOpenDropdown(openDropdown === 'stage' ? null : 'stage');
                 }}
                 className={`p-1 rounded-[4px] cursor-pointer transition-colors duration-150 ${
-                  activeTab === 'stage'
+                  activeNav === 'stage'
                     ? 'text-[var(--ink)] hover:bg-[var(--surface)]'
                     : 'text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface)]'
                 }`}
@@ -158,7 +169,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
               </button>
               <span
                 className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
-                  activeTab === 'stage' ? 'scale-x-100' : 'scale-x-0'
+                  activeNav === 'stage' ? 'scale-x-100' : 'scale-x-0'
                 }`}
               />
             </div>
@@ -190,7 +201,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
                   className="w-full text-left px-3 py-2.5 rounded-[6px] hover:bg-[var(--surface)] transition-colors cursor-pointer block"
                 >
                   <div className="text-[14px] font-medium text-[var(--ink)]">Compétences</div>
-                  <div className="text-[12px] text-[var(--muted)]">Commerce, Compta, Recouvrement</div>
+                  <div className="text-[12px] text-[var(--muted)]">Commerce, Comptabilité, Recouvrement</div>
                 </button>
                 <button
                   type="button"
@@ -210,12 +221,12 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
             onMouseEnter={() => handleMouseEnterNav('digital')}
             onMouseLeave={handleMouseLeaveNav}
           >
-            <div className="relative inline-flex items-center gap-1 pb-1.5">
+            <div className="relative inline-flex items-center gap-0.5 lg:gap-1 pb-1.5">
               <button
                 type="button"
                 onClick={() => handleSelectItem('digital')}
-                className={`text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
-                  activeTab === 'digital'
+                className={`text-[13.5px] lg:text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                  activeNav === 'digital'
                     ? 'text-[var(--ink)]'
                     : 'text-[var(--muted)] hover:text-[var(--ink)]'
                 }`}
@@ -232,7 +243,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
                   setOpenDropdown(openDropdown === 'digital' ? null : 'digital');
                 }}
                 className={`p-1 rounded-[4px] cursor-pointer transition-colors duration-150 ${
-                  activeTab === 'digital'
+                  activeNav === 'digital'
                     ? 'text-[var(--ink)] hover:bg-[var(--surface)]'
                     : 'text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface)]'
                 }`}
@@ -245,7 +256,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
               </button>
               <span
                 className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
-                  activeTab === 'digital' ? 'scale-x-100' : 'scale-x-0'
+                  activeNav === 'digital' ? 'scale-x-100' : 'scale-x-0'
                 }`}
               />
             </div>
@@ -284,7 +295,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
                 setOpenDropdown(null);
                 onOpenContact();
               }}
-              className="pb-1.5 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
+              className="pb-1.5 text-[13.5px] lg:text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
             >
               Contact
             </button>
@@ -293,22 +304,22 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
         </nav>
 
         {/* Right: Secondary "Mon CV" + Primary "Me contacter" (Desktop md+) */}
-        <div className="hidden md:flex items-center gap-3 shrink-0">
+        <div className="hidden md:flex items-center gap-1.5 lg:gap-3 shrink-0">
           <a
             href={PERSONAL_INFO.cvDownloadUrl}
             target="_blank"
             rel="noreferrer"
-            className="btn-secondary"
+            className="btn-secondary !h-[38px] lg:!h-[44px] !px-2.5 lg:!px-[18px] !text-[13px] lg:!text-[15px]"
           >
             Mon CV
           </a>
           <button
             type="button"
             onClick={onOpenContact}
-            className="btn-primary group"
+            className="btn-primary !h-[38px] lg:!h-[44px] !px-3 lg:!px-[20px] !text-[13px] lg:!text-[15px] group"
           >
             <span>Me contacter</span>
-            <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
+            <ChevronRight className="w-3.5 h-3.5 lg:w-4 lg:h-4 chevron-slide" aria-hidden="true" />
           </button>
         </div>
 

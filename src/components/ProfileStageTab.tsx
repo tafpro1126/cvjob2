@@ -72,36 +72,39 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 Profil &amp; Objectif
               </div>
               <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
-                Un stagiaire opérationnel dès la première semaine.
+                Utile dès la première semaine.
               </h2>
             </div>
 
             <div className="lg:col-span-8 space-y-6">
               <div className="space-y-4 text-[16px] sm:text-[17px] text-[var(--muted)] leading-[1.65]">
                 <p>
-                  Après deux années de tronc commun en gestion à l'Université Libre du Congo (ULC), j'ai obtenu ma Licence Professionnelle en Administration des Entreprises (LPAE) à l'ESGAE à Brazzaville.
+                  Après deux ans de tronc commun en gestion à l’Université Libre du Congo, j’ai obtenu ma Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE, à Brazzaville.
                 </p>
                 <p>
-                  Je recherche un stage en <strong className="font-medium text-[var(--ink)]">commerce</strong>, <strong className="font-medium text-[var(--ink)]">comptabilité</strong>, <strong className="font-medium text-[var(--ink)]">recouvrement</strong> ou <strong className="font-medium text-[var(--ink)]">management</strong> auprès d'une entreprise locale. Ce n'est pas un stage de développement informatique.
+                  Je cherche un stage de 3 à 6 mois en <strong className="font-medium text-[var(--ink)]">commerce</strong>, <strong className="font-medium text-[var(--ink)]">comptabilité</strong>, <strong className="font-medium text-[var(--ink)]">recouvrement</strong> ou <strong className="font-medium text-[var(--ink)]">management</strong>, auprès d’une entreprise locale. Un stage en gestion, pas en informatique.
                 </p>
                 <p>
-                  Sur le terrain, j'ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) au cabinet Émeraude, et suivi en mai 2026 la Masterclass dédiée au recouvrement de créances et à la gestion des impayés.
+                  J’ai déjà touché au concret : j’ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) dans un cabinet d’expertise comptable, et suivi en mai 2026 une Masterclass sur le recouvrement de créances et la gestion des impayés.
+                </p>
+                <p>
+                  Je me forme aussi en autonomie aux outils numériques et à l’IA, pour gagner du temps sur les tâches répétitives de gestion. Je travaille en français et en anglais.
                 </p>
               </div>
 
               {/* Clean tabular facts without boxed cards */}
-              <div className="pt-6 border-t border-[var(--hairline)] grid grid-cols-2 sm:grid-cols-4 gap-6 text-[13px]">
+              <div className="pt-6 border-t border-[var(--hairline)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-[13px]">
                 <div>
                   <div className="text-[var(--subtle)]">Diplôme</div>
                   <div className="font-medium text-[var(--ink)] mt-1">LPAE (ESGAE)</div>
                 </div>
                 <div>
-                  <div className="text-[var(--subtle)]">Localisation</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Brazzaville, Congo</div>
+                  <div className="text-[var(--subtle)]">Anglais</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Intermédiaire, formation BYU-Pathway</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Mobilité</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (en cours d'obtention)</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (en cours d&apos;obtention)</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Disponibilité</div>
@@ -197,7 +200,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
             </div>
 
             {/* Clean borderless text tabs with animated underline */}
-            <div className="flex flex-wrap items-center gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Exemples métiers">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Exemples métiers">
               {[
                 { id: 'recouvrement', label: 'Recouvrement' },
                 { id: 'commerce', label: 'Commerce' },
@@ -234,7 +237,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
         {/* Sub-view 1: Recouvrement */}
         {activeProof === 'recouvrement' && (
           <div className="space-y-10">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-6 border-y border-[var(--hairline)]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 py-6 border-y border-[var(--hairline)]">
               <div>
                 <div className="text-[13px] text-[var(--subtle)]">Total créances émises</div>
                 <div className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] mt-1 tnum">
@@ -285,7 +288,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-[13px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
                   <div className="py-2 border-b border-[var(--hairline)] flex justify-between">
                     <span className="text-[var(--muted)]">0 – 30 jours</span>
                     <span className="font-medium text-[var(--ink)] tnum">{formatFCFA(agingReport.buckets.current.amount)}</span>
@@ -418,9 +421,9 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 { label: '3. Rendez-vous & devis remis', count: funnelData.pitched, rate: '27%' },
                 { label: '4. Contrats signés', count: `${funnelData.deals} ventes`, rate: `${funnelData.overallConversionRate}%` },
               ].map((row, idx) => (
-                <div key={idx} className="py-4 flex items-center justify-between text-[15px]">
+                <div key={idx} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[15px]">
                   <span className="text-[var(--ink)]">{row.label}</span>
-                  <div className="flex items-center gap-8 tnum">
+                  <div className="flex items-center justify-between sm:justify-end gap-8 tnum">
                     <span className="font-medium text-[var(--ink)]">{row.count}</span>
                     <span className="text-[var(--muted)] w-16 text-right">{row.rate}</span>
                   </div>
@@ -428,9 +431,9 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
               ))}
             </div>
 
-            <div className="flex items-baseline justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
               <span className="text-[14px] text-[var(--muted)]">Chiffre d'affaires prévisionnel simulé</span>
-              <span className="text-[28px] font-light text-[var(--ink)] tnum">
+              <span className="text-[24px] sm:text-[28px] font-light text-[var(--ink)] tnum">
                 {formatFCFA(funnelData.estimatedRevenue)}
               </span>
             </div>
@@ -454,7 +457,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
             </div>
 
             <div className="overflow-x-auto border-y border-[var(--hairline)]">
-              <table className="w-full text-left text-[14px]">
+              <table className="w-full min-w-[520px] text-left text-[14px]">
                 <thead>
                   <tr className="border-b border-[var(--hairline)] text-[var(--subtle)]">
                     <th className="py-3 px-2 font-medium">Période</th>
@@ -539,7 +542,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
               </h2>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Filtrer le parcours">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 border-b border-[var(--hairline)]" role="tablist" aria-label="Filtrer le parcours">
               {[
                 { id: 'all', label: 'Tout' },
                 { id: 'education', label: 'Formation' },

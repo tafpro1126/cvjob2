@@ -21,36 +21,36 @@ export function CookieBanner({
     <aside
       role="region"
       aria-label="Bannière de gestion des cookies"
-      className="fixed bottom-4 left-4 right-4 z-50 max-w-4xl mx-auto rounded-[8px] bg-[var(--surface-elevated)] shadow-[0_18px_40px_rgba(10,37,64,0.16)] border border-[var(--hairline)] p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+      className="fixed bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-50 max-w-4xl mx-auto rounded-[8px] bg-[var(--surface-elevated)] shadow-[0_18px_40px_rgba(10,37,64,0.16)] border border-[var(--hairline)] p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4"
     >
       <div className="space-y-1 max-w-xl">
-        <p className="text-[14px] font-medium text-[var(--ink)]">
+        <p className="text-[13px] sm:text-[14px] font-medium text-[var(--ink)]">
           Respect de votre vie privée
         </p>
-        <p className="text-[13px] text-[var(--muted)] leading-relaxed">
-          Ce portfolio utilise uniquement un stockage essentiel pour mémoriser vos préférences de thème et de consentement. La mesure d'audience reste désactivée sans votre accord.
+        <p className="text-[12px] sm:text-[13px] text-[var(--muted)] leading-snug sm:leading-relaxed">
+          Stockage essentiel pour vos préférences de thème et consentement. La mesure d&apos;audience reste désactivée sans votre accord.
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+      <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
           type="button"
           onClick={onOpenCustomize}
-          className="btn-secondary !h-[44px] !px-4 !text-[14px]"
+          className="btn-secondary !h-[38px] sm:!h-[42px] !px-3 sm:!px-4 !text-[12.5px] sm:!text-[13.5px]"
         >
           Personnaliser
         </button>
         <button
           type="button"
           onClick={onRejectAll}
-          className="btn-secondary !h-[44px] !px-4 !text-[14px]"
+          className="btn-secondary !h-[38px] sm:!h-[42px] !px-3 sm:!px-4 !text-[12.5px] sm:!text-[13.5px]"
         >
           Tout refuser
         </button>
         <button
           type="button"
           onClick={onAcceptAll}
-          className="btn-primary !h-[44px] !px-4 !text-[14px]"
+          className="btn-primary !h-[38px] sm:!h-[42px] !px-3.5 sm:!px-4 !text-[12.5px] sm:!text-[13.5px]"
         >
           Tout accepter
         </button>
