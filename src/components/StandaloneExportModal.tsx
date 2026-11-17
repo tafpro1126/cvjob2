@@ -160,27 +160,63 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
     .dropdown small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
     @keyframes ddEnter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-    .hero { position: relative; overflow: hidden; padding: 72px 0 64px; }
-    .ribbon {
-      position: absolute; top: -80px; right: -80px; width: 640px; height: 600px; border-radius: 40%;
-      background: linear-gradient(135deg, #4F46E5, #7C3AED 30%, #EC4899 58%, #F97316 80%, #38BDF8);
-      filter: blur(56px); opacity: 0.38; animation: ribbonMove 22s linear infinite; pointer-events: none;
+    .hero { position: relative; overflow: hidden; padding: 36px 0 56px; }
+    .mesh-1, .mesh-2, .mesh-3 {
+      position: absolute; border-radius: 999px; pointer-events: none; will-change: transform, opacity;
     }
+    .mesh-1 {
+      top: -110px; right: -90px; width: 620px; height: 560px; filter: blur(56px);
+      background: radial-gradient(circle at 35% 35%, #4F46E5 0%, #7C3AED 44%, #EC4899 82%, transparent 100%);
+      animation: meshFlow1 10s ease-in-out infinite;
+    }
+    .mesh-2 {
+      top: 40px; right: 8%; width: 500px; height: 460px; filter: blur(58px);
+      background: radial-gradient(circle at 60% 45%, #F97316 0%, #FB7185 48%, #8B5CF6 88%, transparent 100%);
+      animation: meshFlow2 13s ease-in-out infinite;
+    }
+    .mesh-3 {
+      top: -40px; right: 24%; width: 440px; height: 420px; filter: blur(52px);
+      background: radial-gradient(circle at 50% 50%, #38BDF8 0%, #60A5FA 42%, #6366F1 84%, transparent 100%);
+      animation: meshFlow3 9.5s ease-in-out infinite;
+    }
+    .dark .mesh-1, .dark .mesh-2, .dark .mesh-3 { filter: blur(66px) brightness(0.68); }
     .hero-scrim {
       position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(90deg, var(--bg) 0%, rgba(255,255,255,0.88) 55%, transparent 100%);
+      background: linear-gradient(90deg, var(--bg) 0%, rgba(255,255,255,0.72) 42%, transparent 100%);
     }
     .dark .hero-scrim {
-      background: linear-gradient(90deg, var(--bg) 0%, rgba(7,11,20,0.88) 55%, transparent 100%);
+      background: linear-gradient(90deg, var(--bg) 0%, rgba(7,11,20,0.75) 42%, transparent 100%);
     }
-    @keyframes ribbonMove {
-      0% { transform: translate3d(0,0,0) rotate(-12deg); }
-      50% { transform: translate3d(-24px,16px,0) rotate(-9deg); }
-      100% { transform: translate3d(0,0,0) rotate(-12deg); }
+    @keyframes meshFlow1 {
+      0%, 100% { transform: translate3d(0,0,0) rotate(-14deg) scale(1); opacity: 0.48; }
+      33% { transform: translate3d(-78px,42px,0) rotate(-4deg) scale(1.1); opacity: 0.62; }
+      66% { transform: translate3d(44px,76px,0) rotate(-20deg) scale(0.95); opacity: 0.42; }
+    }
+    @keyframes meshFlow2 {
+      0%, 100% { transform: translate3d(0,0,0) rotate(10deg) scale(0.96); opacity: 0.42; }
+      50% { transform: translate3d(-96px,-54px,0) rotate(24deg) scale(1.14); opacity: 0.58; }
+    }
+    @keyframes meshFlow3 {
+      0%, 100% { transform: translate3d(0,0,0) rotate(0deg) scale(1.04); opacity: 0.36; }
+      40% { transform: translate3d(68px,-46px,0) rotate(14deg) scale(0.92); opacity: 0.52; }
+      75% { transform: translate3d(-52px,56px,0) rotate(-10deg) scale(1.1); opacity: 0.44; }
     }
     .hero-grid { display: grid; grid-template-columns: 1.7fr 0.9fr; gap: 48px; align-items: center; position: relative; z-index: 2; }
     h1 { font-size: clamp(36px, 5vw, 68px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 20px; }
     .lead { font-size: 20px; color: var(--muted); margin: 0 0 18px; max-width: 620px; }
+    .explorer-link {
+      display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px;
+      background: none; border: none; font-size: 15px; font-weight: 500;
+      color: var(--ink); cursor: pointer; transition: color 150ms ease;
+    }
+    .explorer-link:hover { color: var(--accent); text-decoration: underline; }
+    .cred-carousel {
+      max-width: 672px; margin: 0 auto 20px; overflow: hidden; padding: 8px 0;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+    }
+    .cred-track { display: flex; width: max-content; animation: marquee 22s linear infinite; }
+    .cred-carousel:hover .cred-track { animation-play-state: paused; }
     .metrics {
       margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--hairline);
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; position: relative; z-index: 2;
@@ -247,7 +283,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       .metrics { grid-template-columns: repeat(2, 1fr); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .ribbon, .marquee-track { animation: none !important; }
+      .mesh-1, .mesh-2, .mesh-3, .marquee-track, .cred-track { animation: none !important; }
       * { transition: none !important; }
     }
   </style>
@@ -261,10 +297,12 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
       </a>
 
       <nav class="nav-links desktop-only" aria-label="Navigation principale">
-        <div class="nav-item">
-          <button type="button" id="nav-stage-btn" class="nav-btn active" onclick="toggleDd('dd-stage')">
-            Profil &amp; Stage ▾
+        <button type="button" class="nav-btn" onclick="switchTab('stage'); window.scrollTo({top:0, behavior:'smooth'});">Home</button>
+        <div class="nav-item" onmouseenter="hoverOpen('dd-stage')" onmouseleave="hoverClose('dd-stage')">
+          <button type="button" id="nav-stage-btn" class="nav-btn active" onclick="switchTab('stage')">
+            Profil &amp; Stage
           </button>
+          <button type="button" class="nav-btn" aria-label="Sous-menu Profil &amp; Stage" onclick="toggleDd('dd-stage')">▾</button>
           <div id="dd-stage" class="dropdown hidden">
             <button type="button" onclick="navTo('stage', 'a-propos')">À propos &amp; Objectif<small>Stage à Brazzaville</small></button>
             <button type="button" onclick="navTo('stage', 'competences')">Compétences<small>Commerce, Compta, Recouvrement</small></button>
@@ -273,10 +311,11 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
           </div>
         </div>
 
-        <div class="nav-item">
-          <button type="button" id="nav-digital-btn" class="nav-btn" onclick="toggleDd('dd-digital')">
-            Digital Web ▾
+        <div class="nav-item" onmouseenter="hoverOpen('dd-digital')" onmouseleave="hoverClose('dd-digital')">
+          <button type="button" id="nav-digital-btn" class="nav-btn" onclick="switchTab('digital')">
+            Digital Web
           </button>
+          <button type="button" class="nav-btn" aria-label="Sous-menu Digital Web" onclick="toggleDd('dd-digital')">▾</button>
           <div id="dd-digital" class="dropdown hidden">
             <button type="button" onclick="navTo('digital', 'projets')">Projets<small>Cas concrets &amp; outils PME</small></button>
             <button type="button" onclick="navTo('digital', 'services')">Services<small>Sites, tableaux de bord, devis</small></button>
@@ -299,6 +338,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 
   <div id="mobile-panel" class="mobile-panel hidden">
     <div style="display:flex; flex-direction:column; gap:16px; font-size:18px; font-weight:500;">
+      <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="switchTab('stage'); toggleMobileMenu(); window.scrollTo({top:0, behavior:'smooth'});">Home</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','a-propos')">Profil &amp; Stage — À propos</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','competences')">Compétences métiers</button>
       <button type="button" style="text-align:left; background:none; border:none; color:var(--ink); padding:8px 0;" onclick="navTo('stage','exemples')">Exemples &amp; Parcours</button>
@@ -315,28 +355,49 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
 
   <main>
     <section class="hero">
-      <div class="ribbon" aria-hidden="true"></div>
+      <div class="mesh-1" aria-hidden="true"></div>
+      <div class="mesh-2" aria-hidden="true"></div>
+      <div class="mesh-3" aria-hidden="true"></div>
       <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="container" style="position:relative; z-index:2; display:flex; justify-content:center; margin-bottom:26px;">
+        <p style="font-size:13px; margin:0; text-align:center; display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;">
+          <span style="color:#0071E3; font-weight:500;">Stage recherché · 3 à 6 mois</span>
+          <span style="color:var(--subtle);">·</span>
+          <span style="color:var(--muted); display:inline-flex; align-items:center; gap:5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            Brazzaville, Congo
+          </span>
+          <span style="color:var(--subtle);">·</span>
+          <span style="color:var(--muted);">Permis B (en cours d'obtention)</span>
+        </p>
+      </div>
       <div class="container hero-grid">
         <div>
-          <p class="tnum" style="font-size:13px; color:var(--muted); margin:0 0 20px;">
-            Stage recherché à Brazzaville · Heures de pratique ([À COMPLÉTER]) : <strong id="live-ticker">1 840,00 h</strong>
-          </p>
-          <h1>Gestion d'entreprise, recouvrement et rigueur numérique.</h1>
+          <h1>Gérer, relancer, digitaliser</h1>
           <p class="lead">
-            Je suis Marion Moun, diplômé LPAE de l'ESGAE à Brazzaville. Je recherche un stage en commerce, comptabilité, recouvrement ou management — et je maîtrise aussi les outils web pour automatiser le quotidien.
+            Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE Brazzaville après deux années de gestion à l’Université Libre du Congo, je recherche une opportunité pour mettre ma rigueur au service d’une équipe locale.
           </p>
-          <p style="font-size:14px; color:var(--subtle); margin-bottom:24px;">
-            Projet DAS 1 &amp; 2 chez Émeraude avec M. Yves Miatoko · Masterclass Recouvrement (Mai 2026) · Permis B.
-          </p>
-          <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div class="cred-carousel" aria-label="Références clés">
+            <div class="cred-track">
+              <span class="marquee-item">Projet DAS 1 &amp; 2 chez Émeraude</span>
+              <span class="marquee-item">Masterclass Recouvrement (Mai 2026)</span>
+              <span class="marquee-item">Permis B (en cours d'obtention)</span>
+              <span class="marquee-item">Diplômé LPAE · ESGAE Brazzaville</span>
+              <span class="marquee-item">Projet DAS 1 &amp; 2 chez Émeraude</span>
+              <span class="marquee-item">Masterclass Recouvrement (Mai 2026)</span>
+              <span class="marquee-item">Permis B (en cours d'obtention)</span>
+              <span class="marquee-item">Diplômé LPAE · ESGAE Brazzaville</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
             <button type="button" class="btn btn-primary" onclick="openModal('modal-contact')">Me contacter <span class="chev">›</span></button>
-            <a href="${PERSONAL_INFO.cvDownloadUrl}" target="_blank" rel="noreferrer" class="btn btn-secondary">Mon CV</a>
+            <button type="button" class="explorer-link" onclick="switchTab('stage')">Explorer Profil &amp; Stage ›</button>
+            <button type="button" class="explorer-link" onclick="navTo('digital','projets')">Explorer Digital Web ›</button>
           </div>
         </div>
-        <div style="background:var(--surface); border-radius:8px; padding:32px; text-align:center; box-shadow:var(--shadow);">
-          <div style="font-weight:500;">[PHOTO]</div>
-          <p style="font-size:13px; color:var(--muted); margin:8px 0 0;">Remplacer par mon portrait recadré</p>
+        <div style="justify-self:center; width:100%; max-width:176px; background:var(--surface); border-radius:8px; padding:24px 16px; text-align:center; box-shadow:var(--shadow);">
+          <div style="font-weight:500; font-size:13px;">[PHOTO]</div>
+          <p style="font-size:11px; color:var(--muted); margin:6px 0 0;">Photo d'identité</p>
         </div>
       </div>
 
@@ -354,13 +415,13 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
           <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
           <span class="marquee-item">Google Sheets &amp; Apps Script</span>
           <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
-          <span class="marquee-item">Permis B · Brazzaville</span>
+          <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
           <span class="marquee-item">Comptabilité OHADA révisée</span>
           <span class="marquee-item">Déclarations DAS 1 &amp; 2</span>
           <span class="marquee-item">Balance âgée &amp; Recouvrement</span>
           <span class="marquee-item">Google Sheets &amp; Apps Script</span>
           <span class="marquee-item">Facebook Ads &amp; WhatsApp Business</span>
-          <span class="marquee-item">Permis B · Brazzaville</span>
+          <span class="marquee-item">Permis B (en cours d'obtention) · Brazzaville</span>
         </div>
       </div>
     </section>
@@ -371,7 +432,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
         <div class="eyebrow">Profil &amp; Objectif</div>
         <h2>Un stagiaire opérationnel dès la première semaine.</h2>
         <p style="color:var(--muted); max-width:740px;">
-          Diplômé en Administration des Entreprises (LPAE) à l'ESGAE après deux ans à l'ULC, je recherche un stage en commerce, comptabilité, recouvrement ou management à Brazzaville. J'ai travaillé sur les DAS 1 &amp; 2 chez Émeraude avec M. Yves Miatoko et suivi la Masterclass Recouvrement de mai 2026.
+          Diplômé en Administration des Entreprises (LPAE) à l'ESGAE après deux ans à l'ULC, je recherche un stage en commerce, comptabilité, recouvrement ou management à Brazzaville. J'ai travaillé sur les DAS 1 &amp; 2 chez Émeraude et suivi la Masterclass Recouvrement de mai 2026.
         </p>
       </section>
 
@@ -417,7 +478,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
         <ul style="list-style:none; padding:0; margin:24px 0 0;">
           <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">2025 – 2026</strong> · LPAE — ESGAE Brazzaville</li>
           <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">Mai 2026</strong> · Masterclass Recouvrement de créances &amp; Gestion des impayés</li>
-          <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">2025 – 2026</strong> · Projet DAS 1 &amp; 2 — Cabinet Émeraude (M. Yves Miatoko)</li>
+          <li style="padding:14px 0; border-bottom:1px solid var(--hairline);"><strong class="tnum">2025 – 2026</strong> · Projet DAS 1 &amp; 2 — Cabinet Émeraude</li>
           <li style="padding:14px 0;"><strong class="tnum">2023 – 2025</strong> · 1ère et 2ème année Gestion Tronc Commun — ULC Brazzaville</li>
         </ul>
       </section>
@@ -462,7 +523,7 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
   <footer>
     <div class="container" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; align-items:center;">
       <div>
-        <strong style="color:var(--ink);">© 2026 Marion Moun</strong> · Mansimou, Brazzaville, Congo
+        <strong style="color:var(--ink);">© 2026 Marion Moun</strong> · Brazzaville, Congo
       </div>
       <div class="footer-links">
         <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="openLegal('mentions-legales')">Mentions légales</button>
@@ -554,7 +615,23 @@ export function StandaloneExportModal({ isOpen, onClose }: StandaloneExportModal
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 30);
     }
+    var ddOpenTimer = null, ddCloseTimer = null;
+    function hoverOpen(id) {
+      clearTimeout(ddOpenTimer); clearTimeout(ddCloseTimer);
+      ddOpenTimer = setTimeout(function() {
+        var other = id === 'dd-stage' ? 'dd-digital' : 'dd-stage';
+        document.getElementById(other).classList.add('hidden');
+        document.getElementById(id).classList.remove('hidden');
+      }, 150);
+    }
+    function hoverClose(id) {
+      clearTimeout(ddOpenTimer); clearTimeout(ddCloseTimer);
+      ddCloseTimer = setTimeout(function() {
+        document.getElementById(id).classList.add('hidden');
+      }, 180);
+    }
     function toggleDd(id) {
+      clearTimeout(ddOpenTimer); clearTimeout(ddCloseTimer);
       var other = id === 'dd-stage' ? 'dd-digital' : 'dd-stage';
       document.getElementById(other).classList.add('hidden');
       document.getElementById(id).classList.toggle('hidden');

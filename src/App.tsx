@@ -83,13 +83,18 @@ export default function App() {
     });
   };
 
-  const handleNavigate = (tab: ActiveTab, sectionId?: string) => {
+  const handleNavigate = (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => {
     setActiveTab(tab);
     const targetHash = sectionId ? `#${sectionId}` : `#${tab}`;
     try {
       window.history.replaceState(null, '', targetHash);
     } catch {
       window.location.hash = targetHash;
+    }
+
+    if (scrollToTop) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     window.setTimeout(() => {
@@ -180,7 +185,7 @@ export default function App() {
                 {PERSONAL_INFO.name}
               </div>
               <div>
-                Diplômé LPAE (ESGAE) · Mansimou, arr8 Madibou, Brazzaville, Congo
+                Diplômé LPAE (ESGAE) · Brazzaville, Congo
               </div>
               <div className="tnum text-[var(--subtle)]">
                 {PERSONAL_INFO.phone1} · {PERSONAL_INFO.email}
@@ -226,7 +231,7 @@ export default function App() {
                 href="#mentions-legales"
                 onClick={(e) => {
                   e.preventDefault();
-                  openLegalDoc('mentions-legales');
+                  openLegalDoc('mentions');
                 }}
                 className="hover:text-[var(--ink)] transition-colors"
               >

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, MapPin } from 'lucide-react';
 import { AnimatedCounter, Reveal } from './MotionPrimitives.tsx';
 import { ActiveTab } from '../types.ts';
 
@@ -8,6 +7,13 @@ interface HeroProps {
   onOpenContact: () => void;
   onNavigate: (tab: ActiveTab, sectionId?: string) => void;
 }
+
+const CREDENTIAL_CAROUSEL = [
+  'Projet DAS 1 & 2 chez Émeraude',
+  'Masterclass Recouvrement (Mai 2026)',
+  'Permis B (en cours d’obtention)',
+  'Diplômé LPAE · ESGAE Brazzaville',
+];
 
 const TOOLS_MARQUEE = [
   'Comptabilité OHADA révisée',
@@ -19,80 +25,89 @@ const TOOLS_MARQUEE = [
   'Prospection B2B locale',
   'Facebook Ads & Meta Pixel',
   'WordPress & WooCommerce',
-  'Permis B · Brazzaville',
+  'Permis B (en cours d’obtention) · Brazzaville',
 ];
 
 export function Hero({ onOpenContact, onNavigate }: HeroProps) {
-  // Subtle living counter inspired by Stripe's live GDP ticker (with explicit [À COMPLÉTER] honesty)
-  const [liveCounter, setLiveCounter] = useState<number>(1840.0);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-    const timer = window.setInterval(() => {
-      setLiveCounter((prev) => Number((prev + 0.01).toFixed(2)));
-    }, 1800);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const formattedLiveCounter = new Intl.NumberFormat('fr-FR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(liveCounter);
-
   return (
-    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28">
+    <section className="relative overflow-hidden pt-7 pb-16 sm:pt-10 sm:pb-24">
       
-      {/* Animated diagonal gradient ribbon ONLY on the right side behind hero content */}
+      {/* Living multi-layer animated gradient mesh behind hero content */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden z-0"
       >
         <div
-          className="hero-ribbon absolute -top-24 -right-24 w-[540px] h-[540px] sm:w-[760px] sm:h-[680px] rounded-[40%]"
-        />
-        {/* Contrast scrim ensuring WCAG AA readability for all hero typography */}
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/85 to-transparent"
+          className="hero-mesh-1 absolute -top-28 -right-24 w-[460px] h-[460px] sm:w-[680px] sm:h-[600px] rounded-full"
         />
         <div
-          className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent"
+          className="hero-mesh-2 absolute top-10 right-[8%] w-[380px] h-[380px] sm:w-[540px] sm:h-[500px] rounded-full"
+        />
+        <div
+          className="hero-mesh-3 absolute -top-12 right-[24%] w-[340px] h-[340px] sm:w-[480px] sm:h-[440px] rounded-full"
+        />
+        {/* Contrast scrim ensuring WCAG AA readability for left-column hero typography */}
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/72 via-42% to-transparent"
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg)] to-transparent"
         />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Living counter ticker line (Stripe style) */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-3 gap-y-1 text-[13px] text-[var(--muted)]">
-          <span className="font-medium text-[var(--ink)]">
-            Stage recherché à Brazzaville · Commerce, Comptabilité, Recouvrement &amp; Management
-          </span>
-          <span aria-hidden="true" className="hidden sm:inline text-[var(--subtle)]">/</span>
-          <span className="tnum font-normal text-[var(--muted)]">
-            Heures de gestion &amp; pratique ([À COMPLÉTER]) :{' '}
-            <strong className="font-medium text-[var(--ink)] tnum whitespace-nowrap">{formattedLiveCounter} h</strong>
-          </span>
+        {/* Centered status line matching capture-3 style & colors */}
+        <div className="mb-7 flex justify-center">
+          <div className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[13px] leading-snug">
+            <span className="font-medium text-[#0071E3] dark:text-[#3B82F6]">
+              Stage recherché · 3 à 6 mois
+            </span>
+            <span aria-hidden="true" className="text-[var(--subtle)]">·</span>
+            <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--subtle)]" aria-hidden="true" />
+              <span>Brazzaville, Congo</span>
+            </span>
+            <span aria-hidden="true" className="text-[var(--subtle)]">·</span>
+            <span className="text-[var(--muted)]">
+              Permis B (en cours d&apos;obtention)
+            </span>
+          </div>
         </div>
 
-        {/* Hero Split: Lightweight Giant Headline on Left, Clean Human Portrait on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* Hero Split: Lightweight Giant Headline on Left, Centered Compact ID Portrait on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           <div className="lg:col-span-8 space-y-6">
             <h1 className="text-[40px] sm:text-[56px] lg:text-[68px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.05] [text-wrap:balance]">
-              Gestion d'entreprise, recouvrement et rigueur numérique.
+              Gérer, relancer, digitaliser
             </h1>
 
             <p className="text-[18px] sm:text-[20px] font-normal text-[var(--muted)] leading-[1.55] max-w-2xl">
-              Je suis Marion Moun, diplômé LPAE de l'ESGAE à Brazzaville. Je recherche un stage opérationnel en commerce, comptabilité, recouvrement ou management — et j'apporte aussi la maîtrise d'outils web pour automatiser le quotidien.
+              Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE Brazzaville après deux années de gestion à l’Université Libre du Congo, je recherche une opportunité pour mettre ma rigueur au service d’une équipe locale.
             </p>
 
-            {/* Concrete factual anchor line (no pills) */}
-            <p className="text-[14px] text-[var(--subtle)] leading-relaxed">
-              Projet DAS 1 &amp; 2 chez Émeraude avec M. Yves Miatoko · Masterclass Recouvrement (Mai 2026) · Permis B opérationnel.
-            </p>
+            {/* Centered horizontal credential carousel */}
+            <div className="w-full max-w-2xl mx-auto pt-1">
+              <div
+                aria-label="Références et repères clés"
+                className="marquee-wrapper overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+              >
+                <div className="marquee-track-credential flex items-center">
+                  {[...CREDENTIAL_CAROUSEL, ...CREDENTIAL_CAROUSEL].map((item, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center text-[13.5px] font-normal text-[var(--subtle)] whitespace-nowrap px-4"
+                    >
+                      <span>{item}</span>
+                      <span aria-hidden="true" className="ml-8 text-[var(--subtle)]/60">·</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-            {/* Primary & Secondary Actions (6px radius, 44px height) */}
+            {/* Primary & Explorer Actions (Mon CV removed from Hero; Explorer Digital Web black at rest) */}
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
@@ -103,19 +118,19 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
               </button>
 
-              <a
-                href={PERSONAL_INFO.cvDownloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-secondary"
+              <button
+                type="button"
+                onClick={() => onNavigate('stage')}
+                className="inline-flex items-center gap-1.5 h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
               >
-                Mon CV
-              </a>
+                <span>Explorer Profil &amp; Stage</span>
+                <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
+              </button>
 
               <button
                 type="button"
                 onClick={() => onNavigate('digital', 'projets')}
-                className="inline-flex items-center gap-1.5 h-[44px] px-3 text-[15px] font-medium text-[var(--accent)] hover:underline cursor-pointer group"
+                className="inline-flex items-center gap-1.5 h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
               >
                 <span>Explorer Digital Web</span>
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
@@ -123,12 +138,12 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
             </div>
           </div>
 
-          {/* Human Portrait Slot + Handwritten SVG Signature */}
-          <div className="lg:col-span-4 flex flex-col items-start lg:items-end">
-            <div className="w-full max-w-[280px] space-y-4">
-              <div className="aspect-[4/5] w-full rounded-[8px] bg-[var(--surface)] flex flex-col items-center justify-center text-center p-6 shadow-[var(--card-shadow)]">
+          {/* Centered Compact ID Portrait Slot + Handwritten SVG Signature */}
+          <div className="lg:col-span-4 flex flex-col items-center justify-center">
+            <div className="w-full max-w-[176px] mx-auto space-y-3">
+              <div className="aspect-[4/5] w-full rounded-[8px] bg-[var(--surface)] flex flex-col items-center justify-center text-center p-4 shadow-[var(--card-shadow)]">
                 <svg
-                  className="w-14 h-14 text-[var(--subtle)] mb-3"
+                  className="w-10 h-10 text-[var(--subtle)] mb-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -141,15 +156,15 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
                     d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                   />
                 </svg>
-                <div className="text-[14px] font-medium text-[var(--ink)]">[PHOTO]</div>
-                <p className="text-[12px] text-[var(--muted)] mt-1 leading-normal">
-                  Remplacer par mon portrait recadré simplement
+                <div className="text-[13px] font-medium text-[var(--ink)]">[PHOTO]</div>
+                <p className="text-[11px] text-[var(--muted)] mt-1 leading-snug">
+                  Photo d&apos;identité
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center justify-between pt-0.5">
                 <svg
-                  className="w-28 h-8 text-[var(--ink)]"
+                  className="w-20 h-6 text-[var(--ink)]"
                   viewBox="0 0 160 48"
                   fill="none"
                   stroke="currentColor"
@@ -161,7 +176,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
                   <path d="M 12 36 C 18 16, 26 12, 30 32 C 34 14, 42 16, 46 34 C 54 22, 60 26, 68 32 C 78 12, 84 38, 92 28 C 102 18, 110 32, 118 24 C 126 16, 134 32, 148 20" />
                   <path d="M 28 38 C 50 42, 95 40, 144 32" strokeWidth="1.1" opacity="0.5" />
                 </svg>
-                <span className="text-[12px] text-[var(--subtle)]">Mansimou, Brazzaville</span>
+                <span className="text-[11px] text-[var(--subtle)]">Brazzaville</span>
               </div>
             </div>
           </div>
@@ -169,7 +184,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
         </div>
 
         {/* Animated Key Metrics Row (Tabular numerals, light weight, IntersectionObserver count-up) */}
-        <div className="mt-20 pt-12 border-t border-[var(--hairline)] grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mt-16 pt-10 border-t border-[var(--hairline)] grid grid-cols-2 lg:grid-cols-4 gap-8">
           <Reveal delayMs={0}>
             <div className="space-y-1.5">
               <div className="text-[36px] sm:text-[42px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
@@ -230,7 +245,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
       </div>
 
       {/* Infinite Marquee Strip of Verified Tools & Competencies (Pauses on Hover) */}
-      <div className="mt-16 border-y border-[var(--hairline)] bg-[var(--surface)] py-4 marquee-wrapper overflow-hidden relative z-10">
+      <div className="mt-14 border-y border-[var(--hairline)] bg-[var(--surface)] py-4 marquee-wrapper overflow-hidden relative z-10">
         <div className="marquee-track flex items-center">
           {[...TOOLS_MARQUEE, ...TOOLS_MARQUEE].map((item, idx) => (
             <span

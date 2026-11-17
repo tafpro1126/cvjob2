@@ -60,7 +60,7 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
     confidentialite: 'Politique de confidentialité',
     cgu: "Conditions Générales d'Utilisation (CGU)",
     cookies: 'Politique relative aux cookies',
-    'mentions-legales': 'Mentions légales',
+    mentions: 'Mentions légales',
   };
 
   return (
@@ -78,7 +78,7 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
       >
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-[var(--hairline)]">
           <div>
-            <h2 id="legal-modal-title" className="text-[22px] font-semibold text-[var(--ink)]">
+            <h2 id="legal-modal-title" className="text-[22px] font-medium text-[var(--ink)]">
               {titles[activeDoc]}
             </h2>
             <p className="text-[13px] text-[var(--muted)] mt-1 tnum">
@@ -98,44 +98,47 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
         {activeDoc === 'confidentialite' && (
           <div className="space-y-4 text-[14px] text-[var(--muted)] leading-relaxed">
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">1. Responsable du traitement</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">1. Responsable du traitement</h3>
               <p>
-                Marion Moun — Email : <span className="text-[var(--ink)]">{PERSONAL_INFO.email}</span> — Adresse : {PERSONAL_INFO.address}.
+                Marion Moun — Email : <span className="text-[var(--ink)]">{PERSONAL_INFO.email}</span> — Localisation : {PERSONAL_INFO.location}.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">2. Données collectées</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">2. Données collectées</h3>
               <p>
-                Lorsque vous utilisez le formulaire de contact, vous transmettez volontairement votre nom, votre adresse e-mail ou numéro, le nom de votre entreprise et le contenu de votre message. Lors d'un accès par QR Code depuis mon CV papier, le paramètre d'URL <code className="text-[var(--ink)]">?src=cv</code> est lu localement par votre navigateur pour ouvrir l'onglet « Profil & Stage ».
+                Lorsque vous utilisez les formulaires de contact ou de devis, vous transmettez volontairement votre nom, votre téléphone ou e-mail et le contenu de votre message. Le paramètre <code className="text-[var(--ink)]">?src=cv</code> est lu localement par le navigateur pour ouvrir la partie « Profil &amp; Stage ».
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">3. Finalités et base légale</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">3. Finalités et base légale</h3>
               <p>
-                Ces informations servent uniquement à répondre à vos propositions de stage en entreprise ou demandes de devis pour des prestations web, sur la base de votre démarche volontaire et de l'intérêt légitime d'échanger professionnellement.
+                Ces informations servent exclusivement à répondre à vos propositions de stage en entreprise ou demandes de prestations web, sur la base de votre démarche volontaire.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">4. Durée de conservation et destinataires</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">4. Durée de conservation et destinataires</h3>
               <p>
-                Les échanges reçus par e-mail ou WhatsApp sont conservés le temps du suivi de candidature ou de la mission commerciale, et au maximum 24 mois après le dernier contact. Marion Moun est l'unique destinataire de ces données. Aucune donnée n'est vendue ou cédée à des tiers.
+                Les échanges reçus sont conservés le temps du suivi de candidature ou de la mission, et au maximum 24 mois après le dernier contact. Marion Moun en est l’unique destinataire ; aucune donnée n’est cédée à des tiers.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">5. Hébergeur</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">5. Hébergeur</h3>
               <p>
-                Hébergement du site : [À COMPLÉTER — Nom de l'hébergeur, ex. Cloudflare Pages / Netlify / GitHub Pages, adresse et contact].
+                Hébergement du site : [À COMPLÉTER : Nom, adresse et contact de l’hébergeur].
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">6. Vos droits et procédure de contact</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">6. Vos droits</h3>
               <p>
-                Vous disposez d'un droit d'accès, de rectification et de suppression des données vous concernant. Pour l'exercer, écrivez simplement à <a href={`mailto:${PERSONAL_INFO.email}`} className="text-[var(--accent)] underline">{PERSONAL_INFO.email}</a> en précisant l'objet de votre demande.
+                Vous disposez d’un droit d’accès, de rectification et de suppression de vos données en écrivant à{' '}
+                <a href={`mailto:${PERSONAL_INFO.email}`} className="text-[var(--accent)] underline">
+                  {PERSONAL_INFO.email}
+                </a>.
               </p>
             </section>
           </div>
@@ -144,44 +147,37 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
         {activeDoc === 'cgu' && (
           <div className="space-y-4 text-[14px] text-[var(--muted)] leading-relaxed">
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">1. Objet du site</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">1. Objet du site</h3>
               <p>
-                Ce site présente le parcours académique et professionnel de Marion Moun en vue d'un stage opérationnel en gestion, commerce, comptabilité, recouvrement et management, ainsi que son offre de services numériques pour les entreprises.
+                Ce site présente le parcours de Marion Moun en vue d’un stage de 3 à 6 mois en commerce, comptabilité, recouvrement et management, ainsi que ses prestations web pour les entreprises locales.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">2. Propriété intellectuelle</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">2. Propriété intellectuelle</h3>
               <p>
-                Les textes, maquettes, codes sources et présentations de projets publiés sur ce site sont la propriété de Marion Moun, sauf mention contraire. Toute reproduction sans autorisation préalable écrite est interdite.
+                Les textes, maquettes et présentations publiés sur ce site sont la propriété de Marion Moun, sauf mention contraire.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">3. Exemples visuels fictifs</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">3. Exemples illustratifs</h3>
               <p>
-                Les simulations interactives (balance âgée, tableau de trésorerie, entonnoir commercial) reposent exclusivement sur des données fictives créées à des fins pédagogiques et démonstratives. Aucune donnée confidentielle d'entreprise réelle n'y figure.
+                Les tableaux interactifs (balance âgée, suivi de trésorerie, prospection) reposent exclusivement sur des données fictives à but démonstratif.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">4. Absence d'offre contractuelle</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">4. Absence d’engagement contractuel</h3>
               <p>
-                Les descriptions de prestations digitales présentées sur ce site sont purement informatives. Toute collaboration ou prestation de service fait l'objet d'un devis détaillé et validé par les deux parties.
+                Les descriptions de prestations présentées sont informatives. Toute mission fait l’objet d’un devis validé au préalable.
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">5. Limitation de responsabilité et liens externes</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">5. Loi applicable</h3>
               <p>
-                Marion Moun s'efforce de maintenir des informations exactes et à jour, sans pouvoir garantir l'absence d'erreurs ponctuelles. Les liens vers des services tiers (WhatsApp, Google Forms, etc.) relèvent de la responsabilité de leurs éditeurs respectifs.
-              </p>
-            </section>
-
-            <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">6. Loi applicable</h3>
-              <p>
-                Les présentes conditions sont soumises au droit applicable en République du Congo [À VÉRIFIER : Congo-Brazzaville]. Date de dernière mise à jour : 13 novembre 2026.
+                Les présentes conditions sont soumises au droit applicable en République du Congo [À VÉRIFIER : Congo-Brazzaville].
               </p>
             </section>
           </div>
@@ -190,14 +186,14 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
         {activeDoc === 'cookies' && (
           <div className="space-y-4 text-[14px] text-[var(--muted)] leading-relaxed">
             <p>
-              Ce site limite au strict minimum le stockage d'informations sur votre terminal et n'active aucune mesure d'audience sans votre consentement préalable.
+              Ce site limite au strict minimum le stockage local sur votre navigateur et n’active aucune mesure d’audience sans votre accord explicite.
             </p>
 
             <div className="overflow-x-auto border border-[var(--hairline)] rounded-[8px]">
               <table className="w-full text-left text-[13px]">
                 <thead className="bg-[var(--surface)] text-[var(--ink)] border-b border-[var(--hairline)]">
                   <tr>
-                    <th className="py-2.5 px-3 font-medium">Stockage / Nom</th>
+                    <th className="py-2.5 px-3 font-medium">Nom</th>
                     <th className="py-2.5 px-3 font-medium">Finalité</th>
                     <th className="py-2.5 px-3 font-medium">Durée</th>
                   </tr>
@@ -205,18 +201,18 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
                 <tbody className="divide-y divide-[var(--hairline)]">
                   <tr>
                     <td className="py-2.5 px-3 font-mono text-[var(--ink)]">mm_cookie_consent_v1</td>
-                    <td className="py-2.5 px-3">Mémorisation de vos choix de consentement</td>
+                    <td className="py-2.5 px-3">Enregistrement de vos choix de consentement</td>
                     <td className="py-2.5 px-3 tnum">12 mois</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 px-3 font-mono text-[var(--ink)]">mm_theme_v1</td>
-                    <td className="py-2.5 px-3">Sauvegarde du thème clair ou sombre</td>
+                    <td className="py-2.5 px-3">Mémorisation du thème clair ou sombre</td>
                     <td className="py-2.5 px-3 tnum">12 mois</td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 px-3 font-mono text-[var(--ink)]">Mesure d'audience</td>
-                    <td className="py-2.5 px-3">Statistiques anonymes (chargée uniquement si acceptée)</td>
-                    <td className="py-2.5 px-3 tnum">6 mois [À COMPLÉTER si outil ajouté]</td>
+                    <td className="py-2.5 px-3 font-mono text-[var(--ink)]">Mesure d’audience</td>
+                    <td className="py-2.5 px-3">Chargée uniquement après consentement explicite</td>
+                    <td className="py-2.5 px-3 tnum">[À COMPLÉTER]</td>
                   </tr>
                 </tbody>
               </table>
@@ -237,24 +233,28 @@ export function LegalModal({ activeDoc, onClose, onOpenCookiePrefs }: LegalModal
           </div>
         )}
 
-        {activeDoc === 'mentions-legales' && (
+        {activeDoc === 'mentions' && (
           <div className="space-y-4 text-[14px] text-[var(--muted)] leading-relaxed">
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">Éditeur du site</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">Éditeur du site</h3>
               <p>
-                Marion Moun (Glory Marion Moun) — Étudiant diplômé en Licence Professionnelle en Administration des Entreprises (LPAE, ESGAE).
+                Marion Moun — Diplômé en Licence Professionnelle en Administration des Entreprises (LPAE, ESGAE).
               </p>
               <p>
-                Adresse : {PERSONAL_INFO.address}<br />
-                Email : <a href={`mailto:${PERSONAL_INFO.email}`} className="text-[var(--accent)] underline">{PERSONAL_INFO.email}</a><br />
+                Localisation : {PERSONAL_INFO.location}<br />
+                Email :{' '}
+                <a href={`mailto:${PERSONAL_INFO.email}`} className="text-[var(--accent)] underline">
+                  {PERSONAL_INFO.email}
+                </a>
+                <br />
                 Téléphones : {PERSONAL_INFO.phone1} / {PERSONAL_INFO.phone2}
               </p>
             </section>
 
             <section className="space-y-1">
-              <h3 className="text-[15px] font-semibold text-[var(--ink)]">Hébergement</h3>
+              <h3 className="text-[15px] font-medium text-[var(--ink)]">Hébergement</h3>
               <p>
-                [À COMPLÉTER : Raison sociale de l'hébergeur, adresse postale et coordonnées de contact].
+                [À COMPLÉTER : Raison sociale de l’hébergeur, adresse postale et contact].
               </p>
             </section>
           </div>

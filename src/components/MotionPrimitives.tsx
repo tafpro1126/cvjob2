@@ -14,7 +14,14 @@ export function Reveal({ children, delayMs = 0, className = '' }: RevealProps) {
     const el = ref.current;
     if (!el) return;
 
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rect = el.getBoundingClientRect();
+    const inOrAboveViewport =
+      typeof window !== 'undefined' && rect.top < window.innerHeight + 80;
+
+    if (prefersReduced || inOrAboveViewport) {
       setVisible(true);
       return;
     }
@@ -29,7 +36,7 @@ export function Reveal({ children, delayMs = 0, className = '' }: RevealProps) {
           }
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.01, rootMargin: '60px 0px' }
     );
 
     observer.observe(el);
@@ -74,6 +81,12 @@ export function AnimatedCounter({
       return;
     }
 
+    const rect = el.getBoundingClientRect();
+    if (typeof window !== 'undefined' && rect.top < window.innerHeight + 80) {
+      setHasStarted(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -84,7 +97,7 @@ export function AnimatedCounter({
           }
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.01, rootMargin: '60px 0px' }
     );
 
     observer.observe(el);

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActiveTab } from '../types.ts';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
-import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Home, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
-  onNavigate: (tab: ActiveTab, sectionId?: string) => void;
+  onNavigate: (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => void;
   onOpenContact: () => void;
 }
 
@@ -14,6 +14,8 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
   const [openDropdown, setOpenDropdown] = useState<'stage' | 'digital' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
+  const hoverOpenTimerRef = useRef<number | null>(null);
+  const hoverCloseTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -41,13 +43,41 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('keydown', handleKeyDown);
+      if (hoverOpenTimerRef.current) window.clearTimeout(hoverOpenTimerRef.current);
+      if (hoverCloseTimerRef.current) window.clearTimeout(hoverCloseTimerRef.current);
     };
   }, []);
 
-  const handleSelectItem = (tab: ActiveTab, sectionId?: string) => {
+  const clearHoverTimers = () => {
+    if (hoverOpenTimerRef.current) {
+      window.clearTimeout(hoverOpenTimerRef.current);
+      hoverOpenTimerRef.current = null;
+    }
+    if (hoverCloseTimerRef.current) {
+      window.clearTimeout(hoverCloseTimerRef.current);
+      hoverCloseTimerRef.current = null;
+    }
+  };
+
+  const handleMouseEnterNav = (menu: 'stage' | 'digital') => {
+    clearHoverTimers();
+    hoverOpenTimerRef.current = window.setTimeout(() => {
+      setOpenDropdown(menu);
+    }, 150);
+  };
+
+  const handleMouseLeaveNav = () => {
+    clearHoverTimers();
+    hoverCloseTimerRef.current = window.setTimeout(() => {
+      setOpenDropdown(null);
+    }, 180);
+  };
+
+  const handleSelectItem = (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => {
+    clearHoverTimers();
     setOpenDropdown(null);
     setMobileMenuOpen(false);
-    onNavigate(tab, sectionId);
+    onNavigate(tab, sectionId, scrollToTop);
   };
 
   return (
@@ -62,8 +92,7 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
           href="#stage"
           onClick={(e) => {
             e.preventDefault();
-            handleSelectItem('stage');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            handleSelectItem('stage', undefined, true);
           }}
           className="inline-flex items-center gap-2.5 text-[16px] font-semibold text-[var(--ink)] whitespace-nowrap shrink-0 tracking-tight"
         >
@@ -73,39 +102,71 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
           <span>{PERSONAL_INFO.name}</span>
         </a>
 
-        {/* Center: Navigation Links with Dropdowns (Desktop md+) */}
+        {/* Center: Home + Direct Tab Links + Chevron/Hover Intent Dropdowns (Desktop md+) */}
         <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-8">
-          
-          {/* Profil & Stage Dropdown */}
-          <div className="relative">
+
+          {/* Home link */}
+          <div className="relative py-2 flex items-center">
             <button
               type="button"
-              aria-expanded={openDropdown === 'stage'}
-              aria-controls="dropdown-stage"
-              onClick={() => setOpenDropdown(openDropdown === 'stage' ? null : 'stage')}
-              className={`relative py-2 inline-flex items-center gap-1.5 text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
-                activeTab === 'stage'
-                  ? 'text-[var(--ink)]'
-                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
-              }`}
+              onClick={() => handleSelectItem('stage', undefined, true)}
+              className="inline-flex items-center gap-1.5 pb-1.5 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
             >
-              <span>Profil &amp; Stage</span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-150 ${
-                  openDropdown === 'stage' ? 'rotate-180' : ''
+              <Home className="w-4 h-4" aria-hidden="true" />
+              <span>Home</span>
+            </button>
+          </div>
+
+          {/* Profil & Stage (Text clicks directly to tab; Hover delay or Chevron click opens dropdown) */}
+          <div
+            className="relative py-2 flex items-center"
+            onMouseEnter={() => handleMouseEnterNav('stage')}
+            onMouseLeave={handleMouseLeaveNav}
+          >
+            <div className="relative inline-flex items-center gap-1 pb-1.5">
+              <button
+                type="button"
+                onClick={() => handleSelectItem('stage')}
+                className={`text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                  activeTab === 'stage'
+                    ? 'text-[var(--ink)]'
+                    : 'text-[var(--muted)] hover:text-[var(--ink)]'
                 }`}
-              />
+              >
+                Profil &amp; Stage
+              </button>
+              <button
+                type="button"
+                aria-expanded={openDropdown === 'stage'}
+                aria-controls="dropdown-stage"
+                aria-label="Afficher le sous-menu Profil & Stage"
+                onClick={() => {
+                  clearHoverTimers();
+                  setOpenDropdown(openDropdown === 'stage' ? null : 'stage');
+                }}
+                className={`p-1 rounded-[4px] cursor-pointer transition-colors duration-150 ${
+                  activeTab === 'stage'
+                    ? 'text-[var(--ink)] hover:bg-[var(--surface)]'
+                    : 'text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface)]'
+                }`}
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                    openDropdown === 'stage' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
               <span
                 className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
                   activeTab === 'stage' ? 'scale-x-100' : 'scale-x-0'
                 }`}
               />
-            </button>
+            </div>
 
             {openDropdown === 'stage' && (
               <div
                 id="dropdown-stage"
-                className="dropdown-panel absolute left-0 top-full mt-2 w-64 p-2 z-50"
+                className="dropdown-panel absolute left-0 top-full mt-1 w-64 p-2 z-50"
               >
                 <button
                   type="button"
@@ -143,36 +204,56 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
             )}
           </div>
 
-          {/* Digital Web Dropdown */}
-          <div className="relative">
-            <button
-              type="button"
-              aria-expanded={openDropdown === 'digital'}
-              aria-controls="dropdown-digital"
-              onClick={() => setOpenDropdown(openDropdown === 'digital' ? null : 'digital')}
-              className={`relative py-2 inline-flex items-center gap-1.5 text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
-                activeTab === 'digital'
-                  ? 'text-[var(--ink)]'
-                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
-              }`}
-            >
-              <span>Digital Web</span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-150 ${
-                  openDropdown === 'digital' ? 'rotate-180' : ''
+          {/* Digital Web (Text clicks directly to tab; Hover delay or Chevron click opens dropdown) */}
+          <div
+            className="relative py-2 flex items-center"
+            onMouseEnter={() => handleMouseEnterNav('digital')}
+            onMouseLeave={handleMouseLeaveNav}
+          >
+            <div className="relative inline-flex items-center gap-1 pb-1.5">
+              <button
+                type="button"
+                onClick={() => handleSelectItem('digital')}
+                className={`text-[15px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150 ${
+                  activeTab === 'digital'
+                    ? 'text-[var(--ink)]'
+                    : 'text-[var(--muted)] hover:text-[var(--ink)]'
                 }`}
-              />
+              >
+                Digital Web
+              </button>
+              <button
+                type="button"
+                aria-expanded={openDropdown === 'digital'}
+                aria-controls="dropdown-digital"
+                aria-label="Afficher le sous-menu Digital Web"
+                onClick={() => {
+                  clearHoverTimers();
+                  setOpenDropdown(openDropdown === 'digital' ? null : 'digital');
+                }}
+                className={`p-1 rounded-[4px] cursor-pointer transition-colors duration-150 ${
+                  activeTab === 'digital'
+                    ? 'text-[var(--ink)] hover:bg-[var(--surface)]'
+                    : 'text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface)]'
+                }`}
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                    openDropdown === 'digital' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
               <span
                 className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--accent)] transition-transform duration-200 origin-left ${
                   activeTab === 'digital' ? 'scale-x-100' : 'scale-x-0'
                 }`}
               />
-            </button>
+            </div>
 
             {openDropdown === 'digital' && (
               <div
                 id="dropdown-digital"
-                className="dropdown-panel absolute left-0 top-full mt-2 w-64 p-2 z-50"
+                className="dropdown-panel absolute left-0 top-full mt-1 w-64 p-2 z-50"
               >
                 <button
                   type="button"
@@ -195,16 +276,19 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
           </div>
 
           {/* Contact direct link */}
-          <button
-            type="button"
-            onClick={() => {
-              setOpenDropdown(null);
-              onOpenContact();
-            }}
-            className="py-2 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
-          >
-            Contact
-          </button>
+          <div className="relative py-2 flex items-center">
+            <button
+              type="button"
+              onClick={() => {
+                clearHoverTimers();
+                setOpenDropdown(null);
+                onOpenContact();
+              }}
+              className="pb-1.5 text-[15px] font-medium text-[var(--muted)] hover:text-[var(--ink)] whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-150"
+            >
+              Contact
+            </button>
+          </div>
 
         </nav>
 
@@ -249,6 +333,17 @@ export function Header({ activeTab, onNavigate, onOpenContact }: HeaderProps) {
           className="md:hidden fixed inset-0 top-18 z-50 bg-[var(--bg)] flex flex-col justify-between p-6 overflow-y-auto"
         >
           <div className="space-y-8">
+            <div className="pb-4 border-b border-[var(--hairline)]">
+              <button
+                type="button"
+                onClick={() => handleSelectItem('stage', undefined, true)}
+                className="inline-flex items-center gap-2.5 w-full text-left py-2 text-[18px] font-medium text-[var(--ink)] cursor-pointer"
+              >
+                <Home className="w-5 h-5" aria-hidden="true" />
+                <span>Home</span>
+              </button>
+            </div>
+
             <div className="space-y-3">
               <div className="text-[12px] font-medium text-[var(--subtle)] uppercase tracking-wider">
                 Profil &amp; Stage

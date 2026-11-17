@@ -64,7 +64,7 @@ export function saveThemePreference(theme: 'light' | 'dark'): void {
 
 export function resolveInitialTab(search: string, hash: string): 'stage' | 'digital' {
   const cleanHash = (hash || '').toLowerCase();
-  if (cleanHash === '#digital' || cleanHash === '#projets' || cleanHash === '#services') {
+  if (cleanHash === '#digital' || cleanHash === '#projets' || cleanHash === '#services' || cleanHash === '#devis') {
     return 'digital';
   }
   const params = new URLSearchParams(search || '');
@@ -74,13 +74,24 @@ export function resolveInitialTab(search: string, hash: string): 'stage' | 'digi
   return 'stage';
 }
 
-export type LegalDocType = 'confidentialite' | 'cgu' | 'cookies' | 'mentions-legales';
+export type LegalDocType = 'confidentialite' | 'cgu' | 'cookies' | 'mentions';
 
 export function resolveLegalHash(hash: string): LegalDocType | null {
   const h = (hash || '').toLowerCase();
   if (h === '#confidentialite') return 'confidentialite';
   if (h === '#cgu') return 'cgu';
   if (h === '#cookies') return 'cookies';
-  if (h === '#mentions-legales') return 'mentions-legales';
+  if (h === '#mentions' || h === '#mentions-legales') return 'mentions';
   return null;
+}
+
+export function isNotFoundRoute(pathname: string, hash: string): boolean {
+  const cleanPath = (pathname || '/').replace(/\/+$/, '') || '/';
+  if (cleanPath !== '/' && cleanPath !== '/index.html') {
+    return true;
+  }
+  if ((hash || '').toLowerCase() === '#404') {
+    return true;
+  }
+  return false;
 }

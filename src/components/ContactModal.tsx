@@ -7,11 +7,17 @@ interface ContactModalProps {
   onClose: () => void;
 }
 
+const CONTACT_TOPICS = [
+  'Proposer un entretien (stage 3 à 6 mois)',
+  'Prestation Web / Tableau de bord / Automatisation',
+  'Prise de contact générale',
+];
+
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [copied, setCopied] = useState(false);
   const [senderName, setSenderName] = useState('');
-  const [company, setCompany] = useState('');
-  const [topic, setTopic] = useState('Stage en Gestion / Commerce / Comptabilité / Recouvrement');
+  const [senderContact, setSenderContact] = useState('');
+  const [topic, setTopic] = useState(CONTACT_TOPICS[0]);
   const [message, setMessage] = useState('');
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +29,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     const container = dialogRef.current;
     if (container) {
       const firstBtn = container.querySelector<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
       );
       firstBtn?.focus();
     }
@@ -37,7 +43,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       if (e.key === 'Tab' && container) {
         const focusables = Array.from(
           container.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
           )
         );
         if (focusables.length === 0) return;
@@ -63,7 +69,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   if (!isOpen) return null;
 
   const handleCopy = async () => {
-    const text = `Marion Moun — Diplômé LPAE (ESGAE)\nTél / WhatsApp : ${PERSONAL_INFO.phone1}\nTél secondaire : ${PERSONAL_INFO.phone2}\nEmail : ${PERSONAL_INFO.email}\nAdresse : ${PERSONAL_INFO.address}`;
+    const text = `Marion Moun — Diplômé LPAE (ESGAE)\nTél / WhatsApp : ${PERSONAL_INFO.phone1}\nTél secondaire : ${PERSONAL_INFO.phone2}\nEmail : ${PERSONAL_INFO.email}\nLocalisation : ${PERSONAL_INFO.location}`;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -73,7 +79,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   };
 
-  const composedMessage = `Bonjour Marion,\n\nJe vous contacte au sujet de : ${topic}.\nNom : ${senderName.trim() || '[Non précisé]'}\nEntreprise : ${company.trim() || '[Non précisée]'}\n\n${message.trim() || 'Nous souhaitons échanger avec vous prochainement.'}`;
+  const composedMessage = `Bonjour Marion,\n\nObjet : ${topic}\nNom : ${senderName.trim() || 'Non précisé'}\nContact : ${senderContact.trim() || 'Non précisé'}\n\n${message.trim() || 'Nous souhaitons échanger avec vous prochainement.'}`;
   const whatsappHref = `https://wa.me/${PERSONAL_INFO.phone1Raw}?text=${encodeURIComponent(composedMessage)}`;
   const mailtoHref = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(topic)}&body=${encodeURIComponent(composedMessage)}`;
 
@@ -90,14 +96,13 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[10px] bg-[var(--surface-elevated)] border border-[var(--hairline)] shadow-2xl p-6 sm:p-8 space-y-6"
       >
-        {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-[var(--hairline)]">
           <div>
             <h2 id="contact-modal-title" className="text-[22px] font-medium text-[var(--ink)]">
               Me contacter
             </h2>
             <p className="text-[14px] text-[var(--muted)] mt-1">
-              Marion Moun · Brazzaville, Congo · Réponse rapide par WhatsApp ou e-mail.
+              Marion Moun · <span className="whitespace-nowrap">Brazzaville</span> · Réponse rapide par WhatsApp ou e-mail.
             </p>
           </div>
           <button
@@ -110,7 +115,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </button>
         </div>
 
-        {/* Direct coordinates row */}
+        {/* Direct coordinates */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[14px] pb-6 border-b border-[var(--hairline)]">
           <a
             href={`https://wa.me/${PERSONAL_INFO.phone1Raw}`}
@@ -173,7 +178,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <div className="font-medium text-[var(--ink)]">
                   {copied ? 'Coordonnées copiées' : 'Copier mes coordonnées'}
                 </div>
-                <div className="text-[13px] text-[var(--muted)]">Pour votre dossier RH</div>
+                <div className="text-[13px] text-[var(--muted)]">Pour votre dossier de recrutement</div>
               </div>
             </div>
           </button>
@@ -195,45 +200,46 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 type="text"
                 value={senderName}
                 onChange={(e) => setSenderName(e.target.value)}
-                placeholder="Ex : Mme / M. ..."
+                placeholder="Nom et prénom"
                 className="w-full h-[44px] px-3.5 rounded-[6px] bg-[var(--surface)] border border-[var(--hairline)] text-[14px] text-[var(--ink)] placeholder:text-[var(--subtle)]"
               />
             </div>
 
             <div>
-              <label htmlFor="contact-company" className="block text-[13px] font-medium text-[var(--ink)] mb-1">
-                Entreprise / Structure
+              <label htmlFor="contact-reply" className="block text-[13px] font-medium text-[var(--ink)] mb-1">
+                Téléphone ou e-mail
               </label>
               <input
-                id="contact-company"
+                id="contact-reply"
                 type="text"
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-                placeholder="Ex : Cabinet ou société à Brazzaville"
+                value={senderContact}
+                onChange={(e) => setSenderContact(e.target.value)}
+                placeholder="Pour vous répondre"
                 className="w-full h-[44px] px-3.5 rounded-[6px] bg-[var(--surface)] border border-[var(--hairline)] text-[14px] text-[var(--ink)] placeholder:text-[var(--subtle)]"
               />
             </div>
 
-            <div className="sm:col-span-2">
-              <label htmlFor="contact-topic" className="block text-[13px] font-medium text-[var(--ink)] mb-1">
-                Objet
-              </label>
-              <select
-                id="contact-topic"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="w-full h-[44px] px-3.5 rounded-[6px] bg-[var(--surface)] border border-[var(--hairline)] text-[14px] text-[var(--ink)]"
-              >
-                <option value="Stage en Gestion / Commerce / Comptabilité / Recouvrement">
-                  Stage en Gestion / Commerce / Comptabilité / Recouvrement
-                </option>
-                <option value="Prestation Web / Tableau de bord / Automatisation">
-                  Prestation Web / Tableau de bord / Automatisation
-                </option>
-                <option value="Entretien ou prise de contact générale">
-                  Entretien ou prise de contact générale
-                </option>
-              </select>
+            <div className="sm:col-span-2 space-y-2">
+              <div className="text-[13px] font-medium text-[var(--ink)]">Objet de votre message</div>
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Objet du message">
+                {CONTACT_TOPICS.map((item) => {
+                  const selected = topic === item;
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setTopic(item)}
+                      className={`h-[40px] px-3.5 rounded-[6px] text-[13px] font-medium cursor-pointer transition-colors ${
+                        selected
+                          ? 'bg-[var(--accent)] text-white'
+                          : 'bg-[var(--surface)] text-[var(--ink)] hover:bg-[var(--hairline)]'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="sm:col-span-2">
@@ -252,11 +258,10 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
         </div>
 
-        {/* Address note & Footer Actions */}
         <div className="pt-4 border-t border-[var(--hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-[12px] text-[var(--subtle)]">
+          <div className="flex items-center gap-2 text-[13px] text-[var(--subtle)]">
             <MapPin className="w-3.5 h-3.5 shrink-0" />
-            <span>{PERSONAL_INFO.address}</span>
+            <span className="whitespace-nowrap">{PERSONAL_INFO.location}</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">

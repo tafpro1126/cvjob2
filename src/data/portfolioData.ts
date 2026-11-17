@@ -6,14 +6,14 @@ export const PERSONAL_INFO = {
   title: 'Diplômé en LPAE | Gestion, Commerce, Comptabilité & Recouvrement',
   degree: 'Licence Professionnelle en Administration des Entreprises (LPAE)',
   school: 'ESGAE (École Supérieure de Gestion et d’Administration des Entreprises)',
-  location: 'Brazzaville, Congo (Mansimou, arr8 Madibou)',
-  address: 'N° 8, avenue de l’impréco Mansimou, arr8 Madibou, Brazzaville',
+  location: 'Brazzaville, Congo',
+  address: 'Brazzaville, République du Congo',
   phone1: '+242 06 406 50 70',
   phone2: '+242 06 113 38 15',
   phone1Raw: '242064065070',
   phone2Raw: '242061133815',
   email: 'glory3marrion71@gmail.com',
-  driverLicense: 'Permis de conduire Catégorie B (Bling Auto-école)',
+  driverLicense: 'Permis B (en cours d’obtention)',
   cvDownloadUrl: '/assets/aistudio/Capture_d__cran_2026-11-10_223928_d3219857.png',
   googleFormUrl: 'https://forms.gle/[LIEN_GOOGLE_FORM_A_PERSONNALISER]',
   linkedInUrl: 'https://linkedin.com/in/[PROFIL_LINKEDIN_A_COMPLETER]',
@@ -36,7 +36,7 @@ export const PERSONAL_INFO = {
     },
     {
       title: 'Sens du service, discipline et polyvalence',
-      desc: 'Expériences formatrices en gestion académique (DAS 1 & 2), en service client exigeant et en logistique. Permis B pour tous déplacements professionnels à Brazzaville.',
+      desc: 'Expériences formatrices en gestion académique (DAS 1 & 2), en service client exigeant et en logistique. Permis B (en cours d’obtention) pour les déplacements professionnels à Brazzaville.',
       icon: 'check-circle'
     }
   ]
@@ -76,12 +76,12 @@ export const TIMELINE_DATA: TimelineEvent[] = [
   {
     id: 'permis-b',
     period: 'Septembre – Octobre 2026',
-    title: 'Formation en Conduite Automobile (Permis Catégorie B)',
-    organization: 'Bling Auto-école',
+    title: 'Formation en Conduite Automobile (Permis B — en cours d’obtention)',
+    organization: 'Auto-école',
     location: 'Brazzaville, Congo',
     type: 'certification',
-    description: 'Obtention du permis de conduire catégorie B. Mobilité immédiate garantie pour les missions de terrain, visites clients et démarches administratives.',
-    highlights: ['Titulaire du permis B', 'Grande disponibilité géographique sur tout Brazzaville et environs'],
+    description: 'Formation à la conduite automobile en catégorie B pour assurer les déplacements professionnels sur Brazzaville.',
+    highlights: ['Permis B en cours d’obtention', 'Grande disponibilité sur Brazzaville et environs'],
     badgeColor: 'blue'
   },
   {
@@ -89,7 +89,7 @@ export const TIMELINE_DATA: TimelineEvent[] = [
     period: '2025 – 2026',
     title: 'Projet Comptable Professionnel Académique (DAS 1 & 2)',
     organization: 'Cabinet Émeraude',
-    location: 'Sous la direction de M. Yves Miatoko, Expert-Comptable',
+    location: 'Brazzaville, Congo',
     type: 'experience',
     description: 'Mission pratique en environnement d’expertise comptable : montage et contrôle des Déclarations Annuelles des Salaires (DAS 1 & 2) et travaux de révision comptable.',
     highlights: [
@@ -291,7 +291,7 @@ export const SERVICES_DATA: ServiceOffering[] = [
 
 export const KEY_METRICS = [
   { value: '3', label: 'Années de formation en Gestion', detail: 'ULC Tronc Commun + Licence ESGAE' },
-  { value: '100%', label: 'Disponibilité & Mobilité terrain', detail: 'Basé à Brazzaville · Permis B actif' },
+  { value: '100%', label: 'Disponibilité & Mobilité terrain', detail: 'Basé à Brazzaville · Permis B (en cours d’obtention)' },
   { value: '1', label: 'Masterclass Recouvrement certifiée', detail: 'Spécialisation créances & impayés' },
   { value: '4', label: 'Piliers d’impact immédiat', detail: 'Commerce, Compta, Recouvrement, Web' }
 ];

@@ -39,7 +39,7 @@ export function GeminiChatModal({
 
   const suggestedQuestions = [
     "Quels sont les atouts de Marion en recouvrement ?",
-    "Parle-moi de son projet chez Émeraude avec M. Yves Miatoko",
+    "Parle-moi de son projet comptable DAS 1 & 2 chez Émeraude",
     "Est-il disponible pour un stage à Brazzaville ?",
     "Comment son profil web aide-t-il la gestion d'entreprise ?"
   ];

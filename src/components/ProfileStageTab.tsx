@@ -85,7 +85,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                   Je recherche un stage en <strong className="font-medium text-[var(--ink)]">commerce</strong>, <strong className="font-medium text-[var(--ink)]">comptabilité</strong>, <strong className="font-medium text-[var(--ink)]">recouvrement</strong> ou <strong className="font-medium text-[var(--ink)]">management</strong> auprès d'une entreprise locale. Ce n'est pas un stage de développement informatique.
                 </p>
                 <p>
-                  Sur le terrain, j'ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) au cabinet Émeraude sous la direction de M. Yves Miatoko, et suivi en mai 2026 la Masterclass dédiée au recouvrement de créances et à la gestion des impayés.
+                  Sur le terrain, j'ai participé au montage des déclarations annuelles des salaires (DAS 1 &amp; 2) au cabinet Émeraude, et suivi en mai 2026 la Masterclass dédiée au recouvrement de créances et à la gestion des impayés.
                 </p>
               </div>
 
@@ -97,11 +97,11 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Localisation</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Mansimou, Brazzaville</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Brazzaville, Congo</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Mobilité</div>
-                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (Bling Auto-école)</div>
+                  <div className="font-medium text-[var(--ink)] mt-1">Permis B (en cours d'obtention)</div>
                 </div>
                 <div>
                   <div className="text-[var(--subtle)]">Disponibilité</div>
@@ -638,7 +638,7 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
               <div className="space-y-1.5">
                 <h3 className="text-[16px] font-medium text-[var(--ink)]">04. Mobilité sur Brazzaville</h3>
                 <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                  Basé à Mansimou avec le permis B opérationnel, disponible immédiatement pour les visites clients et démarches terrain.
+                  Basé à Brazzaville avec le permis B en cours d'obtention, disponible immédiatement pour les visites clients et démarches terrain.
                 </p>
               </div>
             </div>
