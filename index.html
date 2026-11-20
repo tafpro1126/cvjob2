@@ -2,7 +2,18 @@
 <html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('mm_theme_v1');
+          var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && sysDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <title>Marion Moun — Stage Gestion &amp; Recouvrement | Brazzaville</title>
     <meta name="description" content="Parcours de Marion Moun (LPAE, ESGAE Brazzaville) : recherche de stage de 3 à 6 mois en gestion, comptabilité, recouvrement ou management, et projets web." />
     <meta name="keywords" content="Marion Moun, LPAE, ESGAE Brazzaville, ULC Brazzaville, stage gestion Brazzaville, stage comptabilité, stage recouvrement, stage commerce, stage management" />

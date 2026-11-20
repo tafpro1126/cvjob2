@@ -341,7 +341,7 @@ export function Header({ activeNav, onNavigate, onOpenContact, isDark, onToggleT
             onClick={onToggleTheme}
             aria-label={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
             title={isDark ? 'Thème clair' : 'Thème sombre'}
-            className="w-10 h-10 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+            className="w-11 h-11 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
           >
             {isDark ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
           </button>
@@ -363,7 +363,7 @@ export function Header({ activeNav, onNavigate, onOpenContact, isDark, onToggleT
       {mobileMenuOpen && (
         <div
           id="mobile-fullscreen-menu"
-          className="md:hidden fixed inset-0 top-18 z-50 bg-[var(--bg)] flex flex-col justify-between p-6 overflow-y-auto"
+          className="md:hidden fixed inset-0 top-18 min-h-[calc(100dvh-4.5rem)] z-50 bg-[var(--bg)] flex flex-col justify-between p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] overflow-y-auto"
         >
           <div className="space-y-8">
             <div className="pb-4 border-b border-[var(--hairline)]">

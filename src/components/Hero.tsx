@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
 import { ChevronRight, MapPin } from 'lucide-react';
 import { AnimatedCounter, Reveal } from './MotionPrimitives.tsx';
@@ -27,19 +28,51 @@ const TOOLS_MARQUEE = [
   'TikTok Ads',
 ];
 
+const HERO_WORDS = ['Gérer,', 'relancer,', 'digitaliser'];
+
 export function Hero({ onOpenContact, onNavigate }: HeroProps) {
+  const waveParallaxRef = useRef<HTMLDivElement | null>(null);
+
+  // 3. Parallaxe légère du ruban de vagues au défilement (<= 40 px)
+  useEffect(() => {
+    const el = waveParallaxRef.current;
+    if (!el) return;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionQuery.matches) return;
+
+    let raf = 0;
+    const updateParallax = () => {
+      raf = 0;
+      const offset = Math.min(40, Math.round(window.scrollY * 0.08));
+      el.style.transform = `translate3d(0, ${offset}px, 0)`;
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = window.requestAnimationFrame(updateParallax);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden pt-7 pb-16 sm:pt-10 sm:pb-24">
       
-      {/* Stripe-style flowing liquid gradient backdrop (bright pastel hues, never dark) */}
+      {/* Vagues WebGL continues façon Stripe (thème clair vif, thème sombre profond) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden z-0"
       >
-        <div className="absolute inset-0">
+        <div
+          ref={waveParallaxRef}
+          className="absolute inset-x-0 -top-10 bottom-0 will-change-transform"
+        >
           <StripeGradientCanvas />
         </div>
-        {/* Contrast scrim ensuring WCAG AA readability for left-column hero typography */}
+        {/* Voile progressif pour garantir le contraste AA du texte à gauche */}
         <div
           className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/72 via-42% to-transparent"
         />
@@ -50,11 +83,15 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Centered status line matching Capture 1 */}
+        {/* Ligne de statut centrée avec pastille qui respire (6–8s) */}
         <div className="mb-7 flex justify-center">
           <div className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[13px] leading-snug">
-            <span className="font-medium text-[#0071E3] dark:text-[#3B82F6]">
-              Stage recherché · 3 à 6 mois
+            <span className="inline-flex items-center gap-1.5 font-medium text-[#0071E3] dark:text-[#60A5FA]">
+              <span
+                aria-hidden="true"
+                className="w-2 h-2 rounded-full bg-[#0071E3] dark:bg-[#60A5FA] status-dot-breathe shrink-0"
+              />
+              <span>Stage recherché · 3 à 6 mois</span>
             </span>
             <span aria-hidden="true" className="text-[var(--subtle)]">·</span>
             <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
@@ -68,22 +105,32 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
           </div>
         </div>
 
-        {/* Hero Split (Structure identique à Capture 1) */}
+        {/* Hero Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           <div className="lg:col-span-8 space-y-6">
             <div className="lg:min-h-[143px] lg:flex lg:items-center">
               <h1 className="text-[clamp(19px,5.2vw,38px)] lg:text-[40px] xl:text-[48px] font-bold italic text-[var(--ink)] tracking-[-0.02em] leading-[1.08] whitespace-nowrap">
-                Gérer, relancer, digitaliser
+                {HERO_WORDS.map((word, idx) => (
+                  <span key={word}>
+                    <span
+                      className="hero-word"
+                      style={{ animationDelay: `${idx * 60}ms` }}
+                    >
+                      {word}
+                    </span>
+                    {idx < HERO_WORDS.length - 1 ? ' ' : ''}
+                  </span>
+                ))}
               </h1>
             </div>
 
-            <p className="text-[18px] sm:text-[20px] font-normal text-[var(--muted)] leading-[1.55] max-w-2xl">
+            <p className="hero-sub-enter text-[18px] sm:text-[20px] font-normal text-[var(--muted)] leading-[1.55] max-w-2xl">
               Je m’appelle Marion Moun. Titulaire d’une Licence Professionnelle en Administration des Entreprises (LPAE) à l’ESGAE à Brazzaville après deux ans en gestion à l’Université Libre du Congo, je cherche un stage de 3 à 6 mois pour apprendre sur le terrain et me rendre utile rapidement.
             </p>
 
-            {/* Centered horizontal credential carousel */}
-            <div className="w-full max-w-2xl mx-auto pt-1">
+            {/* Carrousel horizontal des repères de parcours */}
+            <div className="hero-sub-enter w-full max-w-2xl mx-auto pt-1">
               <div
                 aria-label="Repères de parcours"
                 className="marquee-wrapper overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
@@ -102,12 +149,12 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
               </div>
             </div>
 
-            {/* Primary & Explorer Actions (Structure Capture 1) */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            {/* Actions principales */}
+            <div className="hero-actions-enter pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={onOpenContact}
-                className="btn-primary group"
+                className="btn-primary hero-primary-breathe group"
               >
                 <span>Me contacter</span>
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
@@ -116,7 +163,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
               <button
                 type="button"
                 onClick={() => onNavigate('stage')}
-                className="inline-flex items-center gap-1.5 h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
               >
                 <span>Explorer Profil &amp; Stage</span>
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
@@ -125,7 +172,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
               <button
                 type="button"
                 onClick={() => onNavigate('digital', 'projets')}
-                className="inline-flex items-center gap-1.5 h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-3 text-[15px] font-medium text-[var(--ink)] hover:text-[var(--accent)] hover:underline cursor-pointer transition-colors duration-150 group"
               >
                 <span>Explorer Digital Web</span>
                 <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
@@ -133,7 +180,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
             </div>
           </div>
 
-          {/* Right: Compact Portrait Frame (photo1 placeholder, zero explanatory clutter) + Handwritten Signature */}
+          {/* Right: Compact Portrait Frame (photo1 placeholder) + Handwritten Signature */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center">
             <div className="w-full max-w-[176px] mx-auto space-y-3">
               <div className="aspect-[4/5] w-full rounded-[8px] bg-[var(--surface)] flex flex-col items-center justify-center text-center p-4 shadow-[var(--card-shadow)]">
@@ -181,7 +228,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
           <Reveal delayMs={0}>
             <div className="space-y-1.5">
               <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={3} durationMs={1100} suffix=" ans" />
+                <AnimatedCounter target={3} durationMs={1200} suffix=" ans" />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
                 Formation en gestion
@@ -195,7 +242,7 @@ export function Hero({ onOpenContact, onNavigate }: HeroProps) {
           <Reveal delayMs={60}>
             <div className="space-y-1.5">
               <div className="text-[34px] sm:text-[40px] font-light text-[var(--ink)] tracking-tight leading-none tnum">
-                <AnimatedCounter target={2} durationMs={1100} suffix=" DAS" />
+                <AnimatedCounter target={2} durationMs={1200} suffix=" DAS" />
               </div>
               <div className="text-[14px] font-medium text-[var(--ink)]">
                 Participation (DAS 1 &amp; 2)

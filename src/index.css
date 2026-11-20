@@ -9,14 +9,22 @@
     --accent-subtle: rgba(59, 73, 223, 0.08);
     --ink: #0A2540;
     --muted: #425466;
-    --subtle: #596579; /* >= 5.9:1 on white for WCAG AA */
-    --bg: #FFFFFF;
-    --surface: #F6F9FC;
+    --subtle: #596579; /* >= 5.9:1 on light background for WCAG AA */
+    --bg: #FAFAFC;
+    --surface: #F3F6FA;
     --surface-elevated: #FFFFFF;
-    --hairline: rgba(10, 37, 64, 0.1);
-    --header-glass: rgba(255, 255, 255, 0.94);
+    --hairline: rgba(10, 37, 64, 0.11);
+    --header-glass: rgba(250, 250, 252, 0.9);
     --card-shadow: 0 4px 14px rgba(10, 37, 64, 0.06), 0 1px 3px rgba(10, 37, 64, 0.04);
     --card-shadow-hover: 0 14px 32px rgba(10, 37, 64, 0.11), 0 4px 10px rgba(10, 37, 64, 0.06);
+
+    /* Palette des vagues WebGL — Thème clair */
+    --wave-bg: #FAFAFC;
+    --wave-1: #4F46E5;
+    --wave-2: #8B5CF6;
+    --wave-3: #F472B6;
+    --wave-4: #FB923C;
+    --wave-5: #38BDF8;
 
     /* Shared Aging Balance Bar & Legend Colors (Light Mode AA) */
     --bucket-1: #0D9488;
@@ -33,13 +41,21 @@
     --ink: #F8FAFC;
     --muted: #CBD5E1;
     --subtle: #9CA9BC; /* >= 7.2:1 on dark for WCAG AA */
-    --bg: #050811;
-    --surface: #0C1220;
-    --surface-elevated: #11192C;
-    --hairline: rgba(248, 250, 252, 0.12);
-    --header-glass: rgba(5, 8, 17, 0.94);
-    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
-    --card-shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --bg: #05060F;
+    --surface: #0C1022;
+    --surface-elevated: #11162E;
+    --hairline: rgba(248, 250, 252, 0.14);
+    --header-glass: rgba(5, 6, 15, 0.88);
+    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 4px rgba(0, 0, 0, 0.35);
+    --card-shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    /* Palette des vagues WebGL — Thème sombre */
+    --wave-bg: #05060F;
+    --wave-1: #3730A3;
+    --wave-2: #6D28D9;
+    --wave-3: #BE185D;
+    --wave-4: #C2410C;
+    --wave-5: #0369A1;
 
     --bucket-1: #2DD4BF;
     --bucket-2: #818CF8;
@@ -62,7 +78,10 @@
     color: var(--ink);
     margin: 0;
     padding: 0;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     overflow-x: hidden;
+    transition: background-color 400ms ease, color 400ms ease;
   }
 
   :focus-visible {
@@ -76,55 +95,82 @@
   font-feature-settings: "tnum" 1;
 }
 
-/* CSS animated Stripe-inspired gradient ribbon (indigo, violet, rose, orange, sky blue), 22s, soft blur */
-@keyframes heroRibbonDrift {
-  0% {
-    transform: translate3d(-4%, -2%, 0) scale(1.06) rotate(-2deg);
-    background-position: 0% 50%;
+/* Repli CSS statique fidèle pour prefers-reduced-motion ou WebGL indisponible */
+.hero-wave-fallback {
+  background:
+    radial-gradient(65% 65% at 88% 18%, color-mix(in srgb, var(--wave-2) 48%, transparent) 0%, transparent 72%),
+    radial-gradient(58% 58% at 74% 48%, color-mix(in srgb, var(--wave-3) 42%, transparent) 0%, transparent 72%),
+    radial-gradient(52% 52% at 92% 72%, color-mix(in srgb, var(--wave-5) 45%, transparent) 0%, transparent 72%),
+    radial-gradient(48% 48% at 62% 22%, color-mix(in srgb, var(--wave-4) 36%, transparent) 0%, transparent 70%),
+    linear-gradient(125deg, transparent 36%, color-mix(in srgb, var(--wave-1) 30%, transparent) 100%);
+}
+
+/* 1. Entrée du hero : mots du titre (700ms, cubic-bezier(.2,.7,.2,1)), puis sous-titre & actions */
+@keyframes heroWordIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  animation: heroWordIn 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.hero-sub-enter {
+  opacity: 0;
+  animation: heroWordIn 650ms cubic-bezier(0.2, 0.7, 0.2, 1) 200ms forwards;
+}
+
+.hero-actions-enter {
+  opacity: 0;
+  animation: heroWordIn 650ms cubic-bezier(0.2, 0.7, 0.2, 1) 320ms forwards;
+}
+
+/* 9. Respiration discrète (6 à 8s, amplitude 1-2%) sur la pastille badge et le bouton principal */
+@keyframes dotBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
   }
   50% {
-    transform: translate3d(4%, 2%, 0) scale(1.12) rotate(2deg);
-    background-position: 100% 50%;
-  }
-  100% {
-    transform: translate3d(-4%, -2%, 0) scale(1.06) rotate(-2deg);
-    background-position: 0% 50%;
+    transform: scale(1.18);
+    opacity: 1;
   }
 }
 
-.hero-ribbon-bg {
-  background: linear-gradient(
-    115deg,
-    rgba(79, 70, 229, 0.36) 0%,
-    rgba(139, 92, 246, 0.34) 24%,
-    rgba(244, 63, 94, 0.30) 48%,
-    rgba(251, 146, 60, 0.28) 72%,
-    rgba(56, 189, 248, 0.36) 100%
-  );
-  background-size: 220% 220%;
-  filter: blur(54px);
-  animation: heroRibbonDrift 22s ease-in-out infinite;
-  will-change: transform, background-position;
+.status-dot-breathe {
+  animation: dotBreathe 6.5s ease-in-out infinite;
 }
 
-.dark .hero-ribbon-bg {
-  background: linear-gradient(
-    115deg,
-    rgba(79, 70, 229, 0.16) 0%,
-    rgba(139, 92, 246, 0.14) 28%,
-    rgba(244, 63, 94, 0.10) 54%,
-    rgba(56, 189, 248, 0.14) 100%
-  );
-  background-size: 220% 220%;
-  filter: blur(64px);
+@keyframes primaryGlowBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px rgba(59, 73, 223, 0.16);
+  }
+  50% {
+    transform: scale(1.014);
+    box-shadow: 0 6px 22px rgba(59, 73, 223, 0.30);
+  }
 }
 
-/* Crisp 6px radius, 44px height buttons */
+.hero-primary-breathe {
+  animation: primaryGlowBreathe 7s ease-in-out infinite;
+}
+
+/* 5. Boutons : 6px radius, 44px touch target, élévation 1px au survol, enfoncement 1px au clic */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-height: 44px;
   height: 44px;
   padding: 0 20px;
   border-radius: 6px;
@@ -136,11 +182,15 @@
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .btn-primary:hover {
   background-color: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active {
@@ -153,6 +203,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-height: 44px;
   height: 44px;
   padding: 0 18px;
   border-radius: 6px;
@@ -164,12 +215,16 @@
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1), transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 150ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .btn-secondary:hover {
   background-color: var(--surface);
   border-color: var(--muted);
+  transform: translateY(-1px);
 }
 
 .btn-secondary:active {
@@ -179,7 +234,7 @@
 /* Chevron slide on hover (3px right) */
 .chevron-slide {
   display: inline-block;
-  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 160ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .group:hover .chevron-slide,
@@ -188,42 +243,44 @@
   transform: translateX(3px);
 }
 
-/* Sticky Header: >= 92% opaque background + blur so scrolled text never bleeds through */
+/* 4. Sticky Header: devient translucide avec flou après 8px de défilement */
 .site-header {
-  background-color: var(--header-glass);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  transition: box-shadow 180ms ease;
+  background-color: transparent;
+  transition: background-color 220ms ease, backdrop-filter 220ms ease, box-shadow 220ms ease;
 }
 
 .site-header.scrolled {
-  box-shadow: 0 1px 0 var(--hairline), 0 6px 20px rgba(10, 37, 64, 0.04);
+  background-color: var(--header-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 var(--hairline), 0 6px 20px rgba(10, 37, 64, 0.05);
 }
 
 .dark .site-header.scrolled {
-  box-shadow: 0 1px 0 var(--hairline), 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 0 var(--hairline), 0 6px 20px rgba(0, 0, 0, 0.42);
 }
 
 @supports not (backdrop-filter: blur(14px)) {
-  .site-header {
+  .site-header.scrolled {
     background-color: var(--bg);
   }
 }
 
-/* Dropdown menu animation: fade + 8px downward slide, 160ms */
+/* 8. Menus & accordéons fluides (hauteur + opacité, 250ms) */
 @keyframes dropdownEnter {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-8px) scaleY(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scaleY(1);
   }
 }
 
 .dropdown-panel {
-  animation: dropdownEnter 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+  animation: dropdownEnter 250ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   background-color: var(--surface-elevated);
   border: 1px solid var(--hairline);
   box-shadow: 0 20px 44px rgba(10, 37, 64, 0.14), 0 4px 12px rgba(10, 37, 64, 0.06);
@@ -231,26 +288,28 @@
 }
 
 .dark .dropdown-panel {
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
-/* Smooth accordion expand */
-@keyframes accordionFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.accordion-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 250ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 250ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.accordion-body {
-  animation: accordionFadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1);
+.accordion-grid.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
 }
 
-/* Marquee continuous horizontal loop */
+.accordion-grid > div {
+  overflow: hidden;
+}
+
+/* 10. Bandeau défilant en boucle des outils réellement utilisés + carrousel repères */
 @keyframes marqueeLoop {
   0% {
     transform: translateX(0);
@@ -263,20 +322,28 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marqueeLoop 34s linear infinite;
+  animation: marqueeLoop 32s linear infinite;
   will-change: transform;
 }
 
-.marquee-wrapper:hover .marquee-track {
+.marquee-track-credential {
+  display: flex;
+  width: max-content;
+  animation: marqueeLoop 28s linear infinite;
+  will-change: transform;
+}
+
+.marquee-wrapper:hover .marquee-track,
+.marquee-wrapper:hover .marquee-track-credential {
   animation-play-state: paused;
 }
 
-/* Project card lift & inner preview zoom on hover */
+/* 6. Cartes projets : élévation 2px, ombre plus nette, image zoomée 3% */
 .project-card {
   background-color: var(--surface-elevated);
   box-shadow: var(--card-shadow);
   border-radius: 10px;
-  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .project-card:hover {
@@ -285,18 +352,18 @@
 }
 
 .project-card-media {
-  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .project-card:hover .project-card-media {
   transform: scale(1.03);
 }
 
-/* Scroll reveal: fade + 16px Y translate, 500ms */
+/* 2. Défilement : fondu + montée de 16px, 500ms */
 .reveal-block {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 500ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .reveal-block.is-visible {
@@ -304,16 +371,21 @@
   transform: translateY(0);
 }
 
-/* Respect reduced motion strictly */
+/* Respect strict de prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .marquee-track,
+  .marquee-track-credential,
   .dropdown-panel,
-  .hero-ribbon-bg,
-  .accordion-body {
+  .hero-word,
+  .hero-sub-enter,
+  .hero-actions-enter,
+  .status-dot-breathe,
+  .hero-primary-breathe {
     animation: none !important;
+    opacity: 1 !important;
     transform: none !important;
   }
   .reveal-block {
@@ -326,7 +398,8 @@
   .chevron-slide,
   .project-card,
   .project-card-media,
-  .site-header {
+  .site-header,
+  .accordion-grid {
     transition: none !important;
   }
 }

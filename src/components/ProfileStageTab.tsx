@@ -13,7 +13,7 @@ import {
   getDunningStage,
 } from '../utils/calculations.ts';
 import { SkillLevelTier } from '../types.ts';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Reveal } from './MotionPrimitives.tsx';
 
 interface ProfileStageTabProps {
@@ -221,25 +221,28 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
                           type="button"
                           aria-expanded={isOpen}
                           onClick={() => setExpandedSkill(isOpen ? null : skill.name)}
-                          className="w-full py-3.5 flex items-center justify-between gap-4 text-left cursor-pointer group"
+                          className="w-full min-h-[44px] py-3 flex items-center justify-between gap-4 text-left cursor-pointer group"
                         >
                           <span className="text-[15px] font-normal text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
                             {skill.name}
                           </span>
                           <span className="inline-flex items-center gap-2.5 shrink-0">
                             <SkillDots tier={skill.tier} label={skill.levelLabel} />
-                            {isOpen ? (
-                              <ChevronDown className="w-4 h-4 text-[var(--subtle)]" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4 text-[var(--subtle)]" />
-                            )}
+                            <ChevronRight
+                              className={`w-4 h-4 text-[var(--subtle)] transition-transform duration-200 ${
+                                isOpen ? 'rotate-90 text-[var(--accent)]' : ''
+                              }`}
+                              aria-hidden="true"
+                            />
                           </span>
                         </button>
-                        {isOpen && (
-                          <div className="pb-4 pr-6 text-[14px] text-[var(--muted)] leading-relaxed transition-all duration-150">
-                            {skill.description}
+                        <div className={`accordion-grid ${isOpen ? 'is-open' : ''}`} aria-hidden={!isOpen}>
+                          <div>
+                            <div className="pb-4 pr-6 text-[14px] text-[var(--muted)] leading-relaxed">
+                              {skill.description}
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                     );
                   })}
