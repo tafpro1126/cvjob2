@@ -4,9 +4,9 @@ import {
   PERSONAL_INFO,
   TIMELINE_DATA,
   SKILL_CATEGORIES,
-  PROJECTS_DATA,
+  TODAY_VS_STAGE,
+  DIGITAL_PROJECTS_DATA,
   SERVICES_DATA,
-  TOOLS_MARQUEE,
   SAMPLE_INVOICES_DEMO,
 } from './portfolioData.ts';
 
@@ -42,9 +42,9 @@ test('portfolioData contains no forbidden seniority claims, Google Workspace too
     PERSONAL_INFO,
     TIMELINE_DATA,
     SKILL_CATEGORIES,
-    PROJECTS_DATA,
+    TODAY_VS_STAGE,
+    DIGITAL_PROJECTS_DATA,
     SERVICES_DATA,
-    TOOLS_MARQUEE,
     SAMPLE_INVOICES_DEMO,
   });
 
@@ -58,18 +58,19 @@ test('portfolioData contains no forbidden seniority claims, Google Workspace too
 
 test('PERSONAL_INFO matches authorized coordinates and neutral Permis B status', () => {
   assert.equal(PERSONAL_INFO.email, 'glory3marrion71@gmail.com');
-  assert.equal(PERSONAL_INFO.phoneWhatsApp, '+242 06 113 38 15');
-  assert.equal(PERSONAL_INFO.phoneWhatsAppRaw, '242061133815');
+  assert.equal(PERSONAL_INFO.phone1, '+242 06 113 38 15');
+  assert.equal(PERSONAL_INFO.phone1Raw, '242061133815');
+  assert.equal(PERSONAL_INFO.phone2, '+242 06 406 50 70');
   assert.equal(PERSONAL_INFO.location, 'Brazzaville');
-  assert.equal(PERSONAL_INFO.driverLicenseStatus, 'Permis B : en cours [STATUT À CONFIRMER]');
-  assert.equal(PERSONAL_INFO.photoUrl, 'photo1');
-  assert.equal(PERSONAL_INFO.legalEditor.name, 'Valry Moun');
+  assert.equal(PERSONAL_INFO.driverLicense, 'Permis B (en cours) [À CONFIRMER]');
+  assert.equal(PERSONAL_INFO.legalEditorName, 'Valry Moun');
+  assert.equal(PERSONAL_INFO.legalEditorEmail, 'valryboulot371@gmail.com');
 });
 
 test('TIMELINE_DATA excludes Permis B and orders LPAE 2025-2026 first as current', () => {
   assert.ok(TIMELINE_DATA.length >= 6);
   assert.equal(TIMELINE_DATA[0].id, 'lpae-esgae');
-  assert.equal(TIMELINE_DATA[0].isCurrent, true);
+  assert.equal(TIMELINE_DATA[0].current, true);
   assert.equal(
     TIMELINE_DATA.some((ev) => /permis/i.test(ev.title)),
     false,
@@ -77,25 +78,18 @@ test('TIMELINE_DATA excludes Permis B and orders LPAE 2025-2026 first as current
   );
 });
 
-test('SKILL_CATEGORIES strictly use 1-3 dot visual levels (Notions / Bases / À l’aise)', () => {
+test('SKILL_CATEGORIES strictly use 1-3 tier visual levels (Notions / Bases / À l’aise)', () => {
   for (const cat of SKILL_CATEGORIES) {
     for (const skill of cat.skills) {
-      assert.ok([1, 2, 3].includes(skill.dots), `Invalid dots for ${skill.name}`);
+      assert.ok([1, 2, 3].includes(skill.tier), `Invalid tier for ${skill.name}`);
       assert.ok(['Notions', 'Bases', 'À l’aise'].includes(skill.levelLabel), `Invalid levelLabel for ${skill.name}`);
     }
   }
 });
 
-test('TOOLS_MARQUEE lists only really used tools', () => {
-  assert.deepEqual(TOOLS_MARQUEE, [
-    'Excel',
-    'Word',
-    'PowerPoint',
-    'Canva',
-    'n8n',
-    'Zapier',
-    'API',
-    'Facebook Ads',
-    'TikTok Ads',
-  ]);
+test('DIGITAL_PROJECTS_DATA uses honest Projet 1-3 titles and badges', () => {
+  assert.equal(DIGITAL_PROJECTS_DATA.length, 3);
+  for (const proj of DIGITAL_PROJECTS_DATA) {
+    assert.ok(['Projet réel', 'Démonstration'].includes(proj.badge), `Invalid badge for ${proj.id}`);
+  }
 });
