@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActiveTab } from '../types.ts';
 import { PERSONAL_INFO } from '../data/portfolioData.ts';
-import { ChevronDown, ChevronRight, Home, Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Home, Menu, Moon, Sun, X } from 'lucide-react';
 
 interface HeaderProps {
   activeNav: 'home' | 'stage' | 'digital';
   onNavigate: (tab: ActiveTab, sectionId?: string, scrollToTop?: boolean) => void;
   onOpenContact: () => void;
+  isDark: boolean;
+  onToggleTheme: () => void;
 }
 
-export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
+export function Header({ activeNav, onNavigate, onOpenContact, isDark, onToggleTheme }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<'stage' | 'digital' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -303,8 +305,17 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
 
         </nav>
 
-        {/* Right: Secondary "Mon CV" + Primary "Me contacter" (Desktop md+) */}
-        <div className="hidden md:flex items-center gap-1.5 lg:gap-3 shrink-0">
+        {/* Right: Theme Icon + Secondary "Mon CV" + Primary "Me contacter" (Desktop md+) */}
+        <div className="hidden md:flex items-center gap-1.5 lg:gap-2.5 shrink-0">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
+            title={isDark ? 'Thème clair' : 'Thème sombre'}
+            className="w-[38px] h-[38px] lg:w-[44px] lg:h-[44px] rounded-[6px] border border-[var(--hairline)] bg-[var(--surface-elevated)] hover:bg-[var(--surface)] text-[var(--ink)] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+          >
+            {isDark ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
+          </button>
           <a
             href={PERSONAL_INFO.cvDownloadUrl}
             target="_blank"
@@ -323,17 +334,28 @@ export function Header({ activeNav, onNavigate, onOpenContact }: HeaderProps) {
           </button>
         </div>
 
-        {/* Mobile Menu Trigger (< 768px) */}
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-expanded={mobileMenuOpen}
-          aria-controls="mobile-fullscreen-menu"
-          aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          className="md:hidden w-11 h-11 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile Actions: Theme Icon + Menu Trigger (< 768px) */}
+        <div className="flex md:hidden items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
+            title={isDark ? 'Thème clair' : 'Thème sombre'}
+            className="w-10 h-10 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+          >
+            {isDark ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-fullscreen-menu"
+            aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            className="w-11 h-11 rounded-[6px] flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
 
       </div>
 

@@ -738,45 +738,56 @@ export function ProfileStageTab({ onOpenContact }: ProfileStageTabProps) {
         </div>
       </section>
 
-      {/* SECTION 6 : POURQUOI MOI ? (3 lignes courtes, sans cartes identiques) */}
+      {/* SECTION 6 : POURQUOI MOI ? (Design structuré niveau agence, sans modifier les sections précédentes) */}
       <section className="pt-16 border-t border-[var(--hairline)]">
         <Reveal>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            <div className="lg:col-span-4 space-y-4">
-              <div className="text-[13px] font-medium text-[var(--accent)]">
-                État d’esprit
-              </div>
-              <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
-                Pourquoi me confier un stage ?
-              </h2>
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={onOpenContact}
-                  className="btn-primary group"
-                >
-                  <span>Me contacter</span>
-                  <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-
-            <div className="lg:col-span-8 divide-y divide-[var(--hairline)] border-y border-[var(--hairline)]">
-              {PERSONAL_INFO.whyMePoints.map((pt, idx) => (
-                <div key={idx} className="py-5 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6">
-                  <span className="text-[13px] font-normal text-[var(--subtle)] tnum shrink-0">
-                    0{idx + 1}
-                  </span>
-                  <div className="space-y-1">
-                    <h3 className="text-[16px] font-medium text-[var(--ink)]">
-                      {pt.title}
-                    </h3>
-                    <p className="text-[14px] text-[var(--muted)] leading-relaxed">
-                      {pt.desc}
-                    </p>
-                  </div>
+          <div className="rounded-[12px] bg-[var(--surface)] border border-[var(--hairline)] p-6 sm:p-10 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+              <div className="lg:col-span-5 space-y-5 lg:sticky lg:top-28">
+                <div className="text-[13px] font-medium text-[var(--accent)]">
+                  État d’esprit
                 </div>
-              ))}
+                <h2 className="text-[28px] sm:text-[34px] font-light text-[var(--ink)] tracking-[-0.02em] leading-[1.15]">
+                  Pourquoi me confier un stage ?
+                </h2>
+                <p className="text-[15px] text-[var(--muted)] leading-relaxed max-w-md">
+                  Un profil sérieux en début de parcours, attentif aux consignes et motivé à soulager l’équipe sur les tâches de gestion et d’organisation.
+                </p>
+                <div className="pt-2 flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={onOpenContact}
+                    className="btn-primary group"
+                  >
+                    <span>Me contacter</span>
+                    <ChevronRight className="w-4 h-4 chevron-slide" aria-hidden="true" />
+                  </button>
+                  <span className="text-[13px] text-[var(--subtle)]">
+                    3 à 6 mois · Brazzaville
+                  </span>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4">
+                {PERSONAL_INFO.whyMePoints.map((pt, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-[8px] bg-[var(--surface-elevated)] border border-[var(--hairline)] p-5 sm:p-6 shadow-[var(--card-shadow)] flex items-start gap-4 sm:gap-5"
+                  >
+                    <span className="w-8 h-8 rounded-[6px] bg-[var(--accent-subtle)] text-[var(--accent)] text-[13px] font-semibold tnum flex items-center justify-center shrink-0 mt-0.5">
+                      0{idx + 1}
+                    </span>
+                    <div className="space-y-1.5">
+                      <h3 className="text-[16px] sm:text-[17px] font-medium text-[var(--ink)] leading-snug">
+                        {pt.title}
+                      </h3>
+                      <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+                        {pt.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Reveal>

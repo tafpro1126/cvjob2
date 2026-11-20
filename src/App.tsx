@@ -18,7 +18,7 @@ import {
   saveCookiePreferences,
   saveThemePreference,
 } from './utils/storage.ts';
-import { Moon, Sun } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export type NavSection = 'home' | 'stage' | 'digital';
 
@@ -194,6 +194,8 @@ export default function App() {
         activeNav={activeNav}
         onNavigate={handleNavigate}
         onOpenContact={() => setIsContactOpen(true)}
+        isDark={isDark}
+        onToggleTheme={toggleDarkMode}
       />
 
       {/* Main Content */}
@@ -216,41 +218,116 @@ export default function App() {
         </div>
       </main>
 
-      {/* Quiet Stripe-Inspired Footer */}
-      <footer className="border-t border-[var(--hairline)] bg-[var(--surface)] py-14 text-[13px] text-[var(--muted)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-[var(--hairline)]">
-            <div className="space-y-1">
-              <div className="text-[15px] font-medium text-[var(--ink)]">
-                {PERSONAL_INFO.name}
+      {/* Structured Stripe-Inspired Footer */}
+      <footer className="border-t border-[var(--hairline)] bg-[var(--surface)] pt-14 pb-12 text-[13px] text-[var(--muted)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10 border-b border-[var(--hairline)]">
+            <div className="md:col-span-5 space-y-4">
+              <div className="inline-flex items-center gap-2.5 text-[15px] font-semibold text-[var(--ink)] tracking-tight">
+                <span className="w-7 h-7 rounded-[6px] bg-[var(--ink)] text-[var(--bg)] text-[12px] font-semibold flex items-center justify-center">
+                  MM
+                </span>
+                <span>{PERSONAL_INFO.name}</span>
               </div>
-              <div>
-                Titulaire LPAE (ESGAE) · {PERSONAL_INFO.location} · {PERSONAL_INFO.driverLicense}
-              </div>
-              <div className="tnum text-[var(--subtle)]">
-                {PERSONAL_INFO.phone1} · {PERSONAL_INFO.email}
+              <p className="text-[14px] text-[var(--muted)] leading-relaxed max-w-sm">
+                Titulaire LPAE (ESGAE) · {PERSONAL_INFO.location} · Permis B (en cours). Disponible pour un stage de 3 à 6 mois en gestion, comptabilité, commerce ou recouvrement.
+              </p>
+              <div className="pt-1 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsContactOpen(true)}
+                  className="btn-primary !h-[40px] !px-4 !text-[13px] group"
+                >
+                  <span>Me contacter</span>
+                  <ChevronRight className="w-3.5 h-3.5 chevron-slide" aria-hidden="true" />
+                </button>
+                <a
+                  href={PERSONAL_INFO.cvDownloadUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-secondary !h-[40px] !px-4 !text-[13px]"
+                >
+                  Mon CV
+                </a>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={toggleDarkMode}
-                aria-label={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
-                className="btn-secondary !h-[38px] !px-3.5 !text-[13px]"
-              >
-                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span>{isDark ? 'Thème clair' : 'Thème sombre'}</span>
-              </button>
+            <div className="md:col-span-3 space-y-3">
+              <div className="text-[12px] font-semibold uppercase tracking-wider text-[var(--ink)]">
+                Navigation
+              </div>
+              <ul className="space-y-2.5 text-[14px]">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('stage', undefined, true)}
+                    className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+                  >
+                    Accueil
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('stage', 'a-propos')}
+                    className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+                  >
+                    Profil &amp; Objectif
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('stage', 'parcours')}
+                    className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+                  >
+                    Parcours
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('digital', 'projets')}
+                    className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+                  >
+                    Digital Web
+                  </button>
+                </li>
+              </ul>
+            </div>
 
-              <button
-                type="button"
-                onClick={() => setIsContactOpen(true)}
-                className="btn-primary !h-[38px] !px-4 !text-[13px]"
-              >
-                Me contacter
-              </button>
+            <div className="md:col-span-4 space-y-3">
+              <div className="text-[12px] font-semibold uppercase tracking-wider text-[var(--ink)]">
+                Coordonnées directes
+              </div>
+              <ul className="space-y-2.5 text-[14px]">
+                <li className="tnum">
+                  <a
+                    href={`https://wa.me/${PERSONAL_INFO.phone1Raw}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[var(--ink)] font-medium hover:text-[var(--accent)] transition-colors"
+                  >
+                    {PERSONAL_INFO.phone1}
+                  </a>
+                  <span className="text-[var(--subtle)]"> · WhatsApp / Tél</span>
+                </li>
+                <li className="tnum text-[var(--muted)]">
+                  {PERSONAL_INFO.phone2} <span className="text-[var(--subtle)]">· Secondaire</span>
+                </li>
+                <li>
+                  <a
+                    href={`mailto:${PERSONAL_INFO.email}`}
+                    className="hover:text-[var(--ink)] transition-colors break-all"
+                  >
+                    {PERSONAL_INFO.email}
+                  </a>
+                </li>
+                <li className="text-[var(--subtle)]">
+                  {PERSONAL_INFO.location}, République du Congo
+                </li>
+              </ul>
             </div>
           </div>
 

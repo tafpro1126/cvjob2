@@ -98,7 +98,7 @@ export const TIMELINE_DATA: TimelineEvent[] = [
   },
   {
     id: 'autoformation-numerique',
-    period: 'Depuis 2023 [Période exacte À CONFIRMER]',
+    period: 'Depuis 2023',
     title: 'Auto-formation web, outils numériques et IA',
     organization: 'Apprentissage en autonomie',
     location: 'Brazzaville',
@@ -112,13 +112,13 @@ export const TIMELINE_DATA: TimelineEvent[] = [
   },
   {
     id: 'bac-d',
-    period: '2023',
+    period: '2022 – 2023',
     title: 'Baccalauréat Général Série D',
     organization: 'Formation secondaire',
     location: 'Brazzaville',
     type: 'education',
     description: 'Parcours scientifique développant la méthode et l’analyse chiffrée.',
-    highlights: ['Obtenu en 2023 à Brazzaville'],
+    highlights: ['Année scolaire 2022 – 2023 · Obtenu en 2023 à Brazzaville'],
   },
 ];
 
@@ -249,13 +249,18 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 export const TODAY_VS_STAGE = {
   today: [
     'Préparer des documents, tableaux et présentations propres sur Word, Excel, PowerPoint et Canva.',
-    'Assister sur la saisie, la vérification ou le montage de pièces administratives sous relecture.',
-    'Tester de petites automatisations (n8n, Zapier) ou pages web avec l’IA pour simplifier des tâches simples.',
+    'Assister sur la saisie, la vérification ou le montage de pièces administratives, sous relecture.',
+    'Tenir un petit tableau de suivi d’échéances ou de dossiers (bases).',
+    'Tester de petites automatisations (n8n, Zapier) et créer des workflows pour simplifier des tâches simples.',
+    'M’exercer à créer, avec l’aide de l’IA, de petites applications web et Android pour des usages simples. Je suis encore en apprentissage.',
   ],
   inStage: [
-    '[À COMPLÉTER : Objectif 1 — Ex. pratiquer la comptabilité courante et les déclarations sur de vrais dossiers]',
-    '[À COMPLÉTER : Objectif 2 — Ex. suivre concrètement la relation client et les relances d’impayés]',
-    '[À COMPLÉTER : Objectif 3 — Ex. gagner en vitesse, en méthode et en autonomie au sein d’une équipe]',
+    'Comprendre comment un dossier est traité de bout en bout : réception, vérification, suivi, archivage, avec la rigueur et les procédures d’une organisation structurée.',
+    'Apprendre la relation avec les clients ou les porteurs de projets : bien écouter, expliquer clairement, rester courtois et ferme sur les échéances, les remboursements ou les pièces manquantes.',
+    'Pratiquer la comptabilité et le suivi financier sur de vrais dossiers, selon les normes OHADA, y compris le suivi des échéances et du recouvrement.',
+    'Découvrir comment une organisation utilise ses outils au quotidien (suivi de dossiers, paiements, communication avec le public) et repérer où je peux faire gagner du temps.',
+    'Partir de vrais besoins : transformer une tâche répétitive en petit tableau de suivi, formulaire ou automatisation simple, toujours validé par mon encadrant.',
+    'M’initier aux bonnes pratiques de confidentialité et de sécurité des données, car je sais que les dossiers qu’on confie demandent de la discrétion.',
   ],
 };
 
