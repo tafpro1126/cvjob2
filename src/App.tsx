@@ -106,6 +106,14 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [activeTab, navScrollLockUntil]);
 
+  // Keep <link id="app-favicon"> synchronized with the active light/dark theme
+  useEffect(() => {
+    const fav = document.getElementById('app-favicon') as HTMLLinkElement | null;
+    if (fav) {
+      fav.href = isDark ? '/brand/favicon-dark.png' : '/brand/favicon-light.png';
+    }
+  }, [isDark]);
+
   const toggleDarkMode = () => {
     setIsDark((prev) => {
       const next = !prev;
@@ -224,12 +232,23 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10 border-b border-[var(--hairline)]">
             <div className="md:col-span-5 space-y-4">
-              <div className="inline-flex items-center gap-2.5 text-[15px] font-semibold text-[var(--ink)] tracking-tight">
-                <span className="w-7 h-7 rounded-[6px] bg-[var(--ink)] text-[var(--bg)] text-[12px] font-semibold flex items-center justify-center">
-                  MM
-                </span>
-                <span>{PERSONAL_INFO.name}</span>
-              </div>
+              <a
+                href="#home"
+                aria-label={`Accueil — ${PERSONAL_INFO.name}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigate('stage', undefined, true);
+                }}
+                className="inline-flex items-center"
+              >
+                <img
+                  src={isDark ? '/brand/logo-dark.png' : '/brand/logo-light.png'}
+                  alt={PERSONAL_INFO.name}
+                  width={391}
+                  height={287}
+                  className="h-9 w-auto object-contain select-none"
+                />
+              </a>
               <p className="text-[14px] text-[var(--muted)] leading-relaxed max-w-sm">
                 Titulaire LPAE (ESGAE) · {PERSONAL_INFO.location} · Permis B (en cours). Disponible pour un stage de 3 à 6 mois en gestion, comptabilité, commerce ou recouvrement.
               </p>

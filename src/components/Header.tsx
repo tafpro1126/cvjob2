@@ -89,19 +89,23 @@ export function Header({ activeNav, onNavigate, onOpenContact, isDark, onToggleT
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-2 lg:gap-6">
         
-        {/* Left: Monogram & Name */}
+        {/* Left: Monogram Brand Logo (Light/Dark) */}
         <a
           href="#home"
+          aria-label={`Accueil — ${PERSONAL_INFO.name}`}
           onClick={(e) => {
             e.preventDefault();
             handleSelectItem('stage', undefined, true);
           }}
-          className="inline-flex items-center gap-2 lg:gap-2.5 text-[14px] lg:text-[16px] font-semibold text-[var(--ink)] whitespace-nowrap shrink-0 tracking-tight"
+          className="inline-flex items-center min-h-[44px] py-1 shrink-0 rounded-[6px] focus-visible:outline-none"
         >
-          <span className="w-7 h-7 rounded-[6px] bg-[var(--ink)] text-[var(--bg)] text-[12px] font-semibold flex items-center justify-center">
-            MM
-          </span>
-          <span>{PERSONAL_INFO.name}</span>
+          <img
+            src={isDark ? '/brand/logo-dark.png' : '/brand/logo-light.png'}
+            alt={PERSONAL_INFO.name}
+            width={391}
+            height={287}
+            className="h-8 sm:h-9 lg:h-10 w-auto object-contain select-none transition-transform duration-200 hover:scale-[1.03]"
+          />
         </a>
 
         {/* Center: Home + Direct Tab Links + Chevron/Hover Intent Dropdowns (Desktop md+) */}

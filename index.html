@@ -8,8 +8,13 @@
         try {
           var saved = localStorage.getItem('mm_theme_v1');
           var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (saved === 'dark' || (!saved && sysDark)) {
+          var isDark = saved === 'dark' || (!saved && sysDark);
+          if (isDark) {
             document.documentElement.classList.add('dark');
+          }
+          var fav = document.getElementById('app-favicon');
+          if (fav) {
+            fav.setAttribute('href', isDark ? '/brand/favicon-dark.png' : '/brand/favicon-light.png');
           }
         } catch (e) {}
       })();
@@ -18,7 +23,8 @@
     <meta name="description" content="Parcours de Marion Moun (LPAE, ESGAE Brazzaville) : recherche de stage de 3 à 6 mois en gestion, comptabilité, recouvrement ou management, et projets web." />
     <meta name="keywords" content="Marion Moun, LPAE, ESGAE Brazzaville, ULC Brazzaville, stage gestion Brazzaville, stage comptabilité, stage recouvrement, stage commerce, stage management" />
     <meta name="author" content="Marion Moun" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link id="app-favicon" rel="icon" type="image/png" href="/brand/favicon-light.png" />
+    <link rel="apple-touch-icon" href="/brand/favicon-light.png" />
     <link rel="canonical" href="https://[DOMAINE_A_COMPLETER]/" />
 
     <!-- Local Search & Geotargeting -->
